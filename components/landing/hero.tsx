@@ -1,10 +1,24 @@
 'use client';
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Owl } from '@/components/owl/owl';
 import { OwlBubble } from '@/components/owl/owl-bubble';
 import { MathText } from '@/components/questions/math-text';
+import type { OwlState } from '@/components/owl/owl';
+import { playSfx } from '@/lib/ui/sfx';
+
+const GREETING = 'Chào em! Mình là Bé Cú 🦉';
+const LINES = [
+  'Em biết không? Cú mèo xoay đầu được tới 270 độ đó! 🦉',
+  'Mỗi ngày tiến bộ một chút là đủ rồi nè!',
+  'Sai một câu chưa phải là mất gì, mà là biết thêm một điều! 💡',
+  'Vùng vừa sức là nơi em tiến bộ nhanh nhất đó 🌱',
+  'Uống miếng nước rồi mình học tiếp nhé! 💧',
+  'Em làm được mà, Cú tin em! 💪',
+  'Mẹo nhỏ: làm đúng 3 câu liên tiếp là có combo đó 🔥',
+  'Toán và Tiếng Anh đều vui nếu học đúng mức nè!',
+];
 
 const FLOATING = [
   { text: '$x^2 - 5x + 6 = 0$', cls: 'left-0 top-10 bg-white', d: 0 },
@@ -16,6 +30,16 @@ const FLOATING = [
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const [look, setLook] = useState({ x: 0, y: 0 });
+  const [owl, setOwl] = useState<{ state: OwlState; text: string }>({ state: 'idle', text: GREETING });
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  const poke = () => {
+    const pool = LINES.filter((l) => l !== owl.text);
+    setOwl({ state: 'celebrate', text: pool[Math.floor(Math.random() * pool.length)] });
+    playSfx(Math.random() < 0.5 ? 'select' : 'complete');
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setOwl((o) => ({ ...o, state: 'idle' })), 1000);
+  };
   return (
     <section onPointerMove={(e) => {
       const r = ref.current?.getBoundingClientRect();
@@ -42,8 +66,10 @@ export function Hero() {
           </motion.div>
         ))}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-          <OwlBubble text="Chào em! Mình là Bé Cú 🦉" />
-          <Owl state="idle" size={240} lookAt={look} />
+          <OwlBubble text={owl.text} />
+          <button type="button" onClick={poke} aria-label="Bé Cú: bấm để trò chuyện" className="cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lavender-dark">
+            <Owl state={owl.state} size={240} lookAt={look} />
+          </button>
         </div>
       </div>
     </section>
