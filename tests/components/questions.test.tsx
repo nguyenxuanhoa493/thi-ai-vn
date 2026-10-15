@@ -195,3 +195,34 @@ describe('Task 19: image questions & MathText reveals', () => {
     expect(reveal.textContent).not.toContain('$');
   });
 });
+
+describe('Task 19 fix: lightbox focus & scroll lock', () => {
+  const img = { src: '/images/questions/test.svg', alt: 'Hình thử' };
+  const q = { ...base, id: 'fx', type: 'mcq', content: 'Nhìn hình', options: ['A1', 'B1'], answer: 0, image: img } as Question;
+  it('focuses the close button on open and restores focus to the trigger on Escape', async () => {
+    render(<QuestionView question={q} value={null} onChange={() => {}} disabled={false} reveal={false} />);
+    const trigger = screen.getByRole('button', { name: /phóng to/i });
+    await userEvent.click(trigger);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Đóng' }));
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+  it('close button closes and restores focus', async () => {
+    render(<QuestionView question={q} value={null} onChange={() => {}} disabled={false} reveal={false} />);
+    const trigger = screen.getByRole('button', { name: /phóng to/i });
+    await userEvent.click(trigger);
+    await userEvent.click(screen.getByRole('button', { name: 'Đóng' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+  it('locks body scroll while open and restores the previous value', async () => {
+    document.body.style.overflow = 'scroll';
+    render(<QuestionView question={q} value={null} onChange={() => {}} disabled={false} reveal={false} />);
+    await userEvent.click(screen.getByRole('button', { name: /phóng to/i }));
+    expect(document.body.style.overflow).toBe('hidden');
+    await userEvent.keyboard('{Escape}');
+    expect(document.body.style.overflow).toBe('scroll');
+    document.body.style.overflow = '';
+  });
+});
