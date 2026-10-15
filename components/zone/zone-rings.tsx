@@ -28,10 +28,10 @@ export function ZoneRings({ skills, map, size = 380, showLabels = false, highlig
         initial={false} animate={{ r: rLearn, rotate: 360 }} transition={{ r: spring, rotate: { duration: 60, repeat: Infinity, ease: 'linear' } }}
         style={{ originX: '50%', originY: '50%' }} />
       <motion.circle cx={c} cy={c} fill="#dfe6ff" initial={false} animate={{ r: rMaster }} transition={spring} />
-      <text x={c} y={c + rLearn - 14} textAnchor="middle" fontSize={12} fontWeight={800} fill="#1f8a57">LEARNING ZONE</text>
       {skills.map((s, i) => {
         const { zone, p } = skillZone(map[s.id]);
-        const angle = (i / skills.length) * Math.PI * 2 - Math.PI / 2;
+        // số kiến thức chẵn: lệch nửa bước để không có chấm nằm ngay đáy, đè lên nhãn LEARNING ZONE
+        const angle = ((i + (skills.length % 2 === 0 ? 0.5 : 0)) / skills.length) * Math.PI * 2 - Math.PI / 2;
         const r = zone === 'mastered' ? rMaster * 0.6
           : zone === 'learning' ? rMaster + (rLearn - rMaster) * (1 - Math.min(1, p) * 0.7)
           : rLearn + (outer - rLearn) * 0.55;
@@ -55,6 +55,11 @@ export function ZoneRings({ skills, map, size = 380, showLabels = false, highlig
           </g>
         );
       })}
+      {/* khi có nhãn kiến thức, chú giải bên ngoài đã gọi tên vùng; nhãn trong vòng sẽ đè lên tên kiến thức */}
+      {!showLabels && (
+        <text x={c} y={c + rLearn - 14} textAnchor="middle" fontSize={12} fontWeight={800} fill="#1f8a57"
+          stroke="#c9f2dc" strokeWidth={4} paintOrder="stroke">LEARNING ZONE</text>
+      )}
     </svg>
   );
 }
