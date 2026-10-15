@@ -8,7 +8,7 @@ import { MathText } from '@/components/questions/math-text';
 
 const FLOATING = [
   { text: '$x^2 - 5x + 6 = 0$', cls: 'left-0 top-10 bg-white', d: 0 },
-  { text: 'I have been to Hội An ✓', cls: 'right-0 top-24 bg-mint', d: 0.6 },
+  { text: 'I have been to Hội An ✓', cls: 'right-0 top-0 bg-mint', d: 0.6 },
   { text: '🔥 Combo x5', cls: 'left-8 bottom-16 bg-peach', d: 1.2 },
   { text: '🌱 Vùng mở rộng!', cls: 'right-6 bottom-6 bg-lavender-soft', d: 1.8 },
 ];
