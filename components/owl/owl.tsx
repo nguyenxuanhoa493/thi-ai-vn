@@ -2,15 +2,16 @@
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { useId } from 'react';
 
-export type OwlState = 'idle' | 'thinking' | 'correct' | 'wrong' | 'celebrate' | 'cheer';
+export type OwlState = 'idle' | 'thinking' | 'correct' | 'wrong' | 'celebrate' | 'cheer' | 'fly';
 
 const body: Variants = {
   idle: { y: [0, -4, 0], rotate: 0, scaleY: 1, transition: { duration: 2.6, repeat: Infinity, ease: 'easeInOut' } },
   thinking: { y: 0, rotate: [-3, 3, -3], transition: { duration: 1.6, repeat: Infinity, ease: 'easeInOut' } },
   correct: { y: [0, -26, 0, -8, 0], scaleY: [1, 0.92, 1.05, 0.98, 1], rotate: 0, transition: { duration: 0.8 } },
   wrong: { y: 0, rotate: -10, transition: { type: 'spring', stiffness: 220, damping: 10 } },
-  celebrate: { y: [0, -32, 0], rotate: [0, 360], transition: { duration: 0.9, ease: 'easeOut' } },
+  celebrate: { y: [0, -32, 0, -12, 0], scaleY: [1, 0.92, 1.05, 0.98, 1], rotate: 0, transition: { duration: 0.9, ease: 'easeOut' } },
   cheer: { y: [0, -8, 0], rotate: 0, transition: { duration: 0.6, repeat: Infinity } },
+  fly: { y: [0, -6, 0], rotate: 0, scaleY: 1, transition: { duration: 0.3, repeat: Infinity, ease: 'easeInOut' } },
 };
 const wing = (side: 1 | -1): Variants => ({
   idle: { rotate: 0 },
@@ -19,6 +20,7 @@ const wing = (side: 1 | -1): Variants => ({
   wrong: { rotate: side * 8 },
   celebrate: { rotate: [0, side * -40, 0, side * -40, 0], transition: { duration: 0.9 } },
   cheer: { rotate: [0, side * -35, 0], transition: { duration: 0.35, repeat: Infinity } },
+  fly: { rotate: [0, side * -70, 0], transition: { duration: 0.3, repeat: Infinity, ease: 'easeInOut' } },
 });
 const antenna: Variants = {
   idle: { scale: 1, fill: '#ff8a65' },
@@ -27,16 +29,17 @@ const antenna: Variants = {
   wrong: { scale: 1, fill: '#ffb3a7' },
   celebrate: { scale: [1, 1.5, 1], fill: '#ffd166', transition: { duration: 0.5, repeat: 2 } },
   cheer: { scale: 1.1, fill: '#ffd166' },
+  fly: { scale: 1, fill: '#ff8a65' },
 };
 
 const STATE_LABEL: Record<OwlState, string> = {
-  idle: 'đang chờ', thinking: 'đang suy nghĩ', correct: 'vui vì em làm đúng', wrong: 'động viên em', celebrate: 'ăn mừng', cheer: 'cổ vũ',
+  idle: 'đang chờ', thinking: 'đang suy nghĩ', correct: 'vui vì em làm đúng', wrong: 'động viên em', celebrate: 'ăn mừng', cheer: 'cổ vũ', fly: 'đang bay',
 };
 
 export function Owl({ state = 'idle', size = 140, lookAt }: { state?: OwlState; size?: number; lookAt?: { x: number; y: number } }) {
   const reduce = useReducedMotion();
   const shineId = `owlShine-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
-  const happy = state === 'correct' || state === 'celebrate' || state === 'cheer';
+  const happy = state === 'correct' || state === 'celebrate' || state === 'cheer' || state === 'fly';
   const px = (lookAt?.x ?? (state === 'wrong' ? -0.6 : 0)) * 3;
   const py = (lookAt?.y ?? (state === 'wrong' ? 0.5 : 0)) * 3;
   return (

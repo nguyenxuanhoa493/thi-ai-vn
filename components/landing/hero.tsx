@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { Owl } from '@/components/owl/owl';
 import { OwlBubble } from '@/components/owl/owl-bubble';
+import { OwlHome, useOwlHome } from '@/components/landing/mascot';
 import { MathText } from '@/components/questions/math-text';
 import type { OwlState } from '@/components/owl/owl';
 import { playSfx } from '@/lib/ui/sfx';
@@ -29,6 +30,7 @@ const FLOATING = [
 
 export function Hero() {
   const ref = useRef<HTMLDivElement>(null);
+  const home = useOwlHome();
   const [look, setLook] = useState({ x: 0, y: 0 });
   const [owl, setOwl] = useState<{ state: OwlState; text: string }>({ state: 'idle', text: GREETING });
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -66,10 +68,12 @@ export function Hero() {
           </motion.div>
         ))}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-          <OwlBubble text={owl.text} />
+          <OwlBubble text={home ? owl.text : null} />
+          <OwlHome>
           <button type="button" onClick={poke} aria-label="Bé Cú: bấm để trò chuyện" className="cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lavender-dark">
             <Owl state={owl.state} size={240} lookAt={look} />
           </button>
+          </OwlHome>
         </div>
       </div>
     </section>

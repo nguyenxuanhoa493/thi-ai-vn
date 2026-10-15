@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { Owl } from '@/components/owl/owl';
+import { OwlHome } from '@/components/landing/mascot';
 export function FooterCta() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-16">
       <div className="flex flex-col items-center gap-6 rounded-[40px] bg-gradient-to-br from-coral to-[#ffb199] p-12 text-center text-white shadow-clay-lg md:flex-row md:text-left">
-        <Owl state="cheer" size={140} />
+        <OwlHome><Owl state="cheer" size={140} /></OwlHome>
         <div className="flex-1">
           <h2 className="text-4xl font-extrabold">Sẵn sàng học vừa sức cùng Bé Cú?</h2>
           <p className="mt-2 text-lg opacity-90">Miễn phí cho học sinh. Nhà trường tổ chức thi ngay từ ngân hàng đề chuẩn.</p>

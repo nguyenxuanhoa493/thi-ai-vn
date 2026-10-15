@@ -17,14 +17,14 @@ export default function Home() {
   return (
     <MascotProvider>
       <LandingNav />
-      <MascotZone mood={null}><Hero /></MascotZone>
+      <MascotZone mood={null} perch="home"><Hero /></MascotZone>
       <Stats />
-      <MascotZone mood={{ state: 'idle', text: 'Ba trụ cột này giúp em học vừa sức nè!' }}><Pillars /></MascotZone>
-      <MascotZone mood={null}><MiniQuiz /></MascotZone>
-      <MascotZone mood={{ state: 'cheer', text: 'Vùng vừa sức nè!' }}><ZoneTeaser /></MascotZone>
-      <MascotZone mood={{ state: 'idle', text: 'Chỉ 3 bước là xong!' }}><HowItWorks /></MascotZone>
-      <MascotZone mood={{ state: 'cheer', text: 'Wow, 11 dạng câu hỏi luôn!' }}><QuestionTypes /></MascotZone>
-      <MascotZone mood={{ state: 'thinking', text: 'Thầy cô chọn ma trận, Cú lo phần còn lại!' }}>
+      <MascotZone perch="left" mood={{ state: 'idle', text: 'Ba trụ cột này giúp em học vừa sức nè!' }}><Pillars /></MascotZone>
+      <MascotZone mood={null} perch="home"><MiniQuiz /></MascotZone>
+      <MascotZone perch="right" mood={{ state: 'cheer', text: 'Vùng vừa sức nè!' }}><ZoneTeaser /></MascotZone>
+      <MascotZone perch="left" mood={{ state: 'idle', text: 'Chỉ 3 bước là xong!' }}><HowItWorks /></MascotZone>
+      <MascotZone perch="right" mood={{ state: 'cheer', text: 'Wow, 11 dạng câu hỏi luôn!' }}><QuestionTypes /></MascotZone>
+      <MascotZone perch="left" mood={{ state: 'thinking', text: 'Thầy cô chọn ma trận, Cú lo phần còn lại!' }}>
       <section id="nha-truong" className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 py-24">
         <div className="max-w-3xl space-y-4">
           <span className="rounded-full bg-lavender-soft px-3 py-1 text-sm font-bold text-lavender-dark">Dành cho nhà trường & giáo viên</span>
@@ -34,9 +34,9 @@ export default function Home() {
         <ExamBuilderDemo />
       </section>
       </MascotZone>
-      <MascotZone mood={{ state: 'idle', text: 'Cú gửi báo cáo cho ba mẹ nhé!' }}><ParentReport /></MascotZone>
-      <MascotZone mood={{ state: 'thinking', text: 'Em còn thắc mắc gì không?' }}><Faq /></MascotZone>
-      <MascotZone mood={{ state: 'celebrate', text: 'Bắt đầu thôi nào!' }}><FooterCta /></MascotZone>
+      <MascotZone perch="right" mood={{ state: 'idle', text: 'Cú gửi báo cáo cho ba mẹ nhé!' }}><ParentReport /></MascotZone>
+      <MascotZone perch="left" mood={{ state: 'thinking', text: 'Em còn thắc mắc gì không?' }}><Faq /></MascotZone>
+      <MascotZone perch="home" mood={null}><FooterCta /></MascotZone>
     </MascotProvider>
   );
 }

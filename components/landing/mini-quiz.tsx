@@ -8,6 +8,7 @@ import type { AnswerValue, Question } from '@/lib/bank/types';
 import { MathText } from '@/components/questions/math-text';
 import { QuestionView } from '@/components/questions/question-view';
 import { Owl, type OwlState } from '@/components/owl/owl';
+import { OwlHome, useOwlHome } from '@/components/landing/mascot';
 import { OwlBubble } from '@/components/owl/owl-bubble';
 import { ClayButton } from '@/components/ui/clay-button';
 import { playSfx } from '@/lib/ui/sfx';
@@ -21,6 +22,7 @@ const hasAnswer = (v: AnswerValue) => (Array.isArray(v) ? v.length > 0 && v.ever
 
 export function MiniQuiz() {
   const [idx, setIdx] = useState(0);
+  const home = useOwlHome();
   const [value, setValue] = useState<AnswerValue>(null);
   const [reveal, setReveal] = useState<boolean | null>(null); // null = chưa kiểm tra, true/false = kết quả câu hiện tại
   const [score, setScore] = useState(0);
@@ -83,8 +85,8 @@ export function MiniQuiz() {
           </div>
         </div>
         <div className="hidden flex-col items-center gap-3 lg:sticky lg:top-24 lg:flex">
-          <OwlBubble text={bubble} />
-          <Owl state={state} size={200} />
+          <OwlBubble text={home ? bubble : null} />
+          <OwlHome><Owl state={state} size={200} /></OwlHome>
         </div>
       </motion.div>
     </section>
