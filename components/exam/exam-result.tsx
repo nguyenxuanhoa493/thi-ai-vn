@@ -14,7 +14,7 @@ import { CountUp } from '@/components/ui/count-up';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { fireConfetti } from '@/lib/ui/confetti';
 
-export function ExamResultView({ exam, result, questions, onBack }: { exam: ExamDef; result: ExamResult; questions: Question[]; onBack: () => void }) {
+export function ExamResultView({ exam, result, questions, onBack, onRetake }: { exam: ExamDef; result: ExamResult; questions: Question[]; onBack: () => void; onRetake?: () => void }) {
   const [open, setOpen] = useState<string | null>(null);
   useEffect(() => { if (result.score10 >= 8) fireConfetti(); }, [result.score10]);
   return (
@@ -57,7 +57,10 @@ export function ExamResultView({ exam, result, questions, onBack }: { exam: Exam
           );
         })}
       </ClayCard>
-      <ClayButton onClick={onBack}>← Về danh sách bài thi</ClayButton>
+      <div className="flex gap-3">
+        <ClayButton onClick={onBack}>← Về danh sách bài thi</ClayButton>
+        {onRetake && <ClayButton variant="ghost" onClick={onRetake}>Làm lại bài (demo)</ClayButton>}
+      </div>
     </div>
   );
 }

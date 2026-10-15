@@ -10,7 +10,9 @@ vi.stubGlobal('IntersectionObserver', class { observe() {} unobserve() {} discon
 import { ExamRoom } from '@/components/exam/exam-room';
 import { getExam } from '@/lib/bank/exams';
 import { useDemo } from '@/lib/store/demo-store';
-import { startAttempt } from '@/lib/engine/exam';
+import { startAttempt, toggleFlag, gradeAttempt } from '@/lib/engine/exam';
+import { getQuestion } from '@/lib/bank';
+import type { Question } from '@/lib/bank/types';
 
 const exam = getExam('toan9-15p-can')!;
 let clock = 1_000_000;
@@ -60,5 +62,28 @@ describe('ExamRoom', () => {
     expect(screen.getByText(new RegExp(`còn ${exam.questionIds.length} câu chưa làm`))).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Xác nhận nộp' }));
     expect(screen.getByText(/Kết quả bài thi/)).toBeInTheDocument();
+  });
+  it('flagged blank questions still count as unanswered in confirm', async () => {
+    useDemo.getState().setExam(toggleFlag(startAttempt(exam, clock), exam.questionIds[0]));
+    render(<ExamRoom exam={exam} now={now} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Nộp bài' }));
+    expect(screen.getByText(new RegExp(`còn ${exam.questionIds.length} câu chưa làm`))).toBeInTheDocument();
+  });
+  it('blocks starting while another exam is in progress', async () => {
+    const other = getExam('toan9-45p-hpt')!;
+    const att = startAttempt(other, clock);
+    useDemo.getState().setExam(att);
+    render(<ExamRoom exam={exam} now={now} />);
+    expect(screen.getByText(new RegExp(`Em đang làm dở bài «${other.title}»`))).toBeInTheDocument();
+    await userEvent.click(screen.getByLabelText(/Tôi đã đọc và đồng ý/));
+    expect(screen.getByRole('button', { name: 'Vào phòng thi' })).toBeDisabled();
+    expect(useDemo.getState().exam).toEqual(att);
+  });
+  it('shows stored result on mount for a completed exam', () => {
+    const qs = exam.questionIds.map(getQuestion) as Question[];
+    useDemo.getState().finishExam(gradeAttempt(qs, startAttempt(exam, clock - 1000), clock));
+    render(<ExamRoom exam={exam} now={now} />);
+    expect(screen.getByText(/Kết quả bài thi/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Làm lại bài (demo)' })).toBeInTheDocument();
   });
 });

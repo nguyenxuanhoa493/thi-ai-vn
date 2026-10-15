@@ -1,14 +1,15 @@
 'use client';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import type { ExamDef } from '@/lib/bank/exams';
 import { EXAM_KIND_LABEL } from '@/lib/bank/exams';
 import { getQuestion } from '@/lib/bank';
+import { getExam } from '@/lib/bank/exams';
 import type { AnswerValue, Question } from '@/lib/bank/types';
 import {
-  addViolation, formatClock, gradeAttempt, isExpired, navStatus, remainingSec, setAnswer, startAttempt, toggleFlag, type ExamResult,
+  addViolation, formatClock, gradeAttempt, isAnswered, isExpired, navStatus, remainingSec, setAnswer, startAttempt, toggleFlag, type ExamResult,
 } from '@/lib/engine/exam';
 import { BADGES } from '@/lib/engine/gamification';
 import { useDemo } from '@/lib/store/demo-store';
@@ -26,17 +27,27 @@ const RULES = [
   'Có thể đánh dấu câu để xem lại trước khi nộp.',
 ];
 
+function leaveFullscreen() {
+  if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+}
+function toastBadges(ids: string[]) {
+  ids.forEach((b) => { const d = BADGES[b as keyof typeof BADGES]; if (d) toast(`${d.icon} Huy hiệu mới: ${d.name}`); });
+}
+
 export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => number }) {
   const router = useRouter();
   const { exam: attempt, setExam, finishExam, examResults } = useDemo();
   const questions = useMemo(() => exam.questionIds.map(getQuestion).filter(Boolean) as Question[], [exam]);
   const mine = attempt && attempt.examId === exam.id && !attempt.submittedAt ? attempt : null;
+  const other = attempt && attempt.examId !== exam.id && !attempt.submittedAt ? attempt : null;
+  const otherExam = other ? getExam(other.examId) : undefined;
+  const otherLive = !!other && !!otherExam && !isExpired(other, now());
 
   const submit = useCallback((): ExamResult | null => {
     const a = useDemo.getState().exam;
     if (!a || a.examId !== exam.id) return null;
     const r = gradeAttempt(questions, a, now());
-    finishExam(r).forEach((b) => toast(`${BADGES[b].icon} Huy hiệu mới: ${BADGES[b].name}`));
+    toastBadges(finishExam(r));
     return r;
   }, [exam.id, questions, now, finishExam]);
 
@@ -44,9 +55,9 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
   const [result, setResult] = useState<ExamResult | null>(() =>
     mine && isExpired(mine, now()) ? gradeAttempt(questions, mine, now()) : null);
   useEffect(() => {
-    if (result && useDemo.getState().exam?.examId === exam.id) finishExam(result);
+    if (result && useDemo.getState().exam?.examId === exam.id) toastBadges(finishExam(result));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const [phase, setPhase] = useState<Phase>(result ? 'result' : mine ? 'taking' : 'lobby');
+  const [phase, setPhase] = useState<Phase>(result || (!mine && examResults[exam.id]) ? 'result' : mine ? 'taking' : 'lobby');
   const [agreed, setAgreed] = useState(false);
   const [count, setCount] = useState(3);
   const [current, setCurrent] = useState(0);
@@ -58,10 +69,12 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
   useEffect(() => {
     if (phase !== 'countdown') return;
     if (count === 0) {
-      setExam(startAttempt(exam, now()));
-      setLeft(exam.durationMin * 60);
-      setPhase('taking');
-      return;
+      const t = setTimeout(() => {
+        setExam(startAttempt(exam, now()));
+        setLeft(exam.durationMin * 60);
+        setPhase('taking');
+      }, 600);
+      return () => clearTimeout(t);
     }
     const t = setTimeout(() => setCount((c) => c - 1), 1000);
     return () => clearTimeout(t);
@@ -75,7 +88,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
       if (!a) return;
       const r = remainingSec(a, now());
       setLeft(r);
-      if (r === 0) { const res = submit(); if (res) { setResult(res); setPhase('result'); toast('⏰ Hết giờ, bài đã được tự động nộp'); } }
+      if (r === 0) { const res = submit(); if (res) { setResult(res); setPhase('result'); leaveFullscreen(); toast('⏰ Hết giờ, bài đã được tự động nộp'); } }
     }, 500);
     return () => clearInterval(id);
   }, [phase, now, submit]);
@@ -99,7 +112,8 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
 
   if (phase === 'result') {
     const r = result ?? examResults[exam.id];
-    return r ? <ExamResultView exam={exam} result={r} questions={questions} onBack={back} /> : null;
+    return r ? <ExamResultView exam={exam} result={r} questions={questions} onBack={back}
+      onRetake={() => { setResult(null); setAgreed(false); setCurrent(0); setPhase('lobby'); }} /> : null;
   }
 
   if (phase === 'lobby' || phase === 'countdown') {
@@ -123,13 +137,20 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
                 <ul className="space-y-2">
                   {RULES.map((r) => <li key={r} className="flex gap-3 rounded-xl bg-cream px-4 py-2.5 text-sm">📌 {r}</li>)}
                 </ul>
+                {other && otherExam && otherLive && (
+                  <div className="space-y-3 rounded-xl bg-peach px-4 py-3 text-sm text-peach-dark">
+                    <p className="font-semibold">Em đang làm dở bài «{otherExam.title}»</p>
+                    <ClayButton size="sm" onClick={() => router.push(`/phong-thi/${otherExam.id}`)}>Tiếp tục bài đang làm</ClayButton>
+                  </div>
+                )}
                 <label className="flex items-center gap-3 font-semibold">
                   <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="h-5 w-5 accent-coral" />
                   Tôi đã đọc và đồng ý với quy chế thi
                 </label>
                 <div className="flex justify-between">
                   <ClayButton variant="ghost" onClick={back}>← Quay lại</ClayButton>
-                  <ClayButton size="lg" disabled={!agreed} onClick={() => {
+                  <ClayButton size="lg" disabled={!agreed || otherLive} onClick={() => {
+                    if (other && otherExam && !otherLive) toastBadges(finishExam(gradeAttempt(otherExam.questionIds.map(getQuestion).filter(Boolean) as Question[], other, now())));
                     document.documentElement.requestFullscreen?.().catch(() => {});
                     setCount(3); setPhase('countdown');
                   }}>Vào phòng thi</ClayButton>
@@ -143,11 +164,11 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
   }
 
   // taking
-  const a = mine ?? useDemo.getState().exam;
+  const a = mine;
   if (!a) return null;
   const q = questions[current];
   const status = navStatus(a, exam.questionIds);
-  const unanswered = Object.values(status).filter((s) => s === 'unanswered').length;
+  const unanswered = exam.questionIds.filter((id) => !isAnswered(a.answers[id])).length;
   const urgent = left <= 300;
   const update = (v: AnswerValue) => setExam(setAnswer(a, q.id, v));
 
@@ -201,22 +222,22 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
       <AnimatePresence>
         {(warning !== null || confirming) && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 grid place-items-center bg-ink/30 backdrop-blur-sm">
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="w-full max-w-md">
+            <motion.div role="dialog" aria-modal="true" aria-labelledby="exam-dialog-title" initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="w-full max-w-md">
               <ClayCard className="space-y-4 p-8 text-center">
                 {warning !== null ? (
                   <>
                     <div className="flex justify-center"><Owl state="wrong" size={100} /></div>
-                    <p className="text-lg font-bold">Bạn vừa rời khỏi màn hình làm bài (lần {warning})</p>
+                    <p id="exam-dialog-title" className="text-lg font-bold">Bạn vừa rời khỏi màn hình làm bài (lần {warning})</p>
                     <p className="text-sm text-muted">Hành vi này đã được ghi lại và sẽ hiển thị trong kết quả bài thi.</p>
-                    <ClayButton onClick={() => setWarning(null)}>Tiếp tục làm bài</ClayButton>
+                    <ClayButton autoFocus onClick={() => setWarning(null)}>Tiếp tục làm bài</ClayButton>
                   </>
                 ) : (
                   <>
-                    <p className="text-lg font-bold">Nộp bài?</p>
+                    <p id="exam-dialog-title" className="text-lg font-bold">Nộp bài?</p>
                     <p className="text-muted">{unanswered > 0 ? `Em còn ${unanswered} câu chưa làm.` : 'Em đã làm hết các câu.'} Sau khi nộp sẽ không sửa được nữa.</p>
                     <div className="flex justify-center gap-3">
                       <ClayButton variant="ghost" onClick={() => setConfirming(false)}>Làm tiếp</ClayButton>
-                      <ClayButton onClick={() => { const r = submit(); setConfirming(false); if (r) { setResult(r); setPhase('result'); document.exitFullscreen?.().catch(() => {}); } }}>Xác nhận nộp</ClayButton>
+                      <ClayButton autoFocus onClick={() => { const r = submit(); setConfirming(false); if (r) { setResult(r); setPhase('result'); leaveFullscreen(); } }}>Xác nhận nộp</ClayButton>
                     </div>
                   </>
                 )}
