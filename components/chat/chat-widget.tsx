@@ -30,20 +30,27 @@ export function ChatWidget() {
   const [draft, setDraft] = useState('');
   const idRef = useRef(1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathRef = useRef(pathname);
   useEffect(() => { pathRef.current = pathname; }, [pathname]);
+
+  // đóng (nút ✕, Escape hoặc launcher): trả focus về launcher để người dùng bàn phím không bị mất vị trí
+  const close = useCallback(() => {
+    setOpen(false);
+    setTimeout(() => launcherRef.current?.focus(), 0);
+  }, []);
 
   useEffect(() => { const t = setTimeout(() => setUnread(!readSeen()), 0); return () => clearTimeout(t); }, []);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   useEffect(() => { if (open) inputRef.current?.focus(); }, [open]);
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, [open, close]);
   useEffect(() => {
     const el = listRef.current;
     if (el) el.scrollTop = el.scrollHeight;
@@ -71,7 +78,8 @@ export function ChatWidget() {
   }, [play, typing]);
 
   const toggle = () => {
-    setOpen((o) => !o);
+    if (open) { close(); setUnread(false); writeSeen(); return; }
+    setOpen(true);
     setUnread(false);
     writeSeen();
   };
@@ -143,7 +151,7 @@ export function ChatWidget() {
         {!open && (
           <span className="pointer-events-none absolute bottom-1/2 right-full mr-3 hidden translate-y-1/2 whitespace-nowrap rounded-xl bg-white px-3 py-1.5 text-sm font-bold shadow-clay group-hover:block group-focus-within:block">Hỏi Bé Cú</span>
         )}
-        <button type="button" onClick={toggle} aria-label={open ? 'Đóng trò chuyện với Bé Cú' : 'Hỏi Bé Cú'} aria-expanded={open}
+        <button ref={launcherRef} type="button" onClick={toggle} aria-label={open ? 'Đóng trò chuyện với Bé Cú' : 'Hỏi Bé Cú'} aria-expanded={open}
           className="relative grid h-14 w-14 place-items-center rounded-full bg-white shadow-clay-lg ring-2 ring-coral/30 transition-transform hover:scale-105 sm:h-16 sm:w-16">
           <Owl size={40} />
           {unread && !open && <span data-testid="unread-dot" className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full bg-coral ring-2 ring-white" />}

@@ -35,6 +35,18 @@ describe('ChatWidget', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
+  it('returns focus to the launcher when closed via button or Escape', async () => {
+    render(<ChatWidget />);
+    open();
+    fireEvent.click(screen.getByRole('button', { name: 'Đóng trò chuyện' }));
+    await act(async () => { await vi.advanceTimersByTimeAsync(10); });
+    expect(screen.getByRole('button', { name: 'Hỏi Bé Cú' })).toHaveFocus();
+    open();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    await act(async () => { await vi.advanceTimersByTimeAsync(10); });
+    expect(screen.getByRole('button', { name: 'Hỏi Bé Cú' })).toHaveFocus();
+  });
+
   it('sends a message, shows typing then the reply, plays sfx', async () => {
     render(<ChatWidget />);
     open();
