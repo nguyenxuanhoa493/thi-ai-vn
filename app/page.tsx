@@ -19,7 +19,7 @@ export default function Home() {
         <div className="max-w-3xl space-y-4">
           <span className="rounded-full bg-lavender-soft px-3 py-1 text-sm font-bold text-lavender-dark">Dành cho nhà trường & giáo viên</span>
           <h2 className="text-4xl font-extrabold leading-tight">Tổ chức thi ngay, không cần soạn đề</h2>
-          <p className="text-lg text-muted">Chọn lớp, chương và ma trận mức độ, hệ thống lấy câu hỏi từ ngân hàng 40.000 câu <NxbBadge /> và tạo đề cho bài 15 phút, 45 phút, giữa kỳ, cuối kỳ chỉ trong vài giây.</p>
+          <p className="text-lg text-muted">Chọn môn, lớp và ma trận mức độ, hệ thống lấy câu hỏi từ ngân hàng 40.000 câu <NxbBadge /> và tạo đề cho bài 15 phút, 45 phút, giữa kỳ, cuối kỳ chỉ trong vài giây.</p>
         </div>
         <ExamBuilderDemo />
       </section>
