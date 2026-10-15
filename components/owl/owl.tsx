@@ -29,6 +29,10 @@ const antenna: Variants = {
   cheer: { scale: 1.1, fill: '#ffd166' },
 };
 
+const STATE_LABEL: Record<OwlState, string> = {
+  idle: 'đang chờ', thinking: 'đang suy nghĩ', correct: 'vui vì em làm đúng', wrong: 'động viên em', celebrate: 'ăn mừng', cheer: 'cổ vũ',
+};
+
 export function Owl({ state = 'idle', size = 140, lookAt }: { state?: OwlState; size?: number; lookAt?: { x: number; y: number } }) {
   const reduce = useReducedMotion();
   const shineId = `owlShine-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
@@ -37,7 +41,7 @@ export function Owl({ state = 'idle', size = 140, lookAt }: { state?: OwlState; 
   const py = (lookAt?.y ?? (state === 'wrong' ? 0.5 : 0)) * 3;
   return (
     <motion.svg
-      role="img" aria-label={`Bé Cú (${state})`} data-state={state}
+      role="img" aria-label={`Bé Cú (${STATE_LABEL[state]})`} data-state={state}
       width={size} height={size * 0.95} viewBox="0 0 150 142"
       variants={body} animate={reduce ? undefined : state} initial={false}
       style={{ originX: 0.5, originY: 1, overflow: 'visible' }}
