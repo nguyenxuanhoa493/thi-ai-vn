@@ -4,21 +4,30 @@ import { useEffect, useRef, useState } from 'react';
 
 export function Typewriter({ text, speed = 18, onDone }: { text: string; speed?: number; onDone?: () => void }) {
   const reduce = useReducedMotion();
-  const [n, setN] = useState(reduce ? text.length : 0);
+  // counter is tied to the text it belongs to, so a text change never shows stale progress
+  const [st, setSt] = useState({ text, n: 0 });
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
-  const shown = reduce ? text.length : n;
+  const doneFor = useRef<string | null>(null);
+
+  const shown = reduce ? text.length : st.text === text ? Math.min(st.n, text.length) : 0;
+  const complete = shown >= text.length;
 
   useEffect(() => {
-    if (reduce) return;
-    setN(0);
-    const id = setInterval(() => setN((v) => Math.min(v + 1, text.length)), speed);
+    if (reduce || complete) return;
+    const id = setInterval(
+      () => setSt((s) => ({ text, n: Math.min((s.text === text ? s.n : 0) + 1, text.length) })),
+      speed,
+    );
     return () => clearInterval(id);
-  }, [text, speed, reduce]);
+  }, [text, speed, reduce, complete]);
 
   useEffect(() => {
-    if (shown >= text.length) doneRef.current?.();
-  }, [shown, text]);
+    if (!complete) { doneFor.current = null; return; }
+    if (doneFor.current === text) return;
+    doneFor.current = text;
+    doneRef.current?.();
+  }, [complete, text]);
 
-  return <span>{text.slice(0, shown)}{shown < text.length && <span className="animate-pulse">▍</span>}</span>;
+  return <span>{text.slice(0, shown)}{!complete && <span className="animate-pulse">▍</span>}</span>;
 }
