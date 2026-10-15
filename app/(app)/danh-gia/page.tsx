@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useDemo, zoneKey } from '@/lib/store/demo-store';
 import { questionsFor, skillName, skillsFor } from '@/lib/bank';
 import { checkAnswer } from '@/lib/bank/check';
-import { SUBJECT_LABEL, type AnswerValue, type Question, type Subject } from '@/lib/bank/types';
+import { SUBJECT_LABEL, type AnswerValue, type Grade, type Question, type Subject } from '@/lib/bank/types';
 import {
   ASSESSMENT_LENGTH, aiComment, currentTheta, emptyAssessment, nextAssessmentQuestion, recordAssessmentAnswer,
   summarizeAssessment, type AssessmentState, type AssessmentSummary,
@@ -38,21 +38,34 @@ export default function DanhGiaPage() {
   const [value, setValue] = useState<AnswerValue>(null);
   const [summary, setSummary] = useState<AssessmentSummary | null>(null);
   const [step, setStep] = useState(0);
-  const pool = useMemo(() => questionsFor(subject, grade), [subject, grade]);
-  const skills = useMemo(() => skillsFor(subject, grade), [subject, grade]);
+  const [runCtx, setRunCtx] = useState<{ subject: Subject; grade: Grade } | null>(null);
+  const ctx = phase !== 'intro' && runCtx ? runCtx : { subject, grade };
+  const pool = useMemo(() => questionsFor(ctx.subject, ctx.grade), [ctx.subject, ctx.grade]);
+  const skills = useMemo(() => skillsFor(ctx.subject, ctx.grade), [ctx.subject, ctx.grade]);
   const existing = assessments[zoneKey(subject, grade)];
+  const [empty, setEmpty] = useState(false);
 
   const start = () => {
     const s = emptyAssessment();
-    setState(s); setQ(nextAssessmentQuestion(pool, skills, s)); setValue(null); setPhase('running');
+    const first = pool.length ? nextAssessmentQuestion(pool, skills, s) : null;
+    if (!first) { setEmpty(true); return; }
+    setEmpty(false); setRunCtx({ subject, grade });
+    setState(s); setQ(first); setValue(null); setPhase('running');
   };
+
+  useEffect(() => {
+    if (phase === 'running' && runCtx && runCtx.grade !== grade) {
+      setPhase('intro'); setRunCtx(null); setQ(null); setValue(null);
+      toast('Đã đổi lớp — bài đánh giá được làm lại từ đầu');
+    }
+  }, [grade, phase, runCtx]);
   const answer = (correct: boolean) => {
     if (!q) return;
     const s = recordAssessmentAnswer(state, q, correct);
     setState(s); setValue(null);
     const n = nextAssessmentQuestion(pool, skills, s);
     if (n) { setQ(n); return; }
-    const sum = summarizeAssessment(s, skills, { subject, grade });
+    const sum = summarizeAssessment(s, skills, ctx);
     setSummary(sum); setPhase('analyzing');
     saveAssessment(sum).forEach((b) => toast(`${BADGES[b].icon} Huy hiệu mới: ${BADGES[b].name}`));
   };
@@ -78,6 +91,12 @@ export default function DanhGiaPage() {
               <button key={s} type="button" onClick={() => setSubject(s)} className={`rounded-xl px-5 py-2 font-semibold ${subject === s ? 'bg-lavender text-white' : 'text-muted'}`}>{SUBJECT_LABEL[s]} {grade}</button>
             ))}
           </div>
+          {(empty || pool.length === 0) && (
+            <ClayCard className="space-y-3">
+              <p className="font-semibold">Chưa có câu hỏi đánh giá cho {SUBJECT_LABEL[subject]} lớp {grade}</p>
+              <ClayButton variant="ghost" onClick={() => router.push('/luyen-tap')}>Đến Luyện tập</ClayButton>
+            </ClayCard>
+          )}
           <div className="flex flex-wrap gap-3">
             <ClayButton size="lg" onClick={start} disabled={pool.length === 0}>Bắt đầu đánh giá {SUBJECT_LABEL[subject]}</ClayButton>
             {existing && <ClayButton size="lg" variant="ghost" onClick={() => { setSummary(existing); setPhase('report'); }}>Xem báo cáo gần nhất</ClayButton>}
@@ -135,7 +154,7 @@ export default function DanhGiaPage() {
   }
 
   if (phase === 'report' && summary) {
-    const radar = summary.skills.map((r) => ({ name: skillName(r.skillId), score: r.score }));
+    const radar = summary.skills.filter((r) => r.answered > 0).map((r) => ({ name: skillName(r.skillId), score: r.score }));
     return (
       <div className="space-y-6">
         <h1 className="text-3xl font-extrabold">Báo cáo năng lực · {SUBJECT_LABEL[summary.subject]} {summary.grade}</h1>
