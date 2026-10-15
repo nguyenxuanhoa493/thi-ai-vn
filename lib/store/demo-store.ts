@@ -59,8 +59,9 @@ export function createSeed(now: Date = new Date()): DemoData {
       const base = from + ((to - from) * i) / 12;
       return { date: day(13 - i), subject, grade: 9 as Grade, score: Math.round(base + (edge ? 0 : NOISE[(i + shift) % 13])) };
     });
-  const progress = [...series('toan', 52, 63, 0), ...series('anh', 58, 66, 4)];
-  const milestones: Milestone[] = (['toan', 'anh'] as Subject[]).map((subject) => ({ date: day(10), subject, grade: 9 as Grade, kind: 'assessment' as const }));
+  const progress = [...series('toan', 38, 48, 0), ...series('anh', 42, 52, 4)];
+  // không seed mốc 'assessment': radar nói "AI chưa có dữ liệu" trước lần đánh giá thật đầu tiên
+  const milestones: Milestone[] = [];
   return {
     version: STORE_VERSION, profile: { name: 'Minh', grade: 9 }, xp: 1240,
     streak: { count: 6, lastDate: day(1) }, combo: 0, zones: {}, assessments: {}, history,
