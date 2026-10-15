@@ -38,6 +38,10 @@ describe('reply', () => {
     ['cảm ơn cú', /không có gì|Bé Cú/i],
     ['tạm biệt', /Hẹn gặp lại/],
     ['Bé Cú là ai', /trợ lý/i],
+    ['em buồn quá', /Bé Cú hiểu mà/, '/learning-zone'],
+    ['chán quá không muốn học', /nghỉ 5 phút/, '/learning-zone'],
+    ['mệt quá', /vừa sức/],
+    ['em nản rồi', /Bé Cú hiểu mà/],
   ];
   it.each(cases)('maps %j', (input, text, href) => {
     const r = reply(input);
@@ -45,6 +49,13 @@ describe('reply', () => {
     if (href) expect(r.link?.href).toBe(href);
   });
 
+  it('sad inputs get the encourage intent, not smalltalk', () => {
+    expect(INTENT_IDS).toContain('encourage');
+    for (const t of ['buồn', 'chán', 'mệt', 'nản']) expect(reply(`em ${t} lắm`).text).toMatch(/Bé Cú hiểu mà/);
+  });
+  it('ultra-short keywords no longer hijack unrelated sentences', () => {
+    for (const t of ['hoa hồng đẹp', 'cap nhat', 'văn nghệ', 'gói quà', 'lý do gì']) expect(reply(t).text).not.toMatch(/hai môn|lớp 6/);
+  });
   it('falls back with chips for nonsense', () => {
     const r = reply('asdfgh qwerty');
     expect(r.text).toMatch(/chưa hiểu/);

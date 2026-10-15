@@ -31,16 +31,17 @@ const INTENTS: Intent[] = [
   { id: 'sound', kw: ['am thanh', 'bat tat', 'loa', 'mute', 'nhac'], answer: { text: 'Em bấm nút 🔊 ở góc trên để bật hoặc tắt âm thanh nhé. Biểu tượng 🔇 nghĩa là đang tắt.' } },
   { id: 'grade', kw: ['doi lop', 'chon lop', 'chuyen lop', 'lop may'], answer: { text: 'Em chọn lớp ở ô "Lớp" trên thanh trên cùng. Câu hỏi và Learning Zone sẽ đổi theo lớp em chọn.' } },
   { id: 'reset', kw: ['reset', 'dat lai', 'lam lai tu dau', 'xoa tien do', 'xoa du lieu'], answer: { text: 'Em bấm nút ↺ Đặt lại demo ở góc trên để xoá tiến độ và bắt đầu lại từ đầu nhé.' } },
-  { id: 'price', kw: ['gia', 'bao nhieu tien', 'mien phi', 'phi', 'goi', 'tra tien', 'thanh toan', 'hoc phi', 'free'], answer: { text: 'Bản demo miễn phí cho em trải nghiệm; gói cho nhà trường sẽ công bố sau.', chips: ['Nhà trường đăng ký thế nào?'] } },
+  { id: 'price', kw: ['gia', 'bao nhieu tien', 'mien phi', 'phi', 'tra tien', 'thanh toan', 'hoc phi', 'free'], answer: { text: 'Bản demo miễn phí cho em trải nghiệm; gói cho nhà trường sẽ công bố sau.', chips: ['Nhà trường đăng ký thế nào?'] } },
   { id: 'mobile', kw: ['dien thoai', 'may tinh bang', 'mobile', 'ipad', 'ung dung'], answer: { text: 'Em dùng được trên điện thoại, máy tính bảng lẫn máy tính; giao diện tự co giãn cho vừa màn hình.' } },
-  { id: 'subjects', kw: ['mon gi', 'mon hoc', 'nhung mon', 'mon nao', 'toan', 'tieng anh', 'hoa', 'ly', 'van'], answer: { text: 'Hiện demo hỗ trợ hai môn: Toán và Tiếng Anh. Các môn khác sẽ bổ sung sau.', chips: ['Lớp nào được hỗ trợ?'] } },
-  { id: 'grades', kw: ['lop nao', 'lop 6', 'lop 9', 'lop 12', 'khoi', 'cap'], answer: { text: 'Bản demo có lớp 6, lớp 9 và lớp 12. Em đổi lớp bất cứ lúc nào ở thanh trên cùng.' } },
+  { id: 'subjects', kw: ['mon gi', 'mon hoc', 'nhung mon', 'mon nao', 'toan', 'tieng anh'], answer: { text: 'Hiện demo hỗ trợ hai môn: Toán và Tiếng Anh. Các môn khác sẽ bổ sung sau.', chips: ['Lớp nào được hỗ trợ?'] } },
+  { id: 'grades', kw: ['lop nao', 'lop 6', 'lop 9', 'lop 12', 'khoi'], answer: { text: 'Bản demo có lớp 6, lớp 9 và lớp 12. Em đổi lớp bất cứ lúc nào ở thanh trên cùng.' } },
   { id: 'login', kw: ['mat khau', 'dang nhap', 'tai khoan', 'quen mat', 'login', 'dang ky tai khoan'], answer: { text: 'Bản demo chưa có đăng nhập, nên em không cần tài khoản hay mật khẩu. Cứ vào học thôi! 🦉' } },
   { id: 'tips', kw: ['meo', 'hoc hieu qua', 'hoc tot', 'cach hoc', 'phuong phap', 'loi khuyen', 'tips'], answer: { text: 'Mẹo của Bé Cú: học vừa sức, mỗi ngày khoảng 15 phút, đều đặn còn hơn học dồn. Câu sai thì xem lại giải thích nhé!', link: { href: '/learning-zone', label: 'Vào Learning Zone →' } } },
   { id: 'thanks', kw: ['cam on', 'thanks', 'thank', 'cảm ơn', 'gioi qua', 'tuyet'], answer: { text: 'Không có gì đâu! Bé Cú luôn sẵn sàng giúp em 🦉' } },
   { id: 'bye', kw: ['tam biet', 'bye', 'goodbye', 'hen gap lai', 'di day', 'thoat'], answer: { text: 'Hẹn gặp lại em nhé! Học vui, đều mỗi ngày 🦉' } },
   { id: 'who', kw: ['be cu la ai', 'cu la ai', 'ban la ai', 'ai vay', 'ten gi', 'con cu', 'be cu', 'tro ly'], answer: { text: 'Bé Cú là trợ lý của thi.ai.vn, luôn đồng hành cùng em khi học. Lưu ý: đây là bot kịch bản của bản demo, trả lời theo các chủ đề có sẵn.', chips: MAIN_CHIPS } },
-  { id: 'smalltalk', kw: ['khoe khong', 'the nao roi', 'buon', 'chan', 'vui', 'dang lam gi', 'yeu', 'dep'], answer: { text: 'Bé Cú khoẻ lắm, cảm ơn em! Mình cùng học một chút cho vui nhé 🦉', chips: ['Bắt đầu từ đâu?', 'Mẹo học hiệu quả'] } },
+  { id: 'encourage', kw: ['buon', 'chan', 'met', 'nan', 'chan qua', 'met qua', 'khong muon hoc', 'hoc khong noi'], answer: { text: 'Bé Cú hiểu mà 🦉 Mình nghỉ 5 phút rồi luyện vài câu vừa sức nhé — làm đúng sẽ vui hơn đó!', link: { href: '/learning-zone', label: 'Vào Learning Zone →' } } },
+  { id: 'smalltalk', kw: ['khoe khong', 'the nao roi', 'vui', 'dang lam gi', 'yeu', 'dep'], answer: { text: 'Bé Cú khoẻ lắm, cảm ơn em! Mình cùng học một chút cho vui nhé 🦉', chips: ['Bắt đầu từ đâu?', 'Mẹo học hiệu quả'] } },
 ];
 
 export const INTENT_IDS = INTENTS.map((i) => i.id);
