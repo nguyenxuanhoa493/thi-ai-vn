@@ -29,6 +29,14 @@ describe('sanitizePersisted', () => {
     'falls back to seed for %j', (p) => {
       expect(sanitizePersisted(p, NOW)).toEqual(createSeed(NOW));
     });
+  it('falls back when streak is malformed', () => {
+    expect(sanitizePersisted({ ...createSeed(NOW), streak: { count: 'x' } }, NOW)).toEqual(createSeed(NOW));
+  });
+  it('nulls a malformed exam but keeps the rest', () => {
+    const r = sanitizePersisted({ ...createSeed(NOW), xp: 5, exam: { examId: 'x' } }, NOW);
+    expect(r.exam).toBeNull();
+    expect(r.xp).toBe(5);
+  });
   it('keeps valid data', () => {
     const valid = { ...createSeed(NOW), xp: 99 };
     expect(sanitizePersisted(valid, NOW).xp).toBe(99);
@@ -89,5 +97,14 @@ describe('actions', () => {
     useDemo.getState().setGrade(6);
     useDemo.getState().resetDemo();
     expect(useDemo.getState().profile.grade).toBe(9);
+  });
+});
+
+describe('hydration resilience', () => {
+  it('recovers from unparsable localStorage', async () => {
+    localStorage.setItem('thi-ai-demo', '{bad');
+    await useDemo.persist.rehydrate();
+    expect(useDemo.persist.hasHydrated()).toBe(true);
+    expect(useDemo.getState().profile).toEqual({ name: 'Minh', grade: 9 });
   });
 });

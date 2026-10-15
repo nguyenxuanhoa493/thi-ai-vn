@@ -1,6 +1,6 @@
 'use client';
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist, type PersistStorage } from 'zustand/middleware';
 import { GRADES, type Grade, type Question, type Subject } from '@/lib/bank/types';
 import { skillsFor } from '@/lib/bank';
 import type { AssessmentSummary } from '@/lib/engine/assessment';
@@ -55,13 +55,41 @@ export function sanitizePersisted(p: unknown, now: Date = new Date()): DemoData 
     const d = p as Partial<DemoData> | null;
     const ok = isObj(d) && d.version === STORE_VERSION
       && isObj(d.profile) && typeof d.profile.name === 'string' && GRADES.includes(d.profile.grade as Grade)
-      && typeof d.xp === 'number' && isObj(d.streak) && Array.isArray(d.history) && Array.isArray(d.badges)
+      && typeof d.xp === 'number' && isObj(d.streak) && typeof d.streak.count === 'number' && typeof d.streak.lastDate === 'string' && Array.isArray(d.history) && Array.isArray(d.badges)
       && isObj(d.zones) && isObj(d.assessments) && isObj(d.examResults);
-    return ok ? { ...createSeed(now), ...(d as DemoData) } : createSeed(now);
+    if (!ok) return createSeed(now);
+    const out = { ...createSeed(now), ...(d as DemoData) };
+    const e = out.exam as unknown;
+    if (e != null && !(isObj(e) && typeof e.startedAt === 'number' && typeof e.durationSec === 'number' && isObj(e.answers))) out.exam = null;
+    return out;
   } catch {
     return createSeed(now);
   }
 }
+
+/** Safe storage: unparsable JSON or blocked storage never breaks hydration. */
+const safeStorage: PersistStorage<DemoData> = {
+  getItem: (name) => {
+    try {
+      const raw = localStorage.getItem(name);
+      if (raw == null) return null;
+      try {
+        return JSON.parse(raw);
+      } catch {
+        localStorage.removeItem(name);
+        return null;
+      }
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name, value) => {
+    try { localStorage.setItem(name, JSON.stringify(value)); } catch { /* ignore */ }
+  },
+  removeItem: (name) => {
+    try { localStorage.removeItem(name); } catch { /* ignore */ }
+  },
+};
 
 const dataOnly = (s: DemoState): DemoData => ({
   version: s.version, profile: s.profile, xp: s.xp, streak: s.streak, combo: s.combo, zones: s.zones,
@@ -119,7 +147,7 @@ export const useDemo = create<DemoState>()(
     {
       name: 'thi-ai-demo',
       version: STORE_VERSION,
-      storage: createJSONStorage(() => localStorage),
+      storage: safeStorage,
       partialize: (s) => dataOnly(s),
       migrate: (p) => sanitizePersisted(p),
       merge: (persisted, current) => ({ ...current, ...sanitizePersisted(persisted) }),
