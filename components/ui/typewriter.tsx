@@ -7,7 +7,7 @@ export function Typewriter({ text, speed = 18, onDone }: { text: string; speed?:
   // counter is tied to the text it belongs to, so a text change never shows stale progress
   const [st, setSt] = useState({ text, n: 0 });
   const doneRef = useRef(onDone);
-  doneRef.current = onDone;
+  useEffect(() => { doneRef.current = onDone; });
   const doneFor = useRef<string | null>(null);
 
   const shown = reduce ? text.length : st.text === text ? Math.min(st.n, text.length) : 0;

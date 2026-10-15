@@ -11,9 +11,8 @@ export function CountUp({ value, duration = 1.2, format = vi }: { value: number;
   // luôn bắt đầu từ 0 để HTML server và lần render đầu ở client khớp nhau (tránh hydration mismatch khi reduced motion)
   const [display, setDisplay] = useState(0);
   useEffect(() => {
-    if (reduce) { setDisplay(value); return; }
-    if (!inView) return;
-    const c = animate(0, value, { duration, ease: [0.2, 0.9, 0.3, 1], onUpdate: setDisplay });
+    if (!inView && !reduce) return;
+    const c = animate(0, value, { duration: reduce ? 0 : duration, ease: [0.2, 0.9, 0.3, 1], onUpdate: setDisplay });
     return () => c.stop();
   }, [inView, value, duration, reduce]);
   return <span ref={ref}>{format(display)}</span>;

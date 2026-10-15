@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import { render, screen } from '@testing-library/react';
 
-vi.mock('motion/react', () => ({ useReducedMotion: () => true, useInView: () => false, animate: vi.fn() }));
+vi.mock('motion/react', () => ({ useReducedMotion: () => true, useInView: () => false, animate: (_from: number, to: number, o: { onUpdate: (v: number) => void }) => { o.onUpdate(to); return { stop() {} }; } }));
 import { CountUp } from '@/components/ui/count-up';
 
 describe('CountUp reduced motion', () => {
