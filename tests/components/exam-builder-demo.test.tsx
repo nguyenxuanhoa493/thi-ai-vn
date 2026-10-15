@@ -16,6 +16,16 @@ describe('ExamBuilderDemo', () => {
     expect(screen.getByText(/Mã phòng thi/)).toBeInTheDocument();
     vi.useRealTimers();
   });
+  it('clears the pending build timer on unmount', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const { unmount } = render(<ExamBuilderDemo />);
+    await user.click(screen.getByRole('button', { name: 'Tạo đề' }));
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+    vi.useRealTimers();
+  });
   it('matrix stepper changes counts', async () => {
     render(<ExamBuilderDemo />);
     const plus = screen.getByRole('button', { name: 'Tăng Nhận biết' });

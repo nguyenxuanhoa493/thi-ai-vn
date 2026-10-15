@@ -1,6 +1,6 @@
 'use client';
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { questionsFor } from '@/lib/bank';
 import { LEVELS, LEVEL_LABEL, SUBJECT_LABEL, type Grade, type Level, type Question, type Subject } from '@/lib/bank/types';
 import { buildExam, type Matrix } from '@/lib/engine/exam-builder';
@@ -19,10 +19,15 @@ export function ExamBuilderDemo() {
   const [state, setState] = useState<'idle' | 'building' | 'done'>('idle');
   const [result, setResult] = useState<{ questions: Question[]; room: string } | null>(null);
 
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+
   const step = (l: Level, d: number) => setMatrix((m) => ({ ...m, [l]: Math.max(0, Math.min(20, m[l] + d)) }));
   const build = () => {
     setState('building');
-    setTimeout(() => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      timer.current = null;
       const r = buildExam(questionsFor(subject, grade).filter((q) => q.type !== 'speak'), matrix);
       setResult({ questions: r.questions, room: code() });
       setState('done');
