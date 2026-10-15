@@ -24,7 +24,7 @@ interface Props {
 export function QuestionView({ question: q, index, showMeta = true, onChange, ...rest }: Props) {
   const play = useSfx();
   // phát 'select' chỉ khi người dùng đổi đáp án (onChange do component con gọi), không phát với giá trị khởi tạo
-  const p = { ...rest, onChange: (v: AnswerValue) => { play('select'); onChange(v); } };
+  const p = { ...rest, onChange: (v: AnswerValue) => { if (q.type !== 'short' && q.type !== 'write' && typeof v !== 'string') play('select'); onChange(v); } };
   const body = (() => {
     switch (q.type) {
       case 'mcq': case 'listen': return <McqView question={q} {...p} />;

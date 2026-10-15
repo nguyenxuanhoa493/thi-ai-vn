@@ -38,7 +38,7 @@ export function playSfx(name: SfxName): void {
     if (!useDemo.getState().soundOn) return;
     const c = getCtx();
     if (!c) return;
-    if (c.state === 'suspended') void c.resume()?.catch?.(() => {});
+    if (c.state === 'suspended' || (c.state as string) === 'interrupted') void c.resume()?.catch?.(() => {});
     const t0 = c.currentTime;
     for (const n of RECIPES[name]) {
       const start = t0 + n.at;

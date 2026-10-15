@@ -12,6 +12,14 @@ const playSfx = vi.hoisted(() => vi.fn());
 vi.mock('@/lib/ui/sfx', () => ({ playSfx }));
 
 describe('QuestionView select sound', () => {
+  it('typing into a short-answer question does not play select', async () => {
+    playSfx.mockClear();
+    const q: Question = { ...base, id: 'sh', type: 'short', content: 'Tính', answer: '4' };
+    render(<QuestionView question={q} value="" onChange={() => {}} disabled={false} reveal={false} />);
+    const input = (document.querySelector('input, textarea') as HTMLElement | null);
+    if (input) await userEvent.type(input, '12');
+    expect(playSfx).not.toHaveBeenCalled();
+  });
   it('plays select on user change only, not on render', async () => {
     playSfx.mockClear();
     const q: Question = { ...base, id: 'sm', type: 'mcq', content: 'Chọn', options: ['A1', 'B1'], answer: 0 };
