@@ -32,8 +32,8 @@ export default function PhongThiPage() {
                 <h3 className="flex-1 text-lg font-bold">{e.title}</h3>
                 <p className="text-sm text-muted">⏱ {e.durationMin} phút · {e.questionIds.length} câu · {e.schedule}</p>
                 <p className="font-bold">
-                  {r ? <span className="text-mint-dark">✓ Đã làm · {r.score10.toFixed(2).replace('.', ',')} điểm</span>
-                    : inProgress ? <span className="text-coral">● Đang làm dở, vào tiếp →</span>
+                  {inProgress ? <span className="text-coral">● Đang làm dở, vào tiếp →</span>
+                    : r ? <span className="text-mint-dark">✓ Đã làm · {r.score10.toFixed(2).replace('.', ',')} điểm</span>
                     : <span className="text-coral">Vào thi →</span>}
                 </p>
               </TiltCard>

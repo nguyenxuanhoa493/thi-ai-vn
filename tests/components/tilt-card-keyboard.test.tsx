@@ -36,3 +36,17 @@ describe('TiltCard keyboard access', () => {
     expect(push).toHaveBeenCalledWith(expect.stringMatching(/^\/phong-thi\/.+/));
   });
 });
+
+describe('Phòng thi card status', () => {
+  it('shows in-progress even when the exam already has a result (retake)', async () => {
+    const { examsFor } = await import('@/lib/bank/exams');
+    const e = examsFor(9)[0];
+    useDemo.setState({
+      exam: { examId: e.id, startedAt: Date.now(), durationSec: 600, answers: {}, violations: 0 } as never,
+      examResults: { [e.id]: { examId: e.id, score10: 7.5 } as never },
+    });
+    render(<PhongThiPage />);
+    expect(screen.getByText(/Đang làm dở, vào tiếp/)).toBeInTheDocument();
+    expect(screen.queryByText(/Đã làm/)).toBeNull();
+  });
+});
