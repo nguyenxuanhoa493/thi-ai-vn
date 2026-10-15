@@ -35,8 +35,9 @@ export function ZoneRings({ skills, map, size = 380, showLabels = false, highlig
         const r = zone === 'mastered' ? rMaster * 0.6
           : zone === 'learning' ? rMaster + (rLearn - rMaster) * (1 - Math.min(1, p) * 0.7)
           : rLearn + (outer - rLearn) * 0.55;
-        const x = c + Math.cos(angle) * r;
-        const y = c + Math.sin(angle) * r;
+        // làm tròn: Math.cos/sin trên server (Node) và trình duyệt có thể lệch ở chữ số cuối → lỗi hydration
+        const x = Math.round((c + Math.cos(angle) * r) * 100) / 100;
+        const y = Math.round((c + Math.sin(angle) * r) * 100) / 100;
         const hl = highlight === s.id;
         return (
           <g key={s.id}>
