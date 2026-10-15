@@ -4,6 +4,7 @@ import { skillName } from '@/lib/bank';
 import { LevelPill } from '@/components/ui/level-pill';
 import { NxbBadge } from '@/components/ui/nxb-badge';
 import { MathText } from './math-text';
+import { QuestionImage } from './question-image';
 import { McqView } from './mcq';
 import { MultiView } from './multi';
 import { Tf4View } from './tf4';
@@ -50,6 +51,7 @@ export function QuestionView({ question: q, index, showMeta = true, onChange, ..
         </div>
       )}
       <h2 className="text-xl font-semibold leading-relaxed"><MathText text={q.content} /></h2>
+      {q.image && <QuestionImage key={q.id} image={q.image} />}
       <div key={q.id}>{body}</div>
     </div>
   );

@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   ALL_QUESTIONS, SKILLS, CHAPTERS, questionsFor, skillsFor, chaptersFor, getQuestion, skillName, chapterCount, BANK_TOTAL,
 } from '@/lib/bank';
@@ -139,6 +141,24 @@ describe('fix round 1: answer balance & exam composition', () => {
       const exam = EXAMS.find((e) => e.id === examId)!;
       expect(exam.questionIds.length, examId).toBeGreaterThan(0);
       for (const id of exam.questionIds) expect(getQuestion(id)!.skillId, `${examId} ${id}`).toBe(skillId);
+    }
+  });
+});
+
+describe('Task 19: image questions', () => {
+  const withImage = ALL_QUESTIONS.filter((q) => q.image);
+  it('every image src exists under public/ and has non-empty alt', () => {
+    for (const q of withImage) {
+      expect(q.image!.src.startsWith('/images/questions/'), q.id).toBe(true);
+      expect(existsSync(join(process.cwd(), 'public', q.image!.src)), q.id).toBe(true);
+      expect(q.image!.alt.trim().length, q.id).toBeGreaterThan(0);
+    }
+  });
+  it('≥5 image questions each for toán 9 and anh 9, ids <skill>-<level>-img<n>', () => {
+    for (const subject of SUBJECTS) {
+      const qs = withImage.filter((q) => q.subject === subject && q.grade === 9);
+      expect(qs.length, subject).toBeGreaterThanOrEqual(5);
+      for (const q of qs) expect(q.id, q.id).toMatch(new RegExp(`^${q.skillId}-${q.level}-img\\d+$`));
     }
   });
 });

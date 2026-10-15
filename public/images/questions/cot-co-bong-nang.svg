@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 330" width="480" height="330" role="img" aria-label="Cột cờ thẳng đứng có bóng dài 15 m trên mặt đất, tia nắng tạo với mặt đất góc 40 độ, chiều cao h chưa biết">
+<title>Cột cờ thẳng đứng có bóng dài 15 m trên mặt đất, tia nắng tạo với mặt đất góc 40 độ, chiều cao h chưa biết</title>
+<defs><clipPath id="card"><rect width="480" height="330" rx="20"/></clipPath></defs>
+<g clip-path="url(#card)">
+<rect width="480" height="330" fill="#FFF4EC"/>
+<rect x="0" y="0" width="480" height="272" fill="#EEF3FF"/>
+<rect x="0" y="272" width="480" height="70" fill="#C9F2DC"/>
+<line x1="0" y1="272" x2="480" y2="272" stroke="#1F8A57" stroke-width="3"/>
+<circle cx="137.0" cy="42.9" r="20" fill="#FFD166"/>
+<line x1="161.9" y1="53.3" x2="170.3" y2="56.7" stroke="#FFD166" stroke-width="4" stroke-linecap="round"/>
+<line x1="147.3" y1="67.9" x2="150.8" y2="76.2" stroke="#FFD166" stroke-width="4" stroke-linecap="round"/>
+<line x1="126.7" y1="67.9" x2="123.2" y2="76.2" stroke="#FFD166" stroke-width="4" stroke-linecap="round"/>
+<line x1="112.1" y1="53.3" x2="103.7" y2="56.7" stroke="#FFD166" stroke-width="4" stroke-linecap="round"/>
+<line x1="112.1" y1="32.6" x2="103.7" y2="29.1" stroke="#FFD166" stroke-width="4" stroke-linecap="round"/>
+<line x1="126.7" y1="18.0" x2="123.2" y2="9.7" stroke="#FFD166" stroke-width="4" stroke-linecap="round"/>
+<line x1="147.3" y1="18.0" x2="150.8" y2="9.7" stroke="#FFD166" stroke-width="4" stroke-linecap="round"/>
+<line x1="161.9" y1="32.6" x2="170.3" y2="29.1" stroke="#FFD166" stroke-width="4" stroke-linecap="round"/>
+<line x1="137.0" y1="42.9" x2="410.0" y2="272.0" stroke="#FF8A65" stroke-width="3" stroke-dasharray="8 6"/>
+<line x1="200" y1="272" x2="410" y2="272" stroke="#2B2D42" stroke-opacity="0.5" stroke-width="10" stroke-linecap="round"/>
+<line x1="200" y1="272" x2="200" y2="95.8" stroke="#7C83DB" stroke-width="7" stroke-linecap="round"/>
+<path d="M197,101.8 l-46,12 l46,12 z" fill="#E5484D"/>
+<text x="182.0" y="118.8" font-size="11" fill="#FFD166" text-anchor="middle">★</text>
+<path d="M200.0,258.0 L214.0,258.0 L214.0,272.0" fill="none" stroke="#2B2D42" stroke-width="2"/>
+<path d="M362.0,272.0 A48,48 0 0 1 373.2,241.1" fill="none" stroke="#FF8A65" stroke-width="3"/>
+<text x="350.0" y="260.0" font-family="Lexend, Be Vietnam Pro, sans-serif" font-size="20" font-weight="700" fill="#FF8A65" text-anchor="middle">40°</text>
+<text x="305.0" y="306.0" font-family="Lexend, Be Vietnam Pro, sans-serif" font-size="22" font-weight="700" fill="#2B2D42" text-anchor="middle">15 m</text>
+<text x="184.0" y="203.9" font-family="Lexend, Be Vietnam Pro, sans-serif" font-size="22" font-weight="700" fill="#2B2D42" text-anchor="end">h = ?</text>
+</g>
+</svg>

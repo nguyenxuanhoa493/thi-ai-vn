@@ -148,3 +148,50 @@ describe('fix round 1', () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe('Task 19: image questions & MathText reveals', () => {
+  const img = { src: '/images/questions/test.svg', alt: 'Tam giác vuông ABC' };
+  it('renders the image with alt under the content', () => {
+    const q = { ...base, id: 'im', type: 'mcq', content: 'Nhìn hình', options: ['A1', 'B1'], answer: 0, image: img } as Question;
+    render(<QuestionView question={q} value={null} onChange={() => {}} disabled={false} reveal={false} />);
+    const el = screen.getByRole('img', { name: img.alt });
+    expect(el.getAttribute('src')).toBe(img.src);
+  });
+  it('no image → no img element', () => {
+    const q: Question = { ...base, id: 'ni', type: 'mcq', content: 'Chọn', options: ['A1', 'B1'], answer: 0 };
+    render(<QuestionView question={q} value={null} onChange={() => {}} disabled={false} reveal={false} />);
+    expect(screen.queryByRole('img')).toBeNull();
+  });
+  it('clicking the image opens a zoom dialog; Escape closes it', async () => {
+    const q = { ...base, id: 'iz', type: 'mcq', content: 'Nhìn hình', options: ['A1', 'B1'], answer: 0, image: img } as Question;
+    render(<QuestionView question={q} value={null} onChange={() => {}} disabled={false} reveal={false} />);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: /phóng to/i }));
+    const dlg = screen.getByRole('dialog');
+    expect(dlg.getAttribute('aria-modal')).toBe('true');
+    expect(screen.getAllByRole('img', { name: img.alt }).length).toBe(2);
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+  it('clicking the overlay closes the dialog', async () => {
+    const q = { ...base, id: 'io', type: 'mcq', content: 'Nhìn hình', options: ['A1', 'B1'], answer: 0, image: img } as Question;
+    render(<QuestionView question={q} value={null} onChange={() => {}} disabled={false} reveal={false} />);
+    await userEvent.click(screen.getByRole('button', { name: /phóng to/i }));
+    await userEvent.click(screen.getByRole('dialog'));
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+  it('short reveal renders the correct answer through MathText', () => {
+    const q: Question = { ...base, id: 'sr', type: 'short', content: 'Tính', answer: '$\\frac{3}{5}$' };
+    const { container } = render(<QuestionView question={q} value="" onChange={() => {}} disabled reveal />);
+    const reveal = screen.getByText(/Đáp án đúng/);
+    expect(reveal.querySelector('[role="math"][aria-label="\\\\frac{3}{5}"]')).not.toBeNull();
+    expect(container.textContent).not.toContain('$');
+  });
+  it('fill reveal renders answers through MathText', () => {
+    const q: Question = { ...base, id: 'fr', type: 'fill', content: 'Điền', text: 'A ___ B ___', bank: ['$x^2$', 'b'], answer: ['$x^2$', 'b'] };
+    render(<QuestionView question={q} value={['', '']} onChange={() => {}} disabled reveal />);
+    const reveal = screen.getByText(/^Đáp án:/);
+    expect(reveal.querySelector('[role="math"][aria-label="x^2"]')).not.toBeNull();
+    expect(reveal.textContent).not.toContain('$');
+  });
+});

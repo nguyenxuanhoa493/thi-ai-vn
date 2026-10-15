@@ -16,6 +16,8 @@ export interface Skill {
   name: string; prerequisites: string[]; bankCount: number;
 }
 
+export interface QuestionImage { src: string; alt: string; width?: number; height?: number }
+
 interface QuestionBase {
   id: string; subject: Subject; grade: Grade; skillId: string; level: Level;
   /** Độ khó Rasch, khoảng -3..3 */
@@ -25,6 +27,8 @@ interface QuestionBase {
   explanation: string;
   hints: readonly string[];
   source: 'NXB';
+  /** Hình minh hoạ tĩnh (SVG trong /public), hiển thị dưới đề bài */
+  image?: QuestionImage;
 }
 
 export type McqQuestion = QuestionBase & { type: 'mcq'; options: string[]; answer: number };

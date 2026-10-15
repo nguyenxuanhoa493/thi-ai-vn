@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { useRef } from 'react';
 import type { FillQuestion } from '@/lib/bank/types';
 import type { QuestionProps } from './types';
+import { MathText } from './math-text';
 
 export function FillView({ question: q, value, onChange, disabled, reveal }: QuestionProps<FillQuestion>) {
   const dragged = useRef(false);
@@ -53,7 +54,7 @@ export function FillView({ question: q, value, onChange, disabled, reveal }: Que
           );
         })}
       </div>
-      {reveal && <p className="text-sm text-muted">Đáp án: {q.answer.join(', ')}</p>}
+      {reveal && <p className="text-sm text-muted">Đáp án: <MathText text={q.answer.join(', ')} /></p>}
     </div>
   );
 }

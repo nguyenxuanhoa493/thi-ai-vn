@@ -14,12 +14,12 @@ export default function QuestionsDev() {
   const [rev, setRev] = useState<Record<string, boolean>>({});
   return (
     <main className="mx-auto max-w-4xl space-y-8 p-10">
-      {TYPES.map((t) => {
-        const q = ALL_QUESTIONS.find((x) => x.type === t);
-        if (!q) return <p key={t}>Thiếu dạng {t}</p>;
+      {[...TYPES.map((t) => ({ label: t, q: ALL_QUESTIONS.find((x) => x.type === t) })),
+        ...ALL_QUESTIONS.filter((x) => x.image).map((q) => ({ label: `có hình · ${q.type} · ${q.id}`, q }))].map(({ label, q }) => {
+        if (!q) return <p key={label}>Thiếu dạng {label}</p>;
         return (
-          <ClayCard key={t} className="space-y-4">
-            <p className="font-mono text-xs text-muted">{t}</p>
+          <ClayCard key={label} className="space-y-4">
+            <p className="font-mono text-xs text-muted">{label}</p>
             <QuestionView question={q} value={vals[q.id] ?? null} onChange={(v) => setVals((s) => ({ ...s, [q.id]: v }))} disabled={!!rev[q.id]} reveal={!!rev[q.id]} />
             <ClayButton onClick={() => setRev((s) => ({ ...s, [q.id]: !s[q.id] }))}>Kiểm tra</ClayButton>
             {rev[q.id] && <p>{JSON.stringify(checkAnswer(q, vals[q.id] ?? null))}</p>}
