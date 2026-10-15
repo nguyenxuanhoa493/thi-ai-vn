@@ -17,6 +17,7 @@ export function PracticeSetClient({ id }: { id: string }) {
   const questions = set.questionIds.map(getQuestion).filter(Boolean) as Question[];
   return (
     <PracticeRunner
+      key={id}
       title={set.title}
       maxQuestions={questions.length}
       next={() => questions[idx.current++] ?? null}

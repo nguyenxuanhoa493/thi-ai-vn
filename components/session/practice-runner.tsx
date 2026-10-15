@@ -93,8 +93,8 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
               <QuestionView question={q} index={count + (result ? 0 : 1)} value={value} onChange={setValue} disabled={!!result} reveal={!!result} />
               {hintsShown > 0 && !result && (
                 <div className="mt-5 space-y-2">
-                  {q.hints.slice(0, hintsShown).map((h) => (
-                    <motion.p key={h} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-[#fff8e1] px-4 py-2 text-sm">💡 <MathText text={h} /></motion.p>
+                  {q.hints.slice(0, hintsShown).map((h, hi) => (
+                    <motion.p key={hi} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-[#fff8e1] px-4 py-2 text-sm">💡 <MathText text={h} /></motion.p>
                   ))}
                 </div>
               )}
