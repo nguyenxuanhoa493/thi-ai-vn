@@ -108,3 +108,37 @@ describe('bank integrity', () => {
     }
   });
 });
+
+describe('fix round 1: answer balance & exam composition', () => {
+  it('mcq/listen answer positions are balanced (no index > 40%)', () => {
+    const qs = ALL_QUESTIONS.filter((q) => q.type === 'mcq' || q.type === 'listen');
+    const freq = new Map<number, number>();
+    for (const q of qs) freq.set(q.answer as number, (freq.get(q.answer as number) ?? 0) + 1);
+    for (const [idx, n] of freq) expect(n / qs.length, `index ${idx}`).toBeLessThanOrEqual(0.4);
+  });
+  it('multi answer sets do not always include index 0', () => {
+    const multis = ALL_QUESTIONS.filter((q) => q.type === 'multi');
+    expect(multis.every((q) => (q.answer as number[]).includes(0))).toBe(false);
+  });
+  it('every grade-9 exam with ≥8 questions has at least one VD/VDC question', () => {
+    for (const e of examsFor(9)) {
+      if (e.questionIds.length < 8) continue;
+      expect(e.questionIds.some((id) => ['VD', 'VDC'].includes(getQuestion(id)!.level)), e.id).toBe(true);
+    }
+  });
+  it('Thi cuối kỳ I — Toán 9 excludes chương 6 (HK II)', () => {
+    const exam = EXAMS.find((e) => e.id === 'toan9-cuoi-ky')!;
+    const c6 = SKILLS.filter((s) => s.chapterId === 't9-c6').map((s) => s.id);
+    for (const id of exam.questionIds) expect(c6, id).not.toContain(getQuestion(id)!.skillId);
+  });
+  it('grade 6/12 exams stay within their titled skill', () => {
+    const expected: Record<string, string> = {
+      'toan6-15p': 't6-so-tu-nhien', 'anh6-15p': 'e6-present-simple', 'toan12-45p': 't12-don-dieu', 'anh12-15p': 'e12-grammar',
+    };
+    for (const [examId, skillId] of Object.entries(expected)) {
+      const exam = EXAMS.find((e) => e.id === examId)!;
+      expect(exam.questionIds.length, examId).toBeGreaterThan(0);
+      for (const id of exam.questionIds) expect(getQuestion(id)!.skillId, `${examId} ${id}`).toBe(skillId);
+    }
+  });
+});
