@@ -6,10 +6,8 @@ import { toast } from 'sonner';
 import { useDemo, zoneKey } from '@/lib/store/demo-store';
 import { questionsFor, skillName, skillsFor } from '@/lib/bank';
 import { LEVELS, LEVEL_LABEL, SUBJECT_LABEL, type Subject } from '@/lib/bank/types';
-import { applyAnswer, pickNextQuestion, skillZone, type ZoneEvent } from '@/lib/engine/learning-zone';
-import { BADGES } from '@/lib/engine/gamification';
+import { applyAnswer, LEVEL_B, pickNextQuestion, skillZone, type ZoneEvent } from '@/lib/engine/learning-zone';
 import { prob } from '@/lib/engine/irt';
-import { LEVEL_B } from '@/lib/engine/learning-zone';
 import { ZoneRings } from '@/components/zone/zone-rings';
 import { PracticeRunner } from '@/components/session/practice-runner';
 import { Owl } from '@/components/owl/owl';
@@ -86,8 +84,8 @@ export default function LearningZonePage() {
         onAnswered={(q, r) => {
           const current = useDemo.getState().zones[key] ?? map;
           const { map: nextMap, events } = applyAnswer(current, skills, q, r.correct);
-          setZone(subject, grade, nextMap);
-          const base = recordAnswer(subject, q, r.correct);
+          setZone(run!.subject, run!.grade, nextMap);
+          const base = recordAnswer(run!.subject, q, r.correct);
           const newBadges = [...base.newBadges];
           if (events.length) {
             events.forEach((e) => toast.success(eventText(e)));

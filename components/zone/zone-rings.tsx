@@ -1,5 +1,5 @@
 'use client';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import type { Skill } from '@/lib/bank/types';
 import { skillZone, zoneExtent, type ZoneMap } from '@/lib/engine/learning-zone';
 
@@ -8,6 +8,8 @@ const ZONE_COLOR = { mastered: '#8b95e0', learning: '#22c55e', challenge: '#ff8a
 export function ZoneRings({ skills, map, size = 380, showLabels = false, highlight }: {
   skills: Skill[]; map: ZoneMap; size?: number; showLabels?: boolean; highlight?: string;
 }) {
+  const reduce = useReducedMotion();
+  const pad = showLabels ? 110 : 0;
   const c = size / 2;
   const outer = c - 10;
   const extent = zoneExtent(map, skills);
@@ -17,7 +19,7 @@ export function ZoneRings({ skills, map, size = 380, showLabels = false, highlig
   const spring = { type: 'spring', stiffness: 60, damping: 14 } as const;
 
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} width="100%" style={{ maxWidth: size }} role="img" aria-label="Sơ đồ Learning Zone">
+    <svg viewBox={`${-pad} 0 ${size + 2 * pad} ${size}`} width="100%" style={{ maxWidth: size + 2 * pad }} role="img" aria-label="Sơ đồ Learning Zone">
       <circle cx={c} cy={c} r={outer} fill="#ffe1d9" />
       <text x={c} y={24} textAnchor="middle" fontSize={11} fill="#c0563a" fontWeight={600}>QUÁ SỨC</text>
       <motion.circle data-testid="ring-learning" data-extent={extent.toFixed(3)} cx={c} cy={c} fill="#c9f2dc"
@@ -41,11 +43,14 @@ export function ZoneRings({ skills, map, size = 380, showLabels = false, highlig
             <motion.circle data-testid={`dot-${s.id}`} data-zone={zone} initial={false}
               animate={{ cx: x, cy: y, r: hl ? 10 : 7, fill: ZONE_COLOR[zone] }} transition={spring}
               stroke="#fff" strokeWidth={2.5} />
-            {hl && <motion.circle cx={x} cy={y} fill="none" stroke={ZONE_COLOR[zone]} strokeWidth={2}
-              animate={{ r: [10, 20], opacity: [0.8, 0] }} transition={{ duration: 1.2, repeat: Infinity }} />}
+            {hl && (reduce
+              ? <circle cx={x} cy={y} r={15} fill="none" stroke={ZONE_COLOR[zone]} strokeWidth={2} opacity={0.5} />
+              : <motion.circle cx={x} cy={y} fill="none" stroke={ZONE_COLOR[zone]} strokeWidth={2}
+                animate={{ r: [10, 20], opacity: [0.8, 0] }} transition={{ duration: 1.2, repeat: Infinity }} />)}
             {showLabels && (
               <motion.text initial={false} animate={{ x: x + (Math.cos(angle) >= 0 ? 12 : -12), y: y + 4 }} transition={spring}
-                textAnchor={Math.cos(angle) >= 0 ? 'start' : 'end'} fontSize={11} fill="#2b2d42" fontWeight={500}>{s.name}</motion.text>
+                textAnchor={Math.cos(angle) >= 0 ? 'start' : 'end'} fontSize={11} fill="#2b2d42" fontWeight={500}>
+                <title>{s.name}</title>{s.name.length > 22 ? `${s.name.slice(0, 21)}…` : s.name}</motion.text>
             )}
           </g>
         );
