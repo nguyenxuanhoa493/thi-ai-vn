@@ -17,7 +17,7 @@ export function Stats() {
         className="grid grid-cols-2 gap-4 rounded-[32px] bg-white p-8 shadow-clay-lg md:grid-cols-4">
         {STATS.map((s) => (
           <div key={s.label} className="text-center">
-            <p className="font-display text-4xl font-extrabold text-coral xl:text-5xl">
+            <p className="font-display text-3xl font-extrabold text-coral sm:text-4xl xl:text-5xl">
               {s.plain ? s.value : <CountUp value={s.value} />}{s.suffix}
             </p>
             <p className="mt-1 text-sm font-medium text-muted">{s.label}</p>
