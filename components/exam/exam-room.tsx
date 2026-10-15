@@ -140,7 +140,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
                 {other && otherExam && otherLive && (
                   <div className="space-y-3 rounded-xl bg-peach px-4 py-3 text-sm text-peach-dark">
                     <p className="font-semibold">Em đang làm dở bài «{otherExam.title}»</p>
-                    <ClayButton size="sm" onClick={() => router.push(`/phong-thi/${otherExam.id}`)}>Tiếp tục bài đang làm</ClayButton>
+                    <ClayButton onClick={() => router.push(`/phong-thi/${otherExam.id}`)}>Tiếp tục bài đang làm</ClayButton>
                   </div>
                 )}
                 <label className="flex items-center gap-3 font-semibold">
