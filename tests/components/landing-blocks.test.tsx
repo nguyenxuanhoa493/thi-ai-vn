@@ -23,15 +23,15 @@ describe('MiniQuiz', () => {
     const user = userEvent.setup();
     render(<MiniQuiz />);
     const q = getQuestion(QUIZ_IDS[0]) as McqQuestion;
-    expect(screen.getByRole('img', { name: /Bé Cú/ })).toHaveAttribute('data-state', 'idle');
+    expect(screen.getAllByRole('img', { name: /Bé Cú/ })[0]).toHaveAttribute('data-state', 'idle');
     await user.click(screen.getAllByRole('button')[q.answer]);
-    expect(screen.getByRole('img', { name: /Bé Cú/ })).toHaveAttribute('data-state', 'thinking');
+    expect(screen.getAllByRole('img', { name: /Bé Cú/ })[0]).toHaveAttribute('data-state', 'thinking');
     await user.click(screen.getByRole('button', { name: 'Kiểm tra' }));
-    expect(screen.getByRole('img', { name: /Bé Cú/ })).toHaveAttribute('data-state', 'correct');
+    expect(screen.getAllByRole('img', { name: /Bé Cú/ })[0]).toHaveAttribute('data-state', 'correct');
     expect(screen.getByText(/Chính xác/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Câu tiếp' }));
     expect(screen.getByText(/Câu 2\/3/)).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: /Bé Cú/ })).toHaveAttribute('data-state', 'idle');
+    expect(screen.getAllByRole('img', { name: /Bé Cú/ })[0]).toHaveAttribute('data-state', 'idle');
   });
   it('wrong answer makes the owl sad', async () => {
     const user = userEvent.setup();
@@ -39,7 +39,7 @@ describe('MiniQuiz', () => {
     const q = getQuestion(QUIZ_IDS[0]) as McqQuestion;
     await user.click(screen.getAllByRole('button')[(q.answer + 1) % q.options.length]);
     await user.click(screen.getByRole('button', { name: 'Kiểm tra' }));
-    expect(screen.getByRole('img', { name: /Bé Cú/ })).toHaveAttribute('data-state', 'wrong');
+    expect(screen.getAllByRole('img', { name: /Bé Cú/ })[0]).toHaveAttribute('data-state', 'wrong');
   });
 });
 

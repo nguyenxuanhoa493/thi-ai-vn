@@ -9,12 +9,12 @@ interface Ctx { mood: Mood | null; setMood: (m: Mood | null) => void }
 
 const MascotCtx = createContext<Ctx>({ mood: null, setMood: () => {} });
 
-/** Bé Cú nhỏ ở góc dưới-trái (chỉ desktop), đổi trạng thái/lời thoại theo khu vực đang xem.
+/** Bé Cú nhỏ ở góc dưới-trái (chỉ xl+), đổi trạng thái/lời thoại theo khu vực đang xem.
  *  Góc dưới-phải để dành cho nút chat. */
 function StickyOwl() {
   const { mood } = useContext(MascotCtx);
   return (
-    <div className="pointer-events-none fixed bottom-4 left-4 z-30 hidden lg:block" aria-hidden={!mood}>
+    <div className="pointer-events-none fixed bottom-4 left-4 z-30 hidden xl:block" aria-hidden={!mood}>
       <AnimatePresence>
         {mood && (
           <motion.div key="sticky-owl" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 30 }} className="flex flex-col items-start gap-1">

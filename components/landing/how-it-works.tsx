@@ -13,11 +13,11 @@ export function HowItWorks() {
       <h2 className="text-center text-4xl font-extrabold">Cách hoạt động</h2>
       <p className="mx-auto mt-3 max-w-xl text-center text-lg text-muted">Ba bước đơn giản, em chỉ cần bắt đầu.</p>
       <div className="relative mt-14">
-        <svg aria-hidden className="absolute left-[16%] right-[16%] top-10 hidden h-4 w-[68%] md:block" viewBox="0 0 100 4" preserveAspectRatio="none">
-          <motion.line x1="0" y1="2" x2="100" y2="2" stroke="#a8b5ff" strokeWidth="3" strokeDasharray="1 2.4" strokeLinecap="round" vectorEffect="non-scaling-stroke"
-            initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 1.4, ease: 'easeOut' }} />
-        </svg>
-        <ol className="relative grid gap-10 md:grid-cols-3 md:gap-6">
+        <motion.div aria-hidden className="absolute left-[16%] right-[16%] top-10 hidden origin-left border-t-2 border-dashed border-lavender md:block"
+          initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 1.4, ease: 'easeOut' }} />
+        <motion.div aria-hidden className="absolute bottom-16 left-1/2 top-10 origin-top border-l-2 border-dashed border-lavender md:hidden"
+          initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 1.4, ease: 'easeOut' }} />
+        <ol className="relative z-10 grid gap-10 md:grid-cols-3 md:gap-6">
           {STEPS.map((s, i) => (
             <motion.li key={s.title} className="relative flex flex-col items-center text-center"
               initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ delay: i * 0.25 }}>
@@ -27,8 +27,7 @@ export function HowItWorks() {
               </div>
               <h3 className="mt-5 text-xl font-extrabold">{s.title}</h3>
               <p className="mt-2 max-w-xs text-muted">{s.desc}</p>
-              {i < STEPS.length - 1 && <span aria-hidden className="mt-4 text-2xl text-lavender md:hidden">↓</span>}
-            </motion.li>
+                          </motion.li>
           ))}
         </ol>
       </div>

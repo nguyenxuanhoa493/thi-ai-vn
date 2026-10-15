@@ -24,6 +24,7 @@ export function MiniQuiz() {
   const [reveal, setReveal] = useState<boolean | null>(null); // null = chưa kiểm tra, true/false = kết quả câu hiện tại
   const [score, setScore] = useState(0);
   const q = QUESTIONS[idx];
+  if (!q) return null;
   const last = idx === QUESTIONS.length - 1;
   const perfect = reveal !== null && last && score === QUESTIONS.length;
 
@@ -59,6 +60,10 @@ export function MiniQuiz() {
             <span>Đúng: {score}</span>
           </div>
           <QuestionView key={q.id} question={q} value={value} onChange={setValue} disabled={reveal !== null} reveal={reveal !== null} />
+          <div className="flex items-end gap-3 lg:hidden">
+            <Owl state={state} size={100} />
+            <OwlBubble text={bubble} />
+          </div>
           {reveal !== null && (
             <div role="status" className={`rounded-2xl p-4 ${reveal ? 'bg-mint/60' : 'bg-peach/70'}`}>
               <p className="font-display font-extrabold">{reveal ? 'Chính xác! 🎉' : 'Chưa đúng rồi 🙈'}</p>
@@ -76,7 +81,7 @@ export function MiniQuiz() {
             )}
           </div>
         </div>
-        <div className="order-first flex flex-col items-center gap-3 lg:order-none lg:sticky lg:top-24">
+        <div className="hidden flex-col items-center gap-3 lg:sticky lg:top-24 lg:flex">
           <OwlBubble text={bubble} />
           <Owl state={state} size={200} />
         </div>
