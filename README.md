@@ -21,7 +21,11 @@ Bản build như production: `npm run build && npm run start`.
 Nút ↺ trên thanh điều hướng = Reset demo. Bộ chọn "Lớp" đổi khối 6/9/12.
 
 Mẹo khi trình diễn:
-- Bấm ↺ Reset demo trước mỗi buổi để bắt đầu từ trạng thái mẫu.
+- Bấm ↺ "Đặt lại demo" ngay trước khi trình diễn để bắt đầu từ trạng thái mẫu (không còn tiến độ của lần chạy thử).
+- Không làm lại bài đánh giá sau khi đã luyện trong Learning Zone: kết quả đánh giá mới sẽ ghi đè bản đồ vùng và điểm tiến bộ.
+- Dùng Chrome trên máy tính để trình diễn (giọng đọc, micro và hiệu ứng ổn định nhất).
+- Nút bật/tắt âm thanh 🔊/🔇 nằm ở thanh trên cùng của ứng dụng và ở thanh điều hướng trang chủ; tuỳ chọn được ghi nhớ và không bị xoá khi Đặt lại demo.
+- Chatbot Bé Cú (nút nổi góc phải) là bot kịch bản, chỉ trả lời các chủ đề có sẵn, không dùng AI thật.
 - Ở bài đánh giá, trả lời đúng vài câu dễ và bấm "Bỏ qua câu này" ở câu khó để báo cáo có điểm mạnh / cần tập trung rõ ràng.
 - Reload giữa bài thi không bị tính là rời màn hình; chuyển tab thì có.
 - Dạng câu "Nói" và "Nghe" dùng micro / giọng đọc của trình duyệt (Chrome cho kết quả tốt nhất).
