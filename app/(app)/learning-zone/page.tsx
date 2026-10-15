@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useDemo, zoneKey } from '@/lib/store/demo-store';
 import { questionsFor, skillName, skillsFor } from '@/lib/bank';
 import { LEVELS, LEVEL_LABEL, SUBJECT_LABEL, type Subject } from '@/lib/bank/types';
-import { applyAnswer, LEVEL_B, pickNextQuestion, skillZone, type ZoneEvent } from '@/lib/engine/learning-zone';
+import { applyAnswer, LEVEL_B, pickNextQuestion, skillZone, zoneExtent, type ZoneEvent } from '@/lib/engine/learning-zone';
 import { prob } from '@/lib/engine/irt';
 import { ZoneRings } from '@/components/zone/zone-rings';
 import { PracticeRunner } from '@/components/session/practice-runner';
@@ -26,7 +26,7 @@ function eventText(e: ZoneEvent) {
 
 export default function LearningZonePage() {
   const router = useRouter();
-  const { profile, zones, assessments, ensureZone, setZone, recordAnswer, awardBadge } = useDemo();
+  const { profile, zones, zoneBaseline, assessments, ensureZone, setZone, addMilestone, recordAnswer, awardBadge } = useDemo();
   const grade = profile.grade;
   const [subject, setSubject] = useState<Subject>('toan');
   const [run, setRun] = useState<{ subject: Subject; grade: typeof profile.grade } | null>(null);
@@ -69,6 +69,8 @@ export default function LearningZonePage() {
 
   const inZone = skills.filter((s) => map[s.id]);
   const locked = skills.filter((s) => !map[s.id]);
+  const baseline = zoneBaseline[key];
+  const growth = baseline == null ? 0 : Math.round((zoneExtent(map, skills) - baseline) * 100);
 
   const aside = (
     <ClayCard className="space-y-2 p-3">
@@ -97,6 +99,7 @@ export default function LearningZonePage() {
           const newBadges = [...base.newBadges];
           if (events.length) {
             events.forEach((e) => toast.success(eventText(e)));
+            addMilestone(run!.subject, run!.grade, 'zone-expand');
             fireConfetti({ origin: { x: 0.85, y: 0.5 } });
             sfxTimer.current = setTimeout(() => playSfx('zoneExpand'), 250); // lệch sau âm đúng/sai để không chồng nhau
             if (awardBadge('zone-expand')) newBadges.push('zone-expand');
@@ -124,12 +127,15 @@ export default function LearningZonePage() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
         <ClayCard className="flex flex-col items-center gap-4 p-8">
+          <p className="rounded-full bg-mint px-4 py-1.5 text-center text-sm font-bold text-mint-dark">
+            {growth > 0 ? `🌱 Vùng vừa sức của em đã rộng thêm +${growth}% so với lần đầu` : 'Luyện thêm để vùng vừa sức của em rộng ra nhé!'}
+          </p>
           <ZoneRings skills={skills} map={map} size={520} showLabels />
-          <div className="flex gap-5 text-sm">
-            <span className="flex items-center gap-2"><i className="h-3 w-3 rounded-full bg-[#8b95e0]" /> Đã thành thạo</span>
-            <span className="flex items-center gap-2"><i className="h-3 w-3 rounded-full bg-[#22c55e]" /> Đang trong vùng</span>
-            <span className="flex items-center gap-2"><i className="h-3 w-3 rounded-full bg-coral" /> Chưa tới</span>
-          </div>
+          <ul className="space-y-1.5 text-sm text-muted">
+            <li className="flex items-start gap-2"><i className="mt-1 h-3 w-3 shrink-0 rounded-full bg-[#8b95e0]" /> <span>⭐ Đã vững: không cần luyện thêm</span></li>
+            <li className="flex items-start gap-2"><i className="mt-1 h-3 w-3 shrink-0 rounded-full bg-[#22c55e]" /> <span>🌱 Vừa sức: câu hỏi em làm đúng khoảng 3/4 — luyện ở đây tiến bộ nhanh nhất</span></li>
+            <li className="flex items-start gap-2"><i className="mt-1 h-3 w-3 shrink-0 rounded-full bg-[#b39dff]" /> <span>🔭 Sắp khám phá: sẽ mở khi em vững phần trước</span></li>
+          </ul>
         </ClayCard>
 
         <div className="space-y-4">
@@ -147,11 +153,15 @@ export default function LearningZonePage() {
               const sp = map[s.id];
               const { zone } = skillZone(sp);
               const pFrontier = prob(sp.theta, LEVEL_B[sp.unlockedLevel]);
+              const status = zone === 'mastered' ? '✓ Đã vững'
+                : pFrontier < 0.5 ? 'Đang củng cố'
+                : pFrontier < 0.85 ? `~${Math.round(pFrontier * 100)}% đúng ở mức ${LEVEL_LABEL[sp.unlockedLevel]}`
+                : 'Sẵn sàng lên mức mới';
               return (
                 <motion.div key={s.id} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }} className="space-y-1.5">
                   <div className="flex justify-between text-sm">
                     <span className="font-semibold">{s.name}</span>
-                    <span className="text-muted">{zone === 'mastered' ? '✓ Thành thạo' : `~${Math.round(pFrontier * 100)}% đúng ở mức ${LEVEL_LABEL[sp.unlockedLevel]}`}</span>
+                    <span className={pFrontier < 0.5 && zone !== 'mastered' ? 'text-muted/70' : 'text-muted'}>{status}</span>
                   </div>
                   <div className="flex gap-1">
                     {LEVELS.map((l) => (
@@ -164,9 +174,9 @@ export default function LearningZonePage() {
             })}
             {locked.length > 0 && (
               <>
-                <p className="pt-2 font-bold">🔒 Chưa mở</p>
+                <p className="pt-2 font-bold">🔭 Sắp khám phá</p>
                 {locked.map((s) => (
-                  <p key={s.id} className="text-sm text-muted">{s.name} <span className="text-xs">· cần vững: {s.prerequisites.map(skillName).join(', ')}</span></p>
+                  <p key={s.id} className="text-sm text-muted">🔒 {s.name} <span className="text-xs">· cần vững: {s.prerequisites.map(skillName).join(', ')}</span></p>
                 ))}
               </>
             )}

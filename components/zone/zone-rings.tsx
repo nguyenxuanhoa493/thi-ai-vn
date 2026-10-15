@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import type { Skill } from '@/lib/bank/types';
 import { skillZone, zoneExtent, type ZoneMap } from '@/lib/engine/learning-zone';
 
-const ZONE_COLOR = { mastered: '#8b95e0', learning: '#22c55e', challenge: '#ff8a65' } as const;
+const ZONE_COLOR = { mastered: '#8b95e0', learning: '#22c55e', challenge: '#b39dff' } as const;
 
 export function ZoneRings({ skills, map, size = 380, showLabels = false, highlight }: {
   skills: Skill[]; map: ZoneMap; size?: number; showLabels?: boolean; highlight?: string;
@@ -20,8 +20,8 @@ export function ZoneRings({ skills, map, size = 380, showLabels = false, highlig
 
   return (
     <svg viewBox={`${-pad} 0 ${size + 2 * pad} ${size}`} width="100%" style={{ maxWidth: size + 2 * pad }} role="img" aria-label="Sơ đồ Learning Zone">
-      <circle cx={c} cy={c} r={outer} fill="#ffe1d9" />
-      <text x={c} y={24} textAnchor="middle" fontSize={11} fill="#c0563a" fontWeight={600}>QUÁ SỨC</text>
+      <circle cx={c} cy={c} r={outer} fill="#f3efff" />
+      <text x={c} y={24} textAnchor="middle" fontSize={11} fill="#7c83db" fontWeight={700}>🔭 SẮP KHÁM PHÁ</text>
       <motion.circle data-testid="ring-learning" data-extent={extent.toFixed(3)} cx={c} cy={c} fill="#c9f2dc"
         initial={false} animate={{ r: rLearn }} transition={spring} />
       <motion.circle cx={c} cy={c} fill="none" stroke="#22c55e" strokeWidth={2} strokeDasharray="6 6"
@@ -50,16 +50,22 @@ export function ZoneRings({ skills, map, size = 380, showLabels = false, highlig
             {showLabels && (
               <motion.text initial={false} animate={{ x: x + (Math.cos(angle) >= 0 ? 12 : -12), y: y + 4 }} transition={spring}
                 textAnchor={Math.cos(angle) >= 0 ? 'start' : 'end'} fontSize={11} fill="#2b2d42" fontWeight={500}>
-                {s.name.length > 22 && <title>{s.name}</title>}{s.name.length > 22 ? `${s.name.slice(0, 21)}…` : s.name}</motion.text>
+                {s.name.length > 22 && <title>{s.name}</title>}{zone === 'challenge' ? '🔒 ' : ''}{s.name.length > 22 ? `${s.name.slice(0, 21)}…` : s.name}</motion.text>
             )}
           </g>
         );
       })}
-      {/* khi có nhãn kiến thức, chú giải bên ngoài đã gọi tên vùng; nhãn trong vòng sẽ đè lên tên kiến thức */}
-      {!showLabels && (
-        <text x={c} y={c + rLearn - 14} textAnchor="middle" fontSize={12} fontWeight={800} fill="#1f8a57"
-          stroke="#c9f2dc" strokeWidth={4} paintOrder="stroke">LEARNING ZONE</text>
+      {/* nhãn nằm trên từng vòng; viền nền (paintOrder) giữ chữ đọc được khi đè lên chấm/tên kiến thức */}
+      {showLabels && (
+        <text x={c} y={c + 4} textAnchor="middle" fontSize={11} fontWeight={800} fill="#5b64c2"
+          stroke="#dfe6ff" strokeWidth={4} paintOrder="stroke">
+          ⭐ ĐÃ VỮNG<tspan x={c} dy={14} fontSize={10} fontWeight={600}>{masteredCount} kiến thức</tspan>
+        </text>
       )}
+      <text x={c} y={c + rLearn - 22} textAnchor="middle" fontSize={12} fontWeight={800} fill="#1f8a57"
+        stroke="#c9f2dc" strokeWidth={4} paintOrder="stroke">
+        🌱 VỪA SỨC{size >= 300 && <tspan x={c} dy={13} fontSize={10} fontWeight={600}>luyện ở đây · đúng ~75%</tspan>}
+      </text>
     </svg>
   );
 }

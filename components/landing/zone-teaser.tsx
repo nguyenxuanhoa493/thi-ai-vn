@@ -21,9 +21,9 @@ export function ZoneTeaser() {
         <span className="rounded-full bg-mint px-3 py-1 text-sm font-bold text-mint-dark">Learning Zone</span>
         <h2 className="text-4xl font-extrabold leading-tight">Không quá dễ.<br />Không quá khó.<br /><span className="text-mint-dark">Mở rộng dần.</span></h2>
         <ul className="space-y-3 text-lg text-muted">
-          <li>🟣 <b className="text-ink">Đã thành thạo</b>: không bắt em làm lại bài quá dễ.</li>
-          <li>🟢 <b className="text-ink">Vùng học tập</b>: câu hỏi em làm đúng khoảng 70–85%, vừa sức để tiến bộ.</li>
-          <li>🟠 <b className="text-ink">Quá sức</b>: tạm khoá, sẽ mở khi em sẵn sàng.</li>
+          <li>⭐ <b className="text-ink">Đã vững</b>: không bắt em làm lại bài quá dễ.</li>
+          <li>🌱 <b className="text-ink">Vừa sức</b>: câu hỏi em làm đúng khoảng 3/4, luyện ở đây tiến bộ nhanh nhất.</li>
+          <li>🔭 <b className="text-ink">Sắp khám phá</b>: sẽ mở khi em vững phần trước.</li>
         </ul>
       </div>
     </section>

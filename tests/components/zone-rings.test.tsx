@@ -21,3 +21,19 @@ describe('ZoneRings', () => {
     expect(big).toBeGreaterThan(small);
   });
 });
+
+describe('ZoneRings wording', () => {
+  it('uses positive labels and lavender challenge dots', () => {
+    const { container } = render(<ZoneRings skills={skills} map={{ A: { theta: 0, unlockedLevel: 'TH' } }} showLabels />);
+    expect(container.textContent).toContain('SẮP KHÁM PHÁ');
+    expect(container.textContent).toContain('VỪA SỨC');
+    expect(container.textContent).toContain('ĐÃ VỮNG');
+    expect(container.textContent).not.toMatch(/QUÁ SỨC|Quá sức|Chưa tới/);
+    expect(screen.getByTestId('dot-B')).toHaveAttribute('fill', '#b39dff');
+    expect(screen.getByText(/🔒 Skill B/)).toBeInTheDocument();
+  });
+  it('mini rings show the VỪA SỨC label', () => {
+    const { container } = render(<ZoneRings skills={skills} map={{ A: { theta: 0, unlockedLevel: 'TH' } }} />);
+    expect(container.textContent).toContain('VỪA SỨC');
+  });
+});

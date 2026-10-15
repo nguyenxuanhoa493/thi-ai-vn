@@ -139,3 +139,70 @@ describe('soundOn', () => {
     expect(useDemo.getState().soundOn).toBe(false);
   });
 });
+
+describe('progress & milestones', () => {
+  const sumFor = (score = 70) => {
+    const skills = skillsFor('toan', 9);
+    return {
+      subject: 'toan' as const, grade: 9 as const, theta: 0.5, score, label: 'Khá' as never, completedAt: new Date().toISOString(),
+      skills: skills.slice(0, 3).map((s) => ({ skillId: s.id, theta: 0.5, score: 60, answered: 2 })), strengths: [], weaknesses: [],
+    };
+  };
+  const today = () => toDateKey(new Date());
+  it('seed has 13 grade-9 entries per subject ending yesterday, deterministic, rising', () => {
+    const s = createSeed(NOW);
+    for (const subj of ['toan', 'anh'] as const) {
+      const rows = s.progress.filter((p) => p.subject === subj && p.grade === 9);
+      expect(rows).toHaveLength(13);
+      expect(rows.at(-1)!.date).toBe('2026-10-15');
+      expect(rows[0].date).toBe('2026-10-03');
+      expect(rows.at(-1)!.score).toBeGreaterThan(rows[0].score);
+    }
+    expect(s.progress.find((p) => p.subject === 'toan')!.score).toBe(52);
+    expect(s.progress.filter((p) => p.subject === 'toan').at(-1)!.score).toBe(63);
+    expect(s.progress.every((p) => p.grade === 9)).toBe(true);
+    expect(s.milestones.filter((m) => m.kind === 'assessment')).toHaveLength(2);
+    expect(createSeed(NOW)).toEqual(s);
+  });
+  it('saveAssessment upserts today progress and adds an assessment milestone', () => {
+    useDemo.getState().saveAssessment(sumFor());
+    const st = useDemo.getState();
+    const rows = st.progress.filter((p) => p.date === today() && p.subject === 'toan' && p.grade === 9);
+    expect(rows).toHaveLength(1);
+    expect(st.milestones.some((m) => m.date === today() && m.subject === 'toan' && m.kind === 'assessment')).toBe(true);
+    useDemo.getState().saveAssessment(sumFor());
+    expect(useDemo.getState().progress.filter((p) => p.date === today() && p.subject === 'toan' && p.grade === 9)).toHaveLength(1);
+    expect(useDemo.getState().milestones.filter((m) => m.date === today() && m.kind === 'assessment' && m.subject === 'toan')).toHaveLength(1);
+  });
+  it('setZone updates today score from mean theta', () => {
+    const skills = skillsFor('toan', 9);
+    useDemo.getState().setZone('toan', 9, { [skills[0].id]: { theta: 0, unlockedLevel: 'NB' } });
+    expect(useDemo.getState().progress.find((p) => p.date === today() && p.subject === 'toan')!.score).toBe(50);
+    useDemo.getState().setZone('toan', 9, { [skills[0].id]: { theta: 3, unlockedLevel: 'NB' } });
+    const rows = useDemo.getState().progress.filter((p) => p.date === today() && p.subject === 'toan');
+    expect(rows).toHaveLength(1);
+    expect(rows[0].score).toBe(100);
+  });
+  it('addMilestone dedupes same day+kind+subject+grade', () => {
+    useDemo.getState().addMilestone('anh', 9, 'zone-expand');
+    useDemo.getState().addMilestone('anh', 9, 'zone-expand');
+    expect(useDemo.getState().milestones.filter((m) => m.kind === 'zone-expand' && m.subject === 'anh')).toHaveLength(1);
+  });
+  it('records zoneBaseline when a zone is first created, and keeps it', () => {
+    useDemo.getState().ensureZone('anh', 6);
+    const b = useDemo.getState().zoneBaseline[zoneKey('anh', 6)];
+    expect(typeof b).toBe('number');
+    useDemo.getState().setZone('anh', 6, {});
+    expect(useDemo.getState().zoneBaseline[zoneKey('anh', 6)]).toBe(b);
+  });
+  it('old persisted data without new fields keeps xp/profile and gets empty defaults', () => {
+    const { progress: _p, milestones: _m, zoneBaseline: _z, ...old } = createSeed(NOW);
+    void _p; void _m; void _z;
+    const out = sanitizePersisted({ ...old, xp: 321, profile: { name: 'Lan', grade: 12 } }, NOW);
+    expect(out.xp).toBe(321);
+    expect(out.profile).toEqual({ name: 'Lan', grade: 12 });
+    expect(out.progress).toEqual([]);
+    expect(out.milestones).toEqual([]);
+    expect(out.zoneBaseline).toEqual({});
+  });
+});

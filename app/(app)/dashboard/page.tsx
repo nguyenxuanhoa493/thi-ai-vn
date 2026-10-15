@@ -9,6 +9,7 @@ import { SUBJECT_LABEL, type Subject } from '@/lib/bank/types';
 import { thetaToScore } from '@/lib/engine/irt';
 import { BADGES, type BadgeId, toDateKey } from '@/lib/engine/gamification';
 import { SkillRadar } from '@/components/charts/skill-radar';
+import { ProgressChart, type ProgressMark, type ProgressRow } from '@/components/charts/progress-chart';
 import { ZoneRings } from '@/components/zone/zone-rings';
 import { Owl } from '@/components/owl/owl';
 import { OwlBubble } from '@/components/owl/owl-bubble';
@@ -21,7 +22,7 @@ const item = { hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0 } };
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { profile, streak, xp, history, assessments, zones, badges, examResults } = useDemo();
+  const { profile, streak, xp, history, assessments, zones, badges, examResults, progress, milestones } = useDemo();
   const grade = profile.grade;
   const [subject, setSubject] = useState<Subject>('toan');
   const key = zoneKey(subject, grade);
@@ -50,6 +51,31 @@ export default function DashboardPage() {
     const k = toDateKey(d);
     return { k, label: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][d.getDay()], xp: history.filter((h) => h.date === k).reduce((s, h) => s + h.xp, 0) };
   });
+  // năng lực theo thời gian: 14 ngày gần nhất của lớp đang chọn
+  const days14 = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date(); d.setDate(d.getDate() - (13 - i));
+    return { k: toDateKey(d), label: `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}` };
+  });
+  const gradeProgress = progress.filter((p) => p.grade === grade);
+  const chartData: ProgressRow[] = days14.map((d) => {
+    const row: ProgressRow = { label: d.label };
+    for (const sj of ['toan', 'anh'] as Subject[]) {
+      const hit = gradeProgress.find((p) => p.date === d.k && p.subject === sj);
+      if (hit) row[sj] = hit.score;
+    }
+    return row;
+  });
+  const chartSubjects = (['toan', 'anh'] as Subject[]).filter((sj) => chartData.some((r) => r[sj] != null));
+  const marks: ProgressMark[] = milestones.filter((m) => m.grade === grade).flatMap((m) => {
+    const day = days14.find((d) => d.k === m.date);
+    const score = gradeProgress.find((p) => p.date === m.date && p.subject === m.subject)?.score;
+    return day && score != null ? [{ label: day.label, subject: m.subject, score, kind: m.kind }] : [];
+  });
+  const summarySubject = chartSubjects[0];
+  const series = summarySubject ? chartData.map((r) => r[summarySubject]).filter((v): v is number => v != null) : [];
+  const delta = series.length > 1 ? series[series.length - 1] - series[0] : 0;
+  const summaryText = !summarySubject ? '' : series.length < 2 ? 'Mới bắt đầu, hãy luyện tiếp để thấy đường tiến bộ nhé!'
+    : delta > 0 ? `+${delta} điểm ${SUBJECT_LABEL[summarySubject]} sau 2 tuần` : 'Em đang giữ vững phong độ, cố lên!';
   const maxXp = Math.max(50, ...last7.map((d) => d.xp));
 
   return (
@@ -105,6 +131,30 @@ export default function DashboardPage() {
             <p className="text-sm text-muted">{zone ? `${Object.keys(zone).length}/${skills.length} kiến thức đang trong vùng vừa sức.` : 'Vùng vừa sức sẽ xuất hiện sau bài đánh giá.'}</p>
             <ClayButton onClick={() => router.push('/learning-zone')}>Luyện ngay</ClayButton>
           </div>
+        </ClayCard>
+      </motion.div>
+
+      <motion.div variants={item} className="col-span-12">
+        <ClayCard>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-bold">Năng lực theo thời gian</p>
+            {summarySubject && <p className="rounded-full bg-mint px-3 py-1 text-sm font-bold text-mint-dark">{summaryText}</p>}
+          </div>
+          {summarySubject ? (
+            <>
+              <ProgressChart data={chartData} marks={marks} subjects={chartSubjects} />
+              <div className="mt-2 flex flex-wrap gap-4 text-xs text-muted">
+                {chartSubjects.map((sj) => (
+                  <span key={sj} className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full" style={{ background: sj === 'toan' ? '#7c83db' : '#ff8a65' }} />{SUBJECT_LABEL[sj]}</span>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="flex h-[200px] flex-col items-center justify-center gap-3 text-center text-muted">
+              <p>Chưa có dữ liệu tiến bộ lớp {grade}. Làm bài đánh giá để bắt đầu theo dõi nhé!</p>
+              <ClayButton variant="secondary" onClick={() => router.push('/danh-gia')}>Làm bài đánh giá</ClayButton>
+            </div>
+          )}
         </ClayCard>
       </motion.div>
 

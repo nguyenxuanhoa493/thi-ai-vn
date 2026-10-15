@@ -62,5 +62,39 @@ describe('LearningZonePage expansion', () => {
     expect(screen.getAllByText(/Vùng của em vừa mở rộng/).length).toBeGreaterThan(0);
     expect(Number(screen.getByTestId('ring-learning').getAttribute('data-extent'))).toBeGreaterThan(before);
     expect(useDemo.getState().badges).toContain('zone-expand');
+    expect(useDemo.getState().milestones.some((m) => m.kind === 'zone-expand' && m.subject === 'toan' && m.grade === 9)).toBe(true);
+  });
+});
+
+describe('LearningZonePage meaning', () => {
+  it('shows legend and positive wording, no negative wording', async () => {
+    act(() => { useDemo.getState().resetDemo(); useDemo.getState().setGrade(9); useDemo.getState().ensureZone('toan', 9); });
+    const { container } = render(<LearningZonePage />);
+    expect(screen.getByText(/Đã vững: không cần luyện thêm/)).toBeInTheDocument();
+    expect(screen.getByText(/Vừa sức: câu hỏi em làm đúng khoảng 3\/4/)).toBeInTheDocument();
+    expect(screen.getByText(/Sắp khám phá: sẽ mở khi em vững phần trước/)).toBeInTheDocument();
+    expect(screen.getByText('🔭 Sắp khám phá')).toBeInTheDocument();
+    expect(container.textContent).not.toMatch(/Quá sức|QUÁ SỨC|Chưa tới|Chưa mở/);
+    expect(screen.getByText(/Luyện thêm để vùng vừa sức của em rộng ra nhé/)).toBeInTheDocument();
+  });
+  it('summary shows growth vs baseline', () => {
+    act(() => { useDemo.getState().resetDemo(); useDemo.getState().setGrade(9); useDemo.getState().ensureZone('toan', 9); });
+    act(() => {
+      const z = useDemo.getState().zones['toan-9'];
+      const grown = Object.fromEntries(Object.entries(z).map(([k]) => [k, { theta: 1.6, unlockedLevel: 'VDC' as const }]));
+      useDemo.getState().setZone('toan', 9, grown);
+    });
+    render(<LearningZonePage />);
+    expect(screen.getByText(/rộng thêm \+\d+% so với lần đầu/)).toBeInTheDocument();
+  });
+  it('shows "Đang củng cố" without a percentage when p < 0.5, and a percentage when 0.5 <= p < 0.85', () => {
+    act(() => { useDemo.getState().resetDemo(); useDemo.getState().setGrade(9); useDemo.getState().setZone('toan', 9, {
+      't9-hpt-khai-niem': { theta: -2.5, unlockedLevel: 'TH' },
+      't9-bpt': { theta: -0.2, unlockedLevel: 'TH' },
+    }); });
+    const { container } = render(<LearningZonePage />);
+    expect(screen.getByText('Đang củng cố')).toBeInTheDocument();
+    expect(container.textContent).toMatch(/~\d+% đúng ở mức/);
+    expect(container.textContent).not.toMatch(/~(\d|1\d|2\d|3\d|4\d)% đúng/);
   });
 });
