@@ -115,7 +115,7 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
               <p className="mt-3 text-sm font-semibold">🤖 AI giải thích</p>
               <p className="mt-1 leading-relaxed">
                 {/* lời giải có công thức ($…$) hoặc **đậm** phải qua MathText, không gõ từng ký tự thô */}
-                {/[$*]/.test(q.explanation) ? <MathText text={q.explanation} /> : <Typewriter text={q.explanation} speed={12} />}
+                {/[$*]/.test(q.explanation) ? <motion.span initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="inline-block"><MathText text={q.explanation} /></motion.span> : <Typewriter text={q.explanation} speed={12} />}
               </p>
               {outcome?.message && <p className="mt-3 font-semibold text-mint-dark">{outcome.message}</p>}
             </motion.div>

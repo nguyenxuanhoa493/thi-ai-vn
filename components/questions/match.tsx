@@ -1,4 +1,5 @@
 'use client';
+import { MathText } from './math-text';
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import type { MatchQuestion } from '@/lib/bank/types';
@@ -31,7 +32,7 @@ export function MatchView({ question: q, value, onChange, disabled, reveal }: Qu
             <motion.button key={l} type="button" disabled={disabled} whileTap={{ scale: 0.97 }} onClick={() => setActive(i)}
               style={paired && !reveal ? { boxShadow: `inset 6px 0 0 ${PAIR_COLORS[i % PAIR_COLORS.length]}` } : undefined}
               className={`w-full rounded-2xl p-4 text-left font-semibold shadow-clay ${active === i ? 'ring-2 ring-coral' : ''} ${ok === true ? 'bg-mint' : ok === false ? 'bg-peach' : 'bg-white'}`}>
-              {l}
+              <MathText text={l} />
             </motion.button>
           );
         })}
@@ -43,14 +44,14 @@ export function MatchView({ question: q, value, onChange, disabled, reveal }: Qu
             <motion.button key={q.right[r]} type="button" disabled={disabled || active === null} whileTap={{ scale: 0.97 }} onClick={() => pickRight(r)}
               style={li !== -1 && !reveal ? { boxShadow: `inset -6px 0 0 ${PAIR_COLORS[li % PAIR_COLORS.length]}` } : undefined}
               className={`w-full rounded-2xl bg-white p-4 text-left shadow-clay ${active !== null ? 'hover:ring-2 hover:ring-lavender' : ''}`}>
-              {q.right[r]}
+              <MathText text={q.right[r]} />
             </motion.button>
           );
         })}
       </div>
       {reveal && (
         <p className="col-span-2 text-sm text-muted">
-          Đáp án: {q.left.map((l, i) => `${l} → ${q.right[q.answer[i]]}`).join(' · ')}
+          Đáp án: <MathText text={q.left.map((l, i) => `${l} → ${q.right[q.answer[i]]}`).join(' · ')} />
         </p>
       )}
     </div>
