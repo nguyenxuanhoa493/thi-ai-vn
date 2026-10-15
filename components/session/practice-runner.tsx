@@ -113,7 +113,10 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
               {q.type === 'speak' && <div className="mt-3"><SpeakFeedback question={q} durationMs={(value as SpeakAnswer | null)?.durationMs ?? 0} /></div>}
               {q.type === 'write' && <div className="mt-3"><WritingFeedback question={q} text={String(value ?? '')} /></div>}
               <p className="mt-3 text-sm font-semibold">🤖 AI giải thích</p>
-              <p className="mt-1 leading-relaxed"><Typewriter text={q.explanation} speed={12} /></p>
+              <p className="mt-1 leading-relaxed">
+                {/* lời giải có công thức ($…$) hoặc **đậm** phải qua MathText, không gõ từng ký tự thô */}
+                {/[$*]/.test(q.explanation) ? <MathText text={q.explanation} /> : <Typewriter text={q.explanation} speed={12} />}
+              </p>
               {outcome?.message && <p className="mt-3 font-semibold text-mint-dark">{outcome.message}</p>}
             </motion.div>
           )}

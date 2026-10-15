@@ -39,4 +39,13 @@ describe('PracticeRunner', () => {
     await userEvent.click(screen.getByRole('button', { name: /Gợi ý/ }));
     expect(screen.getByText('Gợi ý 1')).toBeInTheDocument();
   });
+  it('renders math in the AI explanation instead of raw LaTeX', async () => {
+    const q = { ...mk('m'), explanation: 'Dạng $ax^2 + bx + c = 0$ với $a \\ne 0$.' } as Question;
+    render(<PracticeRunner title="T" maxQuestions={1} next={() => q} onAnswered={() => ({ xp: 0, combo: 0, newBadges: [] })} onExit={() => {}} />);
+    await userEvent.click(screen.getByRole('button', { name: /Đúng/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Kiểm tra' }));
+    await screen.findByText(/AI giải thích/);
+    expect(document.querySelector('[role="math"][aria-label="ax^2 + bx + c = 0"]')).not.toBeNull();
+    expect(screen.queryByText(/\$ax\^2/)).toBeNull();
+  });
 });
