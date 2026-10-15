@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# thi.ai.vn — Mockup
 
-## Getting Started
+Clickable prototype nền tảng thi & ôn luyện K12 (Toán, Tiếng Anh). Frontend-only, dữ liệu mẫu, logic mô phỏng chạy thật.
 
-First, run the development server:
-
+## Chạy
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # http://localhost:3000
+npm test        # unit test engine + component
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Bản build như production: `npm run build && npm run start`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Kịch bản demo (~5 phút)
+1. `/` Landing → "Học thử miễn phí"
+2. `/dashboard` → "Làm bài đánh giá"
+3. `/danh-gia` → 12 câu thích ứng → báo cáo → "Vào Learning Zone"
+4. `/learning-zone` → "Luyện ngay" → trả lời đúng liên tục để thấy vùng mở rộng
+5. `/phong-thi` → bài 15 phút → thử reload / chuyển tab → nộp bài
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Nút ↺ trên thanh điều hướng = Reset demo. Bộ chọn "Lớp" đổi khối 6/9/12.
 
-## Learn More
+Mẹo khi trình diễn:
+- Bấm ↺ Reset demo trước mỗi buổi để bắt đầu từ trạng thái mẫu.
+- Ở bài đánh giá, trả lời đúng vài câu dễ và bấm "Bỏ qua câu này" ở câu khó để báo cáo có điểm mạnh / cần tập trung rõ ràng.
+- Reload giữa bài thi không bị tính là rời màn hình; chuyển tab thì có.
+- Dạng câu "Nói" và "Nghe" dùng micro / giọng đọc của trình duyệt (Chrome cho kết quả tốt nhất).
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Cấu trúc
+- `lib/engine/*`: IRT/Rasch, đánh giá thích ứng, Learning Zone, chấm thi (hàm thuần, có test)
+- `lib/bank/*`: khung chương trình, câu hỏi mẫu, đề thi
+- `components/questions/*`: 11 dạng câu hỏi
+- `components/owl/owl.tsx`: Bé Cú (thay bằng Rive sau này mà không đổi interface `state`)
