@@ -50,7 +50,7 @@ export function ZoneRings({ skills, map, size = 380, showLabels = false, highlig
             {showLabels && (
               <motion.text initial={false} animate={{ x: x + (Math.cos(angle) >= 0 ? 12 : -12), y: y + 4 }} transition={spring}
                 textAnchor={Math.cos(angle) >= 0 ? 'start' : 'end'} fontSize={11} fill="#2b2d42" fontWeight={500}>
-                <title>{s.name}</title>{s.name.length > 22 ? `${s.name.slice(0, 21)}…` : s.name}</motion.text>
+                {s.name.length > 22 && <title>{s.name}</title>}{s.name.length > 22 ? `${s.name.slice(0, 21)}…` : s.name}</motion.text>
             )}
           </g>
         );
