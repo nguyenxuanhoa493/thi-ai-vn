@@ -1,5 +1,6 @@
 'use client';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
+import { useId } from 'react';
 
 export type OwlState = 'idle' | 'thinking' | 'correct' | 'wrong' | 'celebrate' | 'cheer';
 
@@ -30,6 +31,7 @@ const antenna: Variants = {
 
 export function Owl({ state = 'idle', size = 140, lookAt }: { state?: OwlState; size?: number; lookAt?: { x: number; y: number } }) {
   const reduce = useReducedMotion();
+  const shineId = `owlShine-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   const happy = state === 'correct' || state === 'celebrate' || state === 'cheer';
   const px = (lookAt?.x ?? (state === 'wrong' ? -0.6 : 0)) * 3;
   const py = (lookAt?.y ?? (state === 'wrong' ? 0.5 : 0)) * 3;
@@ -42,13 +44,13 @@ export function Owl({ state = 'idle', size = 140, lookAt }: { state?: OwlState; 
     >
       <ellipse cx="75" cy="134" rx="40" ry="6" fill="#c9cdf5" opacity="0.6" />
       <line x1="75" y1="12" x2="75" y2="28" stroke="#7c83db" strokeWidth="4" strokeLinecap="round" />
-      <motion.circle cx="75" cy="10" r="7" variants={antenna} animate={state} style={{ originX: 0.5, originY: 0.5 }} />
+      <motion.circle cx="75" cy="10" r="7" fill="#ff8a65" variants={antenna} animate={reduce ? undefined : state} style={{ originX: 0.5, originY: 0.5 }} />
       <motion.ellipse cx="28" cy="84" rx="12" ry="24" fill="#8f9cf0" variants={wing(-1)} animate={reduce ? undefined : state} style={{ originX: 0.8, originY: 0.2 }} />
       <motion.ellipse cx="122" cy="84" rx="12" ry="24" fill="#8f9cf0" variants={wing(1)} animate={reduce ? undefined : state} style={{ originX: 0.2, originY: 0.2 }} />
       <rect x="28" y="28" width="94" height="100" rx="42" fill="#a8b5ff" />
-      <rect x="28" y="28" width="94" height="100" rx="42" fill="url(#owlShine)" />
+      <rect x="28" y="28" width="94" height="100" rx="42" fill={`url(#${shineId})`} />
       <defs>
-        <radialGradient id="owlShine" cx="0.35" cy="0.25" r="0.8">
+        <radialGradient id={shineId} cx="0.35" cy="0.25" r="0.8">
           <stop offset="0" stopColor="#fff" stopOpacity="0.45" />
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </radialGradient>
