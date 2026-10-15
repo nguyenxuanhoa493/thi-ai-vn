@@ -87,6 +87,16 @@ describe('LearningZonePage meaning', () => {
     render(<LearningZonePage />);
     expect(screen.getByText(/rộng thêm \+\d+% so với lần đầu/)).toBeInTheDocument();
   });
+  it('existing zone without baseline: growth is positive after a setZone expansion', () => {
+    act(() => { useDemo.getState().resetDemo(); useDemo.getState().setGrade(9); });
+    act(() => {
+      const base = { 't9-hpt-khai-niem': { theta: 0, unlockedLevel: 'NB' as const } };
+      useDemo.setState({ zones: { 'toan-9': base }, zoneBaseline: {} });
+      useDemo.getState().setZone('toan', 9, { 't9-hpt-khai-niem': { theta: 1.6, unlockedLevel: 'VDC' as const } });
+    });
+    render(<LearningZonePage />);
+    expect(screen.getByText(/rộng thêm \+\d+% so với lần đầu/)).toBeInTheDocument();
+  });
   it('shows "Đang củng cố" without a percentage when p < 0.5, and a percentage when 0.5 <= p < 0.85', () => {
     act(() => { useDemo.getState().resetDemo(); useDemo.getState().setGrade(9); useDemo.getState().setZone('toan', 9, {
       't9-hpt-khai-niem': { theta: -2.5, unlockedLevel: 'TH' },

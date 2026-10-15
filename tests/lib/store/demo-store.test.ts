@@ -195,14 +195,25 @@ describe('progress & milestones', () => {
     useDemo.getState().setZone('anh', 6, {});
     expect(useDemo.getState().zoneBaseline[zoneKey('anh', 6)]).toBe(b);
   });
-  it('old persisted data without new fields keeps xp/profile and gets empty defaults', () => {
+  it('present progress arrays are kept as-is', () => {
+    const out = sanitizePersisted({ ...createSeed(NOW), progress: [], milestones: [] }, NOW);
+    expect(out.progress).toEqual([]);
+  });
+  it('same-day progress does not dip', () => {
+    const skills = skillsFor('toan', 9);
+    useDemo.getState().setZone('toan', 9, { [skills[0].id]: { theta: 2, unlockedLevel: 'NB' } });
+    const hi = useDemo.getState().progress.find((p) => p.date === toDateKey(new Date()) && p.subject === 'toan')!.score;
+    useDemo.getState().setZone('toan', 9, { [skills[0].id]: { theta: 2, unlockedLevel: 'NB' }, [skills[1].id]: { theta: -2, unlockedLevel: 'NB' } });
+    expect(useDemo.getState().progress.find((p) => p.date === toDateKey(new Date()) && p.subject === 'toan')!.score).toBe(hi);
+  });
+  it('old persisted data without new fields keeps xp/profile and gets seeded defaults', () => {
     const { progress: _p, milestones: _m, zoneBaseline: _z, ...old } = createSeed(NOW);
     void _p; void _m; void _z;
     const out = sanitizePersisted({ ...old, xp: 321, profile: { name: 'Lan', grade: 12 } }, NOW);
     expect(out.xp).toBe(321);
     expect(out.profile).toEqual({ name: 'Lan', grade: 12 });
-    expect(out.progress).toEqual([]);
-    expect(out.milestones).toEqual([]);
+    expect(out.progress).toEqual(createSeed(NOW).progress);
+    expect(out.milestones).toEqual(createSeed(NOW).milestones);
     expect(out.zoneBaseline).toEqual({});
   });
 });

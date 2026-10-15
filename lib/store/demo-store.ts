@@ -83,9 +83,9 @@ export function sanitizePersisted(p: unknown, now: Date = new Date()): DemoData 
     const e = out.exam as unknown;
     const x = d as Partial<DemoData>;
     // trường mới (thêm sau): thiếu thì dùng mặc định rỗng, không xoá tiến độ cũ
-    if (!Array.isArray(x.progress)) out.progress = [];
+    if (!Array.isArray(x.progress)) out.progress = createSeed(now).progress;
     else out.progress = x.progress.filter((r) => isObj(r) && typeof r.date === 'string' && typeof r.score === 'number' && GRADES.includes(r.grade as Grade) && (r.subject === 'toan' || r.subject === 'anh'));
-    if (!Array.isArray(x.milestones)) out.milestones = [];
+    if (!Array.isArray(x.milestones)) out.milestones = createSeed(now).milestones;
     else out.milestones = x.milestones.filter((r) => isObj(r) && typeof r.date === 'string' && GRADES.includes(r.grade as Grade) && (r.subject === 'toan' || r.subject === 'anh') && (r.kind === 'assessment' || r.kind === 'zone-expand'));
     if (!isObj(x.zoneBaseline)) out.zoneBaseline = {};
     if (typeof (d as { soundOn?: unknown }).soundOn !== 'boolean') out.soundOn = true;
@@ -191,10 +191,15 @@ export const useDemo = create<DemoState>()(
       },
       setZone: (subject, grade, map) => set((s) => {
         const key = zoneKey(subject, grade);
+        const today = toDateKey(new Date());
+        const prevToday = s.progress.find((r) => r.date === today && r.subject === subject && r.grade === grade)?.score;
+        const score = mapScore(map);
         return {
           zones: { ...s.zones, [key]: map },
-          zoneBaseline: key in s.zoneBaseline ? s.zoneBaseline : { ...s.zoneBaseline, [key]: zoneExtent(map, skillsFor(subject, grade)) },
-          progress: upsertProgress(s.progress, subject, grade, mapScore(map)),
+          // zone cũ chưa có mốc: lấy mốc từ bản đồ TRƯỚC khi áp dụng câu trả lời mới
+          zoneBaseline: key in s.zoneBaseline ? s.zoneBaseline : { ...s.zoneBaseline, [key]: zoneExtent(s.zones[key] ?? map, skillsFor(subject, grade)) },
+          // trong cùng một ngày, điểm không tụt khi mở khoá kiến thức mới có θ thấp
+          progress: upsertProgress(s.progress, subject, grade, score == null ? null : Math.max(prevToday ?? 0, score)),
         };
       }),
       addMilestone: (subject, grade, kind) => set((s) => ({ milestones: withMilestone(s.milestones, subject, grade, kind) })),
