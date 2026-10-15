@@ -9,6 +9,7 @@ const NOW = new Date(2026, 9, 16, 9, 0);
 
 beforeEach(() => {
   localStorage.clear();
+  useDemo.setState({ soundOn: true });
   useDemo.getState().resetDemo();
 });
 
@@ -106,5 +107,35 @@ describe('hydration resilience', () => {
     await useDemo.persist.rehydrate();
     expect(useDemo.persist.hasHydrated()).toBe(true);
     expect(useDemo.getState().profile).toEqual({ name: 'Minh', grade: 9 });
+  });
+});
+
+describe('soundOn', () => {
+  it('defaults to true and toggleSound flips it', () => {
+    expect(createSeed(NOW).soundOn).toBe(true);
+    useDemo.getState().toggleSound();
+    expect(useDemo.getState().soundOn).toBe(false);
+    useDemo.getState().toggleSound();
+    expect(useDemo.getState().soundOn).toBe(true);
+  });
+  it('persists soundOn', () => {
+    useDemo.getState().toggleSound();
+    expect(JSON.parse(localStorage.getItem('thi-ai-demo')!).state.soundOn).toBe(false);
+  });
+  it('old persisted data without soundOn keeps progress and defaults to true', () => {
+    const { soundOn: _omit, ...old } = createSeed(NOW);
+    void _omit;
+    const out = sanitizePersisted({ ...old, xp: 777 }, NOW);
+    expect(out.xp).toBe(777);
+    expect(out.soundOn).toBe(true);
+  });
+  it('non-boolean soundOn falls back to true; false is kept', () => {
+    expect(sanitizePersisted({ ...createSeed(NOW), soundOn: 'x' }, NOW).soundOn).toBe(true);
+    expect(sanitizePersisted({ ...createSeed(NOW), soundOn: false }, NOW).soundOn).toBe(false);
+  });
+  it('resetDemo keeps the sound preference', () => {
+    useDemo.getState().toggleSound();
+    useDemo.getState().resetDemo();
+    expect(useDemo.getState().soundOn).toBe(false);
   });
 });

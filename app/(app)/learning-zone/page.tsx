@@ -14,6 +14,7 @@ import { Owl } from '@/components/owl/owl';
 import { ClayButton } from '@/components/ui/clay-button';
 import { ClayCard } from '@/components/ui/clay-card';
 import { fireConfetti } from '@/lib/ui/confetti';
+import { playSfx } from '@/lib/ui/sfx';
 
 const SESSION = 10;
 
@@ -95,6 +96,7 @@ export default function LearningZonePage() {
           if (events.length) {
             events.forEach((e) => toast.success(eventText(e)));
             fireConfetti({ origin: { x: 0.85, y: 0.5 } });
+            setTimeout(() => playSfx('zoneExpand'), 250); // lệch sau âm đúng/sai để không chồng nhau
             if (awardBadge('zone-expand')) newBadges.push('zone-expand');
           }
           return { ...base, newBadges, message: events.length ? eventText(events[0]) : undefined };

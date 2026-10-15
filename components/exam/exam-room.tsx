@@ -13,6 +13,7 @@ import {
 } from '@/lib/engine/exam';
 import { BADGES } from '@/lib/engine/gamification';
 import { useDemo } from '@/lib/store/demo-store';
+import { playSfx } from '@/lib/ui/sfx';
 import { QuestionView } from '@/components/questions/question-view';
 import { Owl } from '@/components/owl/owl';
 import { ClayButton } from '@/components/ui/clay-button';
@@ -48,6 +49,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
     if (!a || a.examId !== exam.id) return null;
     const r = gradeAttempt(questions, a, now());
     toastBadges(finishExam(r));
+    playSfx('submit');
     return r;
   }, [exam.id, questions, now, finishExam]);
 
@@ -83,10 +85,13 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
   // đồng hồ
   useEffect(() => {
     if (phase !== 'taking') return;
+    let lastTick = -1;
     const id = setInterval(() => {
       const a = useDemo.getState().exam;
       if (!a) return;
       const r = remainingSec(a, now());
+      // tick mỗi giây (không phải mỗi 500ms) trong 60 giây cuối
+      if (r <= 60 && r > 0 && r !== lastTick) { lastTick = r; playSfx('tick'); }
       setLeft(r);
       if (r === 0) { const res = submit(); if (res) { setResult(res); setPhase('result'); leaveFullscreen(); toast('⏰ Hết giờ, bài đã được tự động nộp'); } }
     }, 500);
@@ -106,6 +111,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
       const next = addViolation(a);
       setExam(next);
       setWarning(next.violations);
+      playSfx('warning');
     };
     window.addEventListener('beforeunload', onUnload);
     document.addEventListener('visibilitychange', onHide);

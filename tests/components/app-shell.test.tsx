@@ -9,7 +9,7 @@ vi.mock('next/navigation', () => ({ usePathname: () => pathname }));
 import { AppShell } from '@/components/layout/app-shell';
 import { useDemo } from '@/lib/store/demo-store';
 
-beforeEach(() => { pathname = '/dashboard'; useDemo.getState().resetDemo(); });
+beforeEach(() => { pathname = '/dashboard'; useDemo.getState().resetDemo(); useDemo.setState({ soundOn: true }); });
 
 describe('AppShell', () => {
   it('shows nav, streak and xp', async () => {
@@ -28,5 +28,12 @@ describe('AppShell', () => {
     render(<AppShell><p>exam</p></AppShell>);
     expect(await screen.findByText('exam')).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Learning Zone' })).toBeNull();
+  });
+  it('sound toggle flips store and label', async () => {
+    render(<AppShell><p>x</p></AppShell>);
+    await userEvent.click(await screen.findByRole('button', { name: 'Tắt âm thanh' }));
+    expect(useDemo.getState().soundOn).toBe(false);
+    await userEvent.click(screen.getByRole('button', { name: 'Bật âm thanh' }));
+    expect(useDemo.getState().soundOn).toBe(true);
   });
 });

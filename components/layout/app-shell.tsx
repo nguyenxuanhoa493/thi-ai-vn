@@ -18,7 +18,7 @@ const NAV = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const hydrated = useHydrated();
-  const { streak, xp, profile, setGrade, resetDemo } = useDemo();
+  const { streak, xp, profile, setGrade, resetDemo, soundOn, toggleSound } = useDemo();
   const focus = /^\/phong-thi\/.+/.test(pathname);
 
   if (!hydrated) {
@@ -52,6 +52,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               className="rounded-xl bg-white px-2 py-1.5 shadow-clay outline-none">
               {GRADES.map((g) => <option key={g} value={g}>Lớp {g}</option>)}
             </select>
+            <button type="button" title={soundOn ? 'Tắt âm thanh' : 'Bật âm thanh'} aria-label={soundOn ? 'Tắt âm thanh' : 'Bật âm thanh'}
+              onClick={toggleSound} className="rounded-xl bg-white px-3 py-1.5 shadow-clay hover:text-coral">{soundOn ? '🔊' : '🔇'}</button>
             <button type="button" title="Đặt lại demo" aria-label="Đặt lại demo"
               onClick={() => { if (confirm('Xoá toàn bộ tiến độ demo và bắt đầu lại?')) resetDemo(); }}
               className="rounded-xl bg-white px-3 py-1.5 shadow-clay hover:text-coral">↺</button>

@@ -16,6 +16,7 @@ import { ClayCard } from '@/components/ui/clay-card';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { Typewriter } from '@/components/ui/typewriter';
 import { fireConfetti } from '@/lib/ui/confetti';
+import { useSfx } from '@/lib/ui/use-sfx';
 import { toast } from 'sonner';
 
 export interface RunnerOutcome { xp: number; combo: number; newBadges: BadgeId[]; message?: string }
@@ -38,14 +39,15 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
   const [stats, setStats] = useState({ correct: 0, xp: 0 });
   const [owl, setOwl] = useState<OwlState>('idle');
   const started = useRef(false);
+  const play = useSfx();
 
   const advance = useCallback(() => {
-    const finish = () => { setDone(true); setOwl('celebrate'); fireConfetti(); };
+    const finish = () => { setDone(true); setOwl('celebrate'); fireConfetti(); play('complete'); };
     if (count >= maxQuestions) { finish(); return; }
     const n = next();
     if (!n) { finish(); return; }
     setQ(n); setValue(null); setResult(null); setOutcome(null); setHintsShown(0); setOwl('idle');
-  }, [count, maxQuestions, next]);
+  }, [count, maxQuestions, next, play]);
 
   useEffect(() => { if (!started.current) { started.current = true; advance(); } }, [advance]);
 
@@ -57,6 +59,7 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
     setStats((s) => ({ correct: s.correct + (r.correct ? 1 : 0), xp: s.xp + o.xp }));
     setOwl(r.correct ? (o.combo >= 3 ? 'celebrate' : 'correct') : 'wrong');
     if (r.correct && o.combo >= 3) fireConfetti({ origin: { x: 0.2, y: 0.4 } });
+    play(!r.correct ? 'wrong' : o.combo >= 3 ? 'combo' : 'correct');
     o.newBadges.forEach((b) => toast(`${BADGES[b].icon} Huy hiệu mới: ${BADGES[b].name}`));
   };
 

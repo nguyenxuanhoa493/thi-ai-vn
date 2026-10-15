@@ -22,6 +22,7 @@ export interface DemoData {
   badges: BadgeId[];
   exam: ExamAttempt | null;
   examResults: Record<string, ExamResult>;
+  soundOn: boolean;
 }
 interface Actions {
   setGrade: (g: Grade) => void;
@@ -32,6 +33,7 @@ interface Actions {
   awardBadge: (id: BadgeId) => boolean;
   setExam: (a: ExamAttempt | null) => void;
   finishExam: (r: ExamResult) => BadgeId[];
+  toggleSound: () => void;
   resetDemo: () => void;
 }
 export type DemoState = DemoData & Actions;
@@ -44,7 +46,7 @@ export function createSeed(now: Date = new Date()): DemoData {
   return {
     version: STORE_VERSION, profile: { name: 'Minh', grade: 9 }, xp: 1240,
     streak: { count: 6, lastDate: day(1) }, combo: 0, zones: {}, assessments: {}, history,
-    badges: [], exam: null, examResults: {},
+    badges: [], exam: null, examResults: {}, soundOn: true,
   };
 }
 
@@ -60,6 +62,7 @@ export function sanitizePersisted(p: unknown, now: Date = new Date()): DemoData 
     if (!ok) return createSeed(now);
     const out = { ...createSeed(now), ...(d as DemoData) };
     const e = out.exam as unknown;
+    if (typeof (d as { soundOn?: unknown }).soundOn !== 'boolean') out.soundOn = true;
     if (e != null && !(isObj(e) && typeof e.startedAt === 'number' && typeof e.durationSec === 'number' && isObj(e.answers))) out.exam = null;
     return out;
   } catch {
@@ -93,7 +96,7 @@ const safeStorage: PersistStorage<DemoData> = {
 
 const dataOnly = (s: DemoState): DemoData => ({
   version: s.version, profile: s.profile, xp: s.xp, streak: s.streak, combo: s.combo, zones: s.zones,
-  assessments: s.assessments, history: s.history, badges: s.badges, exam: s.exam, examResults: s.examResults,
+  assessments: s.assessments, history: s.history, badges: s.badges, exam: s.exam, examResults: s.examResults, soundOn: s.soundOn,
 });
 
 export const useDemo = create<DemoState>()(
@@ -142,7 +145,9 @@ export const useDemo = create<DemoState>()(
         set((s) => ({ exam: null, examResults: { ...s.examResults, [r.examId]: r } }));
         return get().awardBadge('first-exam') ? ['first-exam'] : [];
       },
-      resetDemo: () => set(createSeed()),
+      toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
+      // tuỳ chọn âm thanh là cài đặt của người dùng, không bị xoá khi đặt lại tiến độ demo
+      resetDemo: () => set({ ...createSeed(), soundOn: get().soundOn }),
     }),
     {
       name: 'thi-ai-demo',

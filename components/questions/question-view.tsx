@@ -14,13 +14,17 @@ import { FillView } from './fill';
 import { GraphView } from './graph';
 import { SpeakView } from './speak';
 import { WriteView } from './write';
+import { useSfx } from '@/lib/ui/use-sfx';
 
 interface Props {
   question: Question; value: AnswerValue; onChange: (v: AnswerValue) => void;
   disabled: boolean; reveal: boolean; index?: number; showMeta?: boolean;
 }
 
-export function QuestionView({ question: q, index, showMeta = true, ...p }: Props) {
+export function QuestionView({ question: q, index, showMeta = true, onChange, ...rest }: Props) {
+  const play = useSfx();
+  // phát 'select' chỉ khi người dùng đổi đáp án (onChange do component con gọi), không phát với giá trị khởi tạo
+  const p = { ...rest, onChange: (v: AnswerValue) => { play('select'); onChange(v); } };
   const body = (() => {
     switch (q.type) {
       case 'mcq': case 'listen': return <McqView question={q} {...p} />;

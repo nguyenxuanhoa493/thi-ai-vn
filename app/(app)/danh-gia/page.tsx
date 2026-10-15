@@ -23,6 +23,7 @@ import { CountUp } from '@/components/ui/count-up';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { Typewriter } from '@/components/ui/typewriter';
 import { fireConfetti } from '@/lib/ui/confetti';
+import { playSfx } from '@/lib/ui/sfx';
 
 type Phase = 'intro' | 'running' | 'analyzing' | 'report';
 const STEPS = ['Ước lượng năng lực theo từng kiến thức…', 'Đối chiếu khung chương trình GDPT 2018…', 'Xây dựng Learning Zone cho em…'];
@@ -83,7 +84,7 @@ export default function DanhGiaPage() {
     if (phase !== 'analyzing') return;
     const t1 = setTimeout(() => setStep(1), 800);
     const t2 = setTimeout(() => setStep(2), 1600);
-    const t3 = setTimeout(() => { setPhase('report'); fireConfetti(); }, 2400);
+    const t3 = setTimeout(() => { setPhase('report'); fireConfetti(); playSfx('complete'); }, 2400);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [phase]);
 

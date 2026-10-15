@@ -8,6 +8,21 @@ import type { Question } from '@/lib/bank/types';
 
 const base = { subject: 'toan', grade: 9, skillId: 't9-bpt', level: 'TH', b: -0.5, explanation: '', hints: [], source: 'NXB' } as const;
 
+const playSfx = vi.hoisted(() => vi.fn());
+vi.mock('@/lib/ui/sfx', () => ({ playSfx }));
+
+describe('QuestionView select sound', () => {
+  it('plays select on user change only, not on render', async () => {
+    playSfx.mockClear();
+    const q: Question = { ...base, id: 'sm', type: 'mcq', content: 'Chọn', options: ['A1', 'B1'], answer: 0 };
+    render(<QuestionView question={q} value={0} onChange={() => {}} disabled={false} reveal={false} />);
+    expect(playSfx).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole('button', { name: /B1/ }));
+    expect(playSfx).toHaveBeenCalledWith('select');
+    expect(playSfx).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('QuestionView', () => {
   it('mcq selects option', async () => {
     const onChange = vi.fn();
