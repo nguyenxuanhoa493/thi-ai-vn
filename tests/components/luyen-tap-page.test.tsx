@@ -13,7 +13,9 @@ describe('LuyenTapPage', () => {
   it('resets open chapter when grade changes', async () => {
     act(() => useDemo.getState().setGrade(9));
     render(<LuyenTapPage />);
-    await userEvent.click(screen.getByRole('button', { name: new RegExp(chaptersFor('toan', 9)[0].name.slice(0, 20)) }));
+    const name = new RegExp(chaptersFor('toan', 9)[0].name.slice(0, 20));
+    // thẻ bộ đề cũng là button (truy cập bàn phím) nên chọn nút chương theo aria-expanded
+    await userEvent.click(screen.getAllByRole('button', { name }).find((b) => b.hasAttribute('aria-expanded'))!);
     act(() => useDemo.getState().setGrade(12));
     const ch12 = chaptersFor('toan', 12)[0].name;
     expect((await screen.findAllByText(ch12)).length).toBeGreaterThan(0);
