@@ -14,14 +14,14 @@ export function MathField({ value, onChange, disabled }: { value: string; onChan
   }, []);
   useEffect(() => {
     const el = ref.current;
-    if (!ready || !el) return;
+    if (!ready || !el || typeof el.getValue !== 'function') return;
     const handler = () => onChange(el.getValue('ascii-math'));
     el.addEventListener('input', handler);
     return () => el.removeEventListener('input', handler);
   }, [ready, onChange]);
   useEffect(() => {
     const el = ref.current;
-    if (!ready || !el) return;
+    if (!ready || !el || typeof el.getValue !== 'function') return;
     if (el.getValue('ascii-math') !== value) el.setValue?.(value, { silenceNotifications: true });
   }, [ready, value]);
   if (!ready) {

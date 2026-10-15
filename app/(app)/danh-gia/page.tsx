@@ -1,0 +1,173 @@
+'use client';
+import { AnimatePresence, motion } from 'motion/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { useDemo, zoneKey } from '@/lib/store/demo-store';
+import { questionsFor, skillName, skillsFor } from '@/lib/bank';
+import { checkAnswer } from '@/lib/bank/check';
+import { SUBJECT_LABEL, type AnswerValue, type Question, type Subject } from '@/lib/bank/types';
+import {
+  ASSESSMENT_LENGTH, aiComment, currentTheta, emptyAssessment, nextAssessmentQuestion, recordAssessmentAnswer,
+  summarizeAssessment, type AssessmentState, type AssessmentSummary,
+} from '@/lib/engine/assessment';
+import { BADGES } from '@/lib/engine/gamification';
+import { isAnswered } from '@/lib/engine/exam';
+import { QuestionView } from '@/components/questions/question-view';
+import { DifficultyMeter } from '@/components/assessment/difficulty-meter';
+import { SkillRadar } from '@/components/charts/skill-radar';
+import { Owl } from '@/components/owl/owl';
+import { ClayButton } from '@/components/ui/clay-button';
+import { ClayCard } from '@/components/ui/clay-card';
+import { CountUp } from '@/components/ui/count-up';
+import { ProgressBar } from '@/components/ui/progress-bar';
+import { Typewriter } from '@/components/ui/typewriter';
+import { fireConfetti } from '@/lib/ui/confetti';
+
+type Phase = 'intro' | 'running' | 'analyzing' | 'report';
+const STEPS = ['Ước lượng năng lực theo từng kiến thức…', 'Đối chiếu khung chương trình GDPT 2018…', 'Xây dựng Learning Zone cho em…'];
+
+export default function DanhGiaPage() {
+  const router = useRouter();
+  const { profile, assessments, saveAssessment } = useDemo();
+  const grade = profile.grade;
+  const [subject, setSubject] = useState<Subject>('toan');
+  const [phase, setPhase] = useState<Phase>('intro');
+  const [state, setState] = useState<AssessmentState>(emptyAssessment());
+  const [q, setQ] = useState<Question | null>(null);
+  const [value, setValue] = useState<AnswerValue>(null);
+  const [summary, setSummary] = useState<AssessmentSummary | null>(null);
+  const [step, setStep] = useState(0);
+  const pool = useMemo(() => questionsFor(subject, grade), [subject, grade]);
+  const skills = useMemo(() => skillsFor(subject, grade), [subject, grade]);
+  const existing = assessments[zoneKey(subject, grade)];
+
+  const start = () => {
+    const s = emptyAssessment();
+    setState(s); setQ(nextAssessmentQuestion(pool, skills, s)); setValue(null); setPhase('running');
+  };
+  const answer = (correct: boolean) => {
+    if (!q) return;
+    const s = recordAssessmentAnswer(state, q, correct);
+    setState(s); setValue(null);
+    const n = nextAssessmentQuestion(pool, skills, s);
+    if (n) { setQ(n); return; }
+    const sum = summarizeAssessment(s, skills, { subject, grade });
+    setSummary(sum); setPhase('analyzing');
+    saveAssessment(sum).forEach((b) => toast(`${BADGES[b].icon} Huy hiệu mới: ${BADGES[b].name}`));
+  };
+
+  useEffect(() => {
+    if (phase !== 'analyzing') return;
+    setStep(0);
+    const t1 = setTimeout(() => setStep(1), 800);
+    const t2 = setTimeout(() => setStep(2), 1600);
+    const t3 = setTimeout(() => { setPhase('report'); fireConfetti(); }, 2400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [phase]);
+
+  if (phase === 'intro') {
+    return (
+      <div className="grid items-center gap-10 lg:grid-cols-2">
+        <div className="space-y-5">
+          <span className="rounded-full bg-lavender-soft px-3 py-1 text-sm font-bold text-lavender-dark">🤖 AI đánh giá năng lực</span>
+          <h1 className="text-4xl font-extrabold leading-tight">Chỉ {ASSESSMENT_LENGTH} câu, AI hiểu em đang ở đâu</h1>
+          <p className="text-lg text-muted">Câu hỏi tự điều chỉnh độ khó theo từng câu trả lời. Kết quả là bản đồ năng lực theo từng kiến thức và Learning Zone dành riêng cho em.</p>
+          <div className="flex rounded-2xl bg-white p-1 shadow-clay w-fit">
+            {(['toan', 'anh'] as Subject[]).map((s) => (
+              <button key={s} type="button" onClick={() => setSubject(s)} className={`rounded-xl px-5 py-2 font-semibold ${subject === s ? 'bg-lavender text-white' : 'text-muted'}`}>{SUBJECT_LABEL[s]} {grade}</button>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <ClayButton size="lg" onClick={start} disabled={pool.length === 0}>Bắt đầu đánh giá {SUBJECT_LABEL[subject]}</ClayButton>
+            {existing && <ClayButton size="lg" variant="ghost" onClick={() => { setSummary(existing); setPhase('report'); }}>Xem báo cáo gần nhất</ClayButton>}
+          </div>
+        </div>
+        <div className="flex justify-center"><Owl state="cheer" size={260} /></div>
+      </div>
+    );
+  }
+
+  if (phase === 'running' && q) {
+    const n = state.asked.length + 1;
+    return (
+      <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+        <div className="space-y-5">
+          <div className="flex items-center gap-4">
+            <ProgressBar value={state.asked.length / ASSESSMENT_LENGTH} className="flex-1" />
+            <span className="font-display font-bold">{n}/{ASSESSMENT_LENGTH}</span>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.div key={q.id} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}>
+              <ClayCard className="p-8"><QuestionView question={q} value={value} onChange={setValue} disabled={false} reveal={false} index={n} /></ClayCard>
+            </motion.div>
+          </AnimatePresence>
+          <div className="flex justify-between">
+            <ClayButton variant="ghost" onClick={() => answer(false)}>Bỏ qua câu này</ClayButton>
+            <ClayButton size="lg" disabled={!isAnswered(value)} onClick={() => answer(checkAnswer(q, value).correct)}>Trả lời</ClayButton>
+          </div>
+        </div>
+        <aside className="space-y-6">
+          <div className="flex justify-center"><Owl state="thinking" size={140} /></div>
+          <ClayCard><DifficultyMeter theta={currentTheta(state)} /></ClayCard>
+          <p className="text-center text-sm text-muted">Bài đánh giá không hiện đúng/sai từng câu để kết quả khách quan nhất.</p>
+        </aside>
+      </div>
+    );
+  }
+
+  if (phase === 'analyzing') {
+    return (
+      <ClayCard className="mx-auto max-w-lg space-y-6 p-10 text-center">
+        <div className="flex justify-center"><Owl state="thinking" size={150} /></div>
+        <h2 className="text-2xl font-extrabold">AI đang phân tích bài làm…</h2>
+        <ul className="space-y-3 text-left">
+          {STEPS.map((s, i) => (
+            <motion.li key={s} initial={{ opacity: 0.3 }} animate={{ opacity: i <= step ? 1 : 0.3 }} className="flex items-center gap-3">
+              <motion.span animate={{ scale: i < step ? 1 : [1, 1.2, 1] }} transition={{ repeat: i === step ? Infinity : 0, duration: 0.8 }}
+                className={`grid h-7 w-7 place-items-center rounded-full text-sm ${i < step ? 'bg-mint-dark text-white' : 'bg-lavender-soft'}`}>{i < step ? '✓' : '•'}</motion.span>
+              {s}
+            </motion.li>
+          ))}
+        </ul>
+      </ClayCard>
+    );
+  }
+
+  if (phase === 'report' && summary) {
+    const radar = summary.skills.map((r) => ({ name: skillName(r.skillId), score: r.score }));
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-extrabold">Báo cáo năng lực · {SUBJECT_LABEL[summary.subject]} {summary.grade}</h1>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <ClayCard className="flex flex-col items-center justify-center gap-2 text-center">
+            <p className="text-sm font-semibold text-muted">Năng lực tổng thể</p>
+            <p className="font-display text-6xl font-extrabold text-coral"><CountUp value={summary.score} /></p>
+            <span className="rounded-full bg-lavender-soft px-4 py-1 font-bold text-lavender-dark">{summary.label}</span>
+          </ClayCard>
+          <ClayCard className="lg:col-span-2"><SkillRadar data={radar} /></ClayCard>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <ClayCard className="space-y-3">
+            <p className="font-bold">💪 Điểm mạnh</p>
+            <div className="flex flex-wrap gap-2">{summary.strengths.map((s) => <span key={s} className="rounded-xl bg-mint px-3 py-1.5 font-semibold text-mint-dark">{skillName(s)}</span>)}</div>
+            <p className="pt-2 font-bold">🎯 Cần tập trung</p>
+            <div className="flex flex-wrap gap-2">{summary.weaknesses.map((s) => <span key={s} className="rounded-xl bg-peach px-3 py-1.5 font-semibold text-peach-dark">{skillName(s)}</span>)}</div>
+          </ClayCard>
+          <ClayCard className="flex gap-4">
+            <Owl state="cheer" size={90} />
+            <div>
+              <p className="font-bold">🤖 Nhận xét của AI</p>
+              <p className="mt-2 leading-relaxed"><Typewriter text={aiComment(summary, profile.name, skillName)} /></p>
+            </div>
+          </ClayCard>
+        </div>
+        <div className="flex gap-3">
+          <ClayButton size="lg" onClick={() => router.push('/learning-zone')}>Vào Learning Zone →</ClayButton>
+          <ClayButton size="lg" variant="ghost" onClick={() => setPhase('intro')}>Làm lại</ClayButton>
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
