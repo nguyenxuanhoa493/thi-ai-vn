@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import { getQuestion } from '@/lib/bank';
 import { checkAnswer } from '@/lib/bank/check';
 import type { AnswerValue, Question } from '@/lib/bank/types';
+import { MathText } from '@/components/questions/math-text';
 import { QuestionView } from '@/components/questions/question-view';
 import { Owl, type OwlState } from '@/components/owl/owl';
 import { OwlBubble } from '@/components/owl/owl-bubble';
@@ -67,7 +68,7 @@ export function MiniQuiz() {
           {reveal !== null && (
             <div role="status" className={`rounded-2xl p-4 ${reveal ? 'bg-mint/60' : 'bg-peach/70'}`}>
               <p className="font-display font-extrabold">{reveal ? 'Chính xác! 🎉' : 'Chưa đúng rồi 🙈'}</p>
-              <p className="mt-1 text-sm text-muted">{q.explanation}</p>
+              <MathText text={q.explanation} className="mt-1 text-sm text-muted" />
             </div>
           )}
           <div className="flex flex-wrap items-center gap-3">

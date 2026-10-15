@@ -33,6 +33,16 @@ describe('MiniQuiz', () => {
     expect(screen.getByText(/Câu 2\/3/)).toBeInTheDocument();
     expect(screen.getAllByRole('img', { name: /Bé Cú/ })[0]).toHaveAttribute('data-state', 'idle');
   });
+  it('renders LaTeX in the explanation as math, not raw $...$', async () => {
+    const user = userEvent.setup();
+    render(<MiniQuiz />);
+    const q = getQuestion(QUIZ_IDS[0]) as McqQuestion;
+    await user.click(screen.getAllByRole('button')[q.answer]);
+    await user.click(screen.getByRole('button', { name: 'Kiểm tra' }));
+    const status = screen.getByRole('status');
+    expect(status.querySelectorAll('[role="math"]').length).toBeGreaterThan(0);
+    expect(status.textContent).not.toContain('$');
+  });
   it('wrong answer makes the owl sad', async () => {
     const user = userEvent.setup();
     render(<MiniQuiz />);
