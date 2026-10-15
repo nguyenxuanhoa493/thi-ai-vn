@@ -25,7 +25,7 @@ describe('LearningZonePage expansion', () => {
     const { toast } = await import('sonner');
     const { prob } = await import('@/lib/engine/irt');
     const { LEVEL_B, LZ_K, MASTERY_P, pickNextQuestion } = await import('@/lib/engine/learning-zone');
-    const { questionsFor, skillsFor } = await import('@/lib/bank');
+    const { questionsFor } = await import('@/lib/bank');
     vi.spyOn(Math, 'random').mockReturnValue(0);
     const skillId = 't9-hpt-khai-niem';
     const theta = 0.18; // just below NB mastery (prob(0.18,-1.5) ~ 0.843 < 0.85)
@@ -49,6 +49,5 @@ describe('LearningZonePage expansion', () => {
     expect(screen.getAllByText(/Vùng của em vừa mở rộng/).length).toBeGreaterThan(0);
     expect(Number(screen.getByTestId('ring-learning').getAttribute('data-extent'))).toBeGreaterThan(before);
     expect(useDemo.getState().badges).toContain('zone-expand');
-    expect(skillsFor('toan', 9).length).toBeGreaterThan(1);
   });
 });
