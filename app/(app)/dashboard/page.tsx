@@ -67,14 +67,14 @@ export default function DashboardPage() {
       <motion.div variants={item} className="col-span-6 lg:col-span-3">
         <ClayCard className="flex h-full flex-col justify-between bg-gradient-to-br from-[#fff1e6] to-white">
           <p className="font-semibold text-muted">Chuỗi ngày học</p>
-          <p className="font-display text-6xl font-extrabold text-coral"><motion.span animate={{ scale: [1, 1.15, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="inline-block">🔥</motion.span><CountUp value={streak.count} /></p>
+          <p className="font-display text-5xl font-extrabold text-coral sm:text-6xl"><motion.span animate={{ scale: [1, 1.15, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="inline-block">🔥</motion.span><CountUp value={streak.count} /></p>
           <p className="text-sm text-muted">Giữ lửa mỗi ngày nhé!</p>
         </ClayCard>
       </motion.div>
       <motion.div variants={item} className="col-span-6 lg:col-span-3">
         <ClayCard className="flex h-full flex-col justify-between">
           <p className="font-semibold text-muted">Điểm kinh nghiệm</p>
-          <p className="font-display text-5xl font-extrabold text-lavender-dark">⭐ <CountUp value={xp} /></p>
+          <p className="font-display text-3xl font-extrabold text-lavender-dark sm:text-5xl">⭐ <CountUp value={xp} /></p>
           <p className="text-sm text-muted">Hôm nay: {answeredToday} câu</p>
         </ClayCard>
       </motion.div>
