@@ -16,6 +16,7 @@ import { ClayButton } from '@/components/ui/clay-button';
 import { ClayCard } from '@/components/ui/clay-card';
 import { CountUp } from '@/components/ui/count-up';
 
+const BAR_MAX_PX = 112; // h-36 (144px) trừ nhãn ngày + khoảng cách
 const item = { hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0 } };
 
 export default function DashboardPage() {
@@ -138,9 +139,10 @@ export default function DashboardPage() {
           <p className="font-bold">Hoạt động 7 ngày</p>
           <div className="mt-4 flex h-36 items-end gap-3">
             {last7.map((d, i) => (
-              <div key={d.k} className="flex flex-1 flex-col items-center gap-2">
+              <div key={d.k} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
+                {/* chiều cao px: % trong flex item không có chiều cao xác định sẽ sụp về 0 */}
                 <motion.div className="w-full rounded-t-xl bg-gradient-to-t from-lavender to-[#c9d0ff]"
-                  initial={{ height: 0 }} animate={{ height: `${(d.xp / maxXp) * 100}%` }} transition={{ delay: 0.3 + i * 0.06, type: 'spring', stiffness: 120, damping: 16 }} />
+                  initial={{ height: 0 }} animate={{ height: Math.round((d.xp / maxXp) * BAR_MAX_PX) }} transition={{ delay: 0.3 + i * 0.06, type: 'spring', stiffness: 120, damping: 16 }} />
                 <span className={`text-xs ${d.k === today ? 'font-bold text-coral' : 'text-muted'}`}>{d.label}</span>
               </div>
             ))}
