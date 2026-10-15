@@ -96,16 +96,20 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
   // phát hiện rời tab
   useEffect(() => {
     if (phase !== 'taking') return;
+    // tải lại trang (F5) cũng bắn visibilitychange → hidden; không tính là rời màn hình
+    let unloading = false;
+    const onUnload = () => { unloading = true; };
     const onHide = () => {
-      if (!document.hidden) return;
+      if (!document.hidden || unloading) return;
       const a = useDemo.getState().exam;
       if (!a) return;
       const next = addViolation(a);
       setExam(next);
       setWarning(next.violations);
     };
+    window.addEventListener('beforeunload', onUnload);
     document.addEventListener('visibilitychange', onHide);
-    return () => document.removeEventListener('visibilitychange', onHide);
+    return () => { window.removeEventListener('beforeunload', onUnload); document.removeEventListener('visibilitychange', onHide); };
   }, [phase, setExam]);
 
   const back = () => router.push('/phong-thi');

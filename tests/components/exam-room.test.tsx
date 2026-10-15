@@ -55,6 +55,15 @@ describe('ExamRoom', () => {
     expect(screen.getByText(/rời khỏi màn hình làm bài/)).toBeInTheDocument();
     Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
   });
+  it('reloading the page is not counted as leaving the screen', () => {
+    useDemo.getState().setExam(startAttempt(exam, clock));
+    render(<ExamRoom exam={exam} now={now} />);
+    fireEvent(window, new Event('beforeunload'));
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+    fireEvent(document, new Event('visibilitychange'));
+    expect(useDemo.getState().exam?.violations).toBe(0);
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
+  });
   it('submit confirmation warns about unanswered questions', async () => {
     useDemo.getState().setExam(startAttempt(exam, clock));
     render(<ExamRoom exam={exam} now={now} />);
