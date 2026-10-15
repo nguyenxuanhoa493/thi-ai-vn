@@ -1,9 +1,11 @@
 'use client';
 import { motion } from 'motion/react';
+import { useRef } from 'react';
 import type { FillQuestion } from '@/lib/bank/types';
 import type { QuestionProps } from './types';
 
 export function FillView({ question: q, value, onChange, disabled, reveal }: QuestionProps<FillQuestion>) {
+  const dragged = useRef(false);
   const segments = q.text.split('___');
   const blanks = Array.isArray(value) && value.length === q.answer.length ? (value as string[]) : q.answer.map(() => '');
   const place = (word: string, target?: number) => {
@@ -36,11 +38,15 @@ export function FillView({ question: q, value, onChange, disabled, reveal }: Que
           return (
             <motion.button key={w} type="button" disabled={disabled || used} drag={!disabled && !used} dragSnapToOrigin
               whileDrag={{ scale: 1.1, zIndex: 10 }}
+              onDragStart={() => { dragged.current = true; }}
               onDragEnd={(_, info) => {
-                const el = document.elementFromPoint(info.point.x - window.scrollX, info.point.y - window.scrollY)?.closest('[data-blank]');
+                const x = info.point.x - window.scrollX, y = info.point.y - window.scrollY;
+                const els = typeof document.elementsFromPoint === 'function' ? document.elementsFromPoint(x, y) : [];
+                const el = els.map((e) => e.closest('[data-blank]')).find(Boolean);
                 if (el) place(w, Number(el.getAttribute('data-blank')));
+                setTimeout(() => { dragged.current = false; }, 0);
               }}
-              onClick={() => place(w)}
+              onClick={() => { if (dragged.current) { dragged.current = false; return; } place(w); }}
               className={`rounded-xl px-4 py-2 font-semibold shadow-clay ${used ? 'bg-lavender-soft text-muted opacity-50' : 'bg-white text-ink'}`}>
               {w}
             </motion.button>

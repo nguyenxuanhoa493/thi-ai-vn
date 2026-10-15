@@ -31,7 +31,7 @@ export function McqView({ question: q, value, onChange, disabled, reveal }: Ques
             <motion.button key={i} type="button" disabled={disabled} data-result={result ?? undefined}
               whileHover={disabled ? undefined : { y: -2 }} whileTap={disabled ? undefined : { scale: 0.98 }}
               onClick={() => onChange(i)}
-              className={`flex items-center gap-3 rounded-2xl bg-white p-4 text-left shadow-clay transition-colors ${selected && !reveal ? 'ring-2 ring-lavender' : ''} ${resultClass(result)}`}>
+              className={`flex items-center gap-3 rounded-2xl ${result ? '' : 'bg-white'} p-4 text-left shadow-clay transition-colors ${selected && !reveal ? 'ring-2 ring-lavender' : ''} ${resultClass(result)}`}>
               <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl font-display font-bold ${selected ? 'bg-lavender text-white' : 'bg-lavender-soft text-lavender-dark'}`}>{LETTERS[i]}</span>
               <MathText text={opt} />
             </motion.button>

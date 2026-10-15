@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 
-type MathFieldEl = HTMLElement & { getValue: (fmt: string) => string; value: string };
+type MathFieldEl = HTMLElement & { getValue: (fmt: string) => string; setValue?: (v: string, o?: { silenceNotifications?: boolean }) => void; value: string };
 
 /** MathLive khi đã tải, fallback input thường trước đó / trong test */
 export function MathField({ value, onChange, disabled }: { value: string; onChange: (v: string) => void; disabled: boolean }) {
@@ -19,6 +19,11 @@ export function MathField({ value, onChange, disabled }: { value: string; onChan
     el.addEventListener('input', handler);
     return () => el.removeEventListener('input', handler);
   }, [ready, onChange]);
+  useEffect(() => {
+    const el = ref.current;
+    if (!ready || !el) return;
+    if (el.getValue('ascii-math') !== value) el.setValue?.(value, { silenceNotifications: true });
+  }, [ready, value]);
   if (!ready) {
     return (
       <input aria-label="Nhập đáp án" value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)}

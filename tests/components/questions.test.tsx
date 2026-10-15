@@ -62,3 +62,57 @@ describe('deterministicShuffle', () => {
     expect(deterministicShuffle(2, 'x')).toEqual([1, 0]);
   });
 });
+
+describe('fix round 1', () => {
+  it('order: does not call onChange on mount; "Giữ thứ tự này" commits a permutation', async () => {
+    const onChange = vi.fn();
+    const q: Question = { ...base, id: 'o', type: 'order', content: 'Sắp', items: ['a', 'b', 'c'], answer: [0, 1, 2] };
+    render(<QuestionView question={q} value={null} onChange={onChange} disabled={false} reveal={false} />);
+    expect(onChange).not.toHaveBeenCalled();
+    await userEvent.click(screen.getByRole('button', { name: 'Giữ thứ tự này' }));
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect([...onChange.mock.calls[0][0]].sort()).toEqual([0, 1, 2]);
+  });
+  it('mcq reveal: correct option is bg-mint, not bg-white', () => {
+    const q: Question = { ...base, id: 'm4', type: 'mcq', content: 'Chọn', options: ['A', 'B'], answer: 0 };
+    render(<QuestionView question={q} value={1} onChange={() => {}} disabled reveal />);
+    const cls = screen.getByRole('button', { name: /A/ }).className.split(/\s+/);
+    expect(cls).toContain('bg-mint');
+    expect(cls).not.toContain('bg-white');
+  });
+  it('fill: drag end uses elementsFromPoint to target a blank', async () => {
+    const onChange = vi.fn();
+    const q: Question = { ...base, id: 'f2', type: 'fill', content: 'Điền', text: 'A ___ B ___', bank: ['who', 'which'], answer: ['who', 'which'] };
+    const { container } = render(<QuestionView question={q} value={['', '']} onChange={onChange} disabled={false} reveal={false} />);
+    const blank1 = container.querySelector('[data-blank="1"]')!;
+    document.elementsFromPoint = vi.fn(() => [screen.getByRole('button', { name: 'who' }), blank1]);
+    const chip = screen.getByRole('button', { name: 'who' });
+    const { fireEvent } = await import('@testing-library/react');
+    fireEvent.pointerDown(chip, { clientX: 5, clientY: 5, button: 0, isPrimary: true });
+    fireEvent.pointerMove(document, { clientX: 60, clientY: 60, isPrimary: true });
+    fireEvent.pointerMove(document, { clientX: 120, clientY: 120, isPrimary: true });
+    fireEvent.pointerUp(document, { clientX: 120, clientY: 120, isPrimary: true });
+    await new Promise((r) => setTimeout(r, 50));
+    expect(onChange).toHaveBeenCalledWith(['', 'who']);
+  });
+  it('speak: release before getUserMedia resolves stops the tracks', async () => {
+    const stop = vi.fn();
+    let resolve!: (s: unknown) => void;
+    Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: { getUserMedia: () => new Promise((r) => { resolve = r; }) } });
+    const MR = vi.fn();
+    vi.stubGlobal('MediaRecorder', MR);
+    const onChange = vi.fn();
+    const q: Question = { ...base, id: 's', type: 'speak', content: 'Nói', target: 'Hello' };
+    render(<QuestionView question={q} value={null} onChange={onChange} disabled={false} reveal={false} />);
+    const btn = screen.getByRole('button', { name: /Nhấn giữ/ });
+    const { fireEvent, act } = await import('@testing-library/react');
+    fireEvent.pointerDown(btn);
+    fireEvent.pointerUp(btn);
+    fireEvent.pointerUp(btn);
+    expect(onChange).toHaveBeenCalledTimes(1);
+    await act(async () => { resolve({ getTracks: () => [{ stop }] }); });
+    expect(stop).toHaveBeenCalled();
+    expect(MR).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+});

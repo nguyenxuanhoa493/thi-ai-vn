@@ -11,7 +11,9 @@ const toPx = (x: number, y: number) => ({ cx: SIZE / 2 + x * U, cy: SIZE / 2 - y
 
 export function GraphView({ question: q, value, onChange, disabled, reveal }: QuestionProps<GraphQuestion>) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const p = (value as GraphPoint | null) ?? { x: 0, y: 0 };
+  const answered = value !== null && typeof value === 'object' && !Array.isArray(value) && 'x' in value;
+  const p = answered ? (value as GraphPoint) : { x: 0, y: 0 };
+  const good = answered && p.x === q.answer.x && p.y === q.answer.y;
   const setFromEvent = (clientX: number, clientY: number) => {
     const r = svgRef.current!.getBoundingClientRect();
     const x = Math.round(((clientX - r.left) / r.width) * 2 * R - R);
@@ -22,8 +24,8 @@ export function GraphView({ question: q, value, onChange, disabled, reveal }: Qu
   const { cx, cy } = toPx(p.x, p.y);
   const ans = toPx(q.answer.x, q.answer.y);
   return (
-    <div className="flex items-start gap-6">
-      <svg ref={svgRef} width={SIZE} height={SIZE} className="touch-none rounded-2xl bg-white shadow-clay"
+    <div className="flex flex-wrap items-start gap-6">
+      <svg ref={svgRef} viewBox="0 0 360 360" className="w-full max-w-[360px] touch-none rounded-2xl bg-white shadow-clay"
         onPointerDown={(e) => { if (disabled) return; (e.target as Element).setPointerCapture?.(e.pointerId); setFromEvent(e.clientX, e.clientY); }}
         onPointerMove={(e) => { if (!disabled && e.buttons === 1) setFromEvent(e.clientX, e.clientY); }}>
         {ticks.map((t) => (
@@ -46,12 +48,12 @@ export function GraphView({ question: q, value, onChange, disabled, reveal }: Qu
           );
         })}
         {reveal && <circle cx={ans.cx} cy={ans.cy} r={12} fill="none" stroke="#1f8a57" strokeWidth={3} strokeDasharray="4 3" />}
-        <motion.circle r={9} fill="#ff8a65" stroke="#fff" strokeWidth={3} animate={{ cx, cy }}
-          transition={{ type: 'spring', stiffness: 400, damping: 28 }} style={{ cursor: disabled ? 'default' : 'grab' }} />
+        {answered && <motion.circle r={9} fill={reveal ? (good ? '#3ccf8e' : '#ffb4a2') : '#ff8a65'} stroke="#fff" strokeWidth={3} animate={{ cx, cy }}
+          transition={{ type: 'spring', stiffness: 400, damping: 28 }} style={{ cursor: disabled ? 'default' : 'grab' }} />}
       </svg>
       <div className="rounded-2xl bg-white p-4 shadow-clay">
         <p className="text-sm text-muted">Điểm đang chọn</p>
-        <p className="font-display text-2xl font-extrabold">({p.x}; {p.y})</p>
+        {answered ? <p className="font-display text-2xl font-extrabold">({p.x}; {p.y})</p> : <p className="text-sm font-semibold">Bấm lên lưới để đặt điểm</p>}
         <p className="mt-2 text-xs text-muted">Bấm hoặc kéo trên lưới để di chuyển điểm</p>
       </div>
     </div>

@@ -46,7 +46,7 @@ export function QuestionView({ question: q, index, showMeta = true, ...p }: Prop
         </div>
       )}
       <h2 className="text-xl font-semibold leading-relaxed"><MathText text={q.content} /></h2>
-      {body}
+      <div key={q.id}>{body}</div>
     </div>
   );
 }

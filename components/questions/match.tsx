@@ -30,7 +30,7 @@ export function MatchView({ question: q, value, onChange, disabled, reveal }: Qu
           return (
             <motion.button key={l} type="button" disabled={disabled} whileTap={{ scale: 0.97 }} onClick={() => setActive(i)}
               style={paired && !reveal ? { boxShadow: `inset 6px 0 0 ${PAIR_COLORS[i % PAIR_COLORS.length]}` } : undefined}
-              className={`w-full rounded-2xl bg-white p-4 text-left font-semibold shadow-clay ${active === i ? 'ring-2 ring-coral' : ''} ${ok === true ? 'bg-mint' : ok === false ? 'bg-peach' : ''}`}>
+              className={`w-full rounded-2xl p-4 text-left font-semibold shadow-clay ${active === i ? 'ring-2 ring-coral' : ''} ${ok === true ? 'bg-mint' : ok === false ? 'bg-peach' : 'bg-white'}`}>
               {l}
             </motion.button>
           );
