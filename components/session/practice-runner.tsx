@@ -40,16 +40,14 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
   const started = useRef(false);
 
   const advance = useCallback(() => {
-    if (count >= maxQuestions) { setDone(true); return; }
+    const finish = () => { setDone(true); setOwl('celebrate'); fireConfetti(); };
+    if (count >= maxQuestions) { finish(); return; }
     const n = next();
-    if (!n) { setDone(true); return; }
+    if (!n) { finish(); return; }
     setQ(n); setValue(null); setResult(null); setOutcome(null); setHintsShown(0); setOwl('idle');
   }, [count, maxQuestions, next]);
 
   useEffect(() => { if (!started.current) { started.current = true; advance(); } }, [advance]);
-  useEffect(() => {
-    if (done) { setOwl('celebrate'); fireConfetti(); }
-  }, [done]);
 
   const check = () => {
     if (!q) return;

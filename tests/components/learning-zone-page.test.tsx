@@ -20,6 +20,19 @@ describe('LearningZonePage', () => {
   });
 });
 
+describe('LearningZonePage grade switch', () => {
+  it('cancels the running session when the grade changes, and does not resume it on switching back', async () => {
+    act(() => { useDemo.getState().resetDemo(); useDemo.getState().setGrade(9); useDemo.getState().ensureZone('toan', 9); });
+    render(<LearningZonePage />);
+    await userEvent.click(screen.getByRole('button', { name: 'Luyện ngay' }));
+    expect(screen.getByRole('button', { name: 'Thoát' })).toBeInTheDocument();
+    act(() => useDemo.getState().setGrade(12));
+    act(() => useDemo.getState().setGrade(9));
+    expect(screen.queryByRole('button', { name: 'Thoát' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Luyện ngay' })).toBeInTheDocument();
+  });
+});
+
 describe('LearningZonePage expansion', () => {
   it('unlocks next level on a correct answer: toast, message, ring growth, badge', async () => {
     const { toast } = await import('sonner');

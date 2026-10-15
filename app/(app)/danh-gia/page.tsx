@@ -1,7 +1,7 @@
 'use client';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useDemo, zoneKey } from '@/lib/store/demo-store';
 import { questionsFor, skillName, skillsFor } from '@/lib/bank';
@@ -53,12 +53,21 @@ export default function DanhGiaPage() {
     setState(s); setQ(first); setValue(null); setPhase('running');
   };
 
-  useEffect(() => {
+  // đổi lớp giữa bài → làm lại từ đầu (điều chỉnh state khi render; toast ở effect, chỉ một lần mỗi lần reset)
+  const [seenGrade, setSeenGrade] = useState(grade);
+  const [gradeResets, setGradeResets] = useState(0);
+  if (seenGrade !== grade) {
+    setSeenGrade(grade);
     if (phase === 'running' && runCtx && runCtx.grade !== grade) {
-      setPhase('intro'); setRunCtx(null); setQ(null); setValue(null);
-      toast('Đã đổi lớp — bài đánh giá được làm lại từ đầu');
+      setPhase('intro'); setRunCtx(null); setQ(null); setValue(null); setGradeResets((n) => n + 1);
     }
-  }, [grade, phase, runCtx]);
+  }
+  const toastedResets = useRef(0);
+  useEffect(() => {
+    if (gradeResets <= toastedResets.current) return;
+    toastedResets.current = gradeResets;
+    toast('Đã đổi lớp — bài đánh giá được làm lại từ đầu');
+  }, [gradeResets]);
   const answer = (correct: boolean) => {
     if (!q) return;
     const s = recordAssessmentAnswer(state, q, correct);
@@ -66,13 +75,12 @@ export default function DanhGiaPage() {
     const n = nextAssessmentQuestion(pool, skills, s);
     if (n) { setQ(n); return; }
     const sum = summarizeAssessment(s, skills, ctx);
-    setSummary(sum); setPhase('analyzing');
+    setSummary(sum); setStep(0); setPhase('analyzing');
     saveAssessment(sum).forEach((b) => toast(`${BADGES[b].icon} Huy hiệu mới: ${BADGES[b].name}`));
   };
 
   useEffect(() => {
     if (phase !== 'analyzing') return;
-    setStep(0);
     const t1 = setTimeout(() => setStep(1), 800);
     const t2 = setTimeout(() => setStep(2), 1600);
     const t3 = setTimeout(() => { setPhase('report'); fireConfetti(); }, 2400);

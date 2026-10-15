@@ -1,7 +1,7 @@
 'use client';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useDemo, zoneKey } from '@/lib/store/demo-store';
 import { questionsFor, skillName, skillsFor } from '@/lib/bank';
@@ -38,7 +38,12 @@ export default function LearningZonePage() {
   const hasAssessment = !!assessments[key];
   const running = !!run && run.grade === grade;
   const setRunning = (v: boolean) => setRun(v ? { subject, grade } : null);
-  useEffect(() => { if (run && run.grade !== grade) { setRun(null); setHighlight(undefined); } }, [run, grade]);
+  // đổi lớp → huỷ phiên đang luyện (điều chỉnh state ngay khi render, không qua effect)
+  const [seenGrade, setSeenGrade] = useState(grade);
+  if (seenGrade !== grade) {
+    setSeenGrade(grade);
+    if (run && run.grade !== grade) { setRun(null); setHighlight(undefined); }
+  }
 
   if (!map) {
     return (
