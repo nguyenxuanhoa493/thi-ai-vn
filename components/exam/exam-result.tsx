@@ -18,12 +18,12 @@ export function ExamResultView({ exam, result, questions, onBack, onRetake }: { 
   const [open, setOpen] = useState<string | null>(null);
   useEffect(() => { if (result.score10 >= 8) fireConfetti(); }, [result.score10]);
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-8">
-      <ClayCard className="flex items-center gap-8 p-8">
-        <Owl state={result.score10 >= 5 ? 'celebrate' : 'cheer'} size={140} />
-        <div className="flex-1">
+    <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-8">
+      <ClayCard className="flex flex-col items-center gap-4 p-5 text-center sm:flex-row sm:gap-8 sm:p-8 sm:text-left">
+        <Owl state={result.score10 >= 5 ? 'celebrate' : 'cheer'} size={110} />
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-muted">Kết quả bài thi · {exam.title}</p>
-          <p className="font-display text-7xl font-extrabold text-coral"><CountUp value={result.score10} format={(n) => n.toFixed(2).replace('.', ',')} /></p>
+          <p className="font-display text-5xl font-extrabold text-coral sm:text-7xl"><CountUp value={result.score10} format={(n) => n.toFixed(2).replace('.', ',')} /></p>
           <p className="text-muted">Đúng {result.correct}/{result.total} câu · Thời gian {formatClock(result.durationUsedSec)}
             {result.violations > 0 && <span className="ml-2 font-semibold text-peach-dark">· ⚠️ {result.violations} lần rời màn hình</span>}</p>
         </div>

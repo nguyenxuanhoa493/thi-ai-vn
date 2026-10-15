@@ -128,12 +128,12 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
 
   if (phase === 'lobby' || phase === 'countdown') {
     return (
-      <div className="flex min-h-screen items-center justify-center p-8">
-        <ClayCard className="w-full max-w-2xl space-y-6 p-10">
+      <div className="flex min-h-screen items-center justify-center p-4 sm:p-8">
+        <ClayCard className="w-full max-w-2xl space-y-6 p-5 sm:p-10">
           <AnimatePresence mode="wait">
             {phase === 'countdown' ? (
               <motion.div key={count} initial={{ scale: 2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}
-                className="py-16 text-center font-display text-9xl font-extrabold text-coral">{count || 'Bắt đầu!'}</motion.div>
+                className="py-16 text-center font-display text-7xl font-extrabold text-coral sm:text-9xl">{count || 'Bắt đầu!'}</motion.div>
             ) : (
               <motion.div key="lobby" className="space-y-6">
                 <div className="flex items-center gap-5">
