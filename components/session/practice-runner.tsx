@@ -15,7 +15,7 @@ import { OwlBubble } from '@/components/owl/owl-bubble';
 import { ClayButton } from '@/components/ui/clay-button';
 import { ClayCard } from '@/components/ui/clay-card';
 import { ProgressBar } from '@/components/ui/progress-bar';
-import { Typewriter } from '@/components/ui/typewriter';
+import { StreamText } from '@/components/questions/stream-text';
 import { fireConfetti } from '@/lib/ui/confetti';
 import { useSfx } from '@/lib/ui/use-sfx';
 import { toast } from 'sonner';
@@ -116,8 +116,7 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
               {q.type === 'write' && <div className="mt-3"><WritingFeedback question={q} text={String(value ?? '')} /></div>}
               <p className="mt-3 text-sm font-semibold"><Bot aria-hidden size={16} className="inline-block align-[-3px] text-lavender-dark" /> AI giải thích</p>
               <p className="mt-1 leading-relaxed">
-                {/* lời giải có công thức ($…$) hoặc **đậm** phải qua MathText, không gõ từng ký tự thô */}
-                {/[$*]/.test(q.explanation) ? <motion.span initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="inline-block"><MathText text={q.explanation} /></motion.span> : <Typewriter text={q.explanation} speed={12} />}
+                <StreamText text={q.explanation} />
               </p>
               {outcome?.message && <p className="mt-3 font-semibold text-mint-dark">{outcome.message}</p>}
             </motion.div>

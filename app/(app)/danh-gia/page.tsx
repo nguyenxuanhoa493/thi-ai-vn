@@ -22,7 +22,7 @@ import { ClayButton } from '@/components/ui/clay-button';
 import { ClayCard } from '@/components/ui/clay-card';
 import { CountUp } from '@/components/ui/count-up';
 import { ProgressBar } from '@/components/ui/progress-bar';
-import { Typewriter } from '@/components/ui/typewriter';
+import { StreamText } from '@/components/questions/stream-text';
 import { fireConfetti } from '@/lib/ui/confetti';
 import { playSfx } from '@/lib/ui/sfx';
 
@@ -187,7 +187,7 @@ export default function DanhGiaPage() {
             <Owl state="cheer" size={90} />
             <div>
               <p className="font-bold"><Bot aria-hidden size={18} className="mr-1.5 inline-block align-[-3px] text-lavender-dark" />Nhận xét của AI</p>
-              <p className="mt-2 leading-relaxed"><Typewriter text={aiComment(summary, profile.name, skillName)} /></p>
+              <p className="mt-2 leading-relaxed"><StreamText text={aiComment(summary, profile.name, skillName)} /></p>
             </div>
           </ClayCard>
         </div>

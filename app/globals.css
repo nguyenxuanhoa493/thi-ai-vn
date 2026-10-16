@@ -39,3 +39,10 @@ h1, h2, h3, h4 { font-family: var(--font-display), system-ui, sans-serif; }
     scroll-behavior: auto !important;
   }
 }
+
+/* StreamText: từng từ hiện mờ dần lên, con trỏ nhấp nháy ở cuối */
+@keyframes stream-in { from { opacity: 0; filter: blur(3px); } to { opacity: 1; filter: none; } }
+@keyframes stream-blink { 50% { opacity: 0; } }
+.stream-token { display: inline; animation: stream-in 0.35s ease-out both; }
+.stream-caret { display: inline-block; width: 0.5em; height: 1em; margin-left: 2px; vertical-align: -0.15em; border-radius: 2px; background: var(--color-lavender-dark); animation: stream-blink 0.9s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .stream-token { animation: none; } .stream-caret { display: none; } }

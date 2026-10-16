@@ -64,6 +64,9 @@ describe('ChatWidget', () => {
     open();
     fireEvent.click(screen.getByRole('button', { name: 'Learning Zone là gì?' }));
     await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    // link chỉ hiện khi câu trả lời đã hiện dần xong
+    expect(screen.queryByRole('button', { name: 'Vào Learning Zone →' })).toBeNull();
+    for (let i = 0; i < 80; i++) await act(async () => { await vi.advanceTimersByTimeAsync(100); });
     fireEvent.click(screen.getByRole('button', { name: 'Vào Learning Zone →' }));
     expect(push).toHaveBeenCalledWith('/learning-zone');
   });

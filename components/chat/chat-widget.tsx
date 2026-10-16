@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { X } from 'lucide-react';
+import { StreamText } from '@/components/questions/stream-text';
 import { Owl } from '@/components/owl/owl';
 import { reply as botReply, type BotReply } from '@/lib/chat/bot';
 import { useSfx } from '@/lib/ui/use-sfx';
@@ -28,6 +29,8 @@ export function ChatWidget() {
   const [msgs, setMsgs] = useState<Msg[]>([WELCOME]);
   const [chips, setChips] = useState<string[]>(WELCOME_CHIPS);
   const [typing, setTyping] = useState(false);
+  // id tin nhắn bot đang hiện dần; link và gợi ý chỉ hiện khi đã hiện xong
+  const [streaming, setStreaming] = useState<number | null>(null);
   const [draft, setDraft] = useState('');
   const idRef = useRef(1);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -71,7 +74,9 @@ export function ChatWidget() {
     void pending.then((r) => {
       const wait = Math.max(0, typingMs(r.text) - (Date.now() - started));
       timer.current = setTimeout(() => {
-        setMsgs((m) => [...m, { id: idRef.current++, from: 'bot', text: r.text, link: r.link }]);
+        const id = idRef.current++;
+        setMsgs((m) => [...m, { id, from: 'bot', text: r.text, link: r.link }]);
+        setStreaming(id);
         setChips(r.chips ?? []);
         setTyping(false);
       }, wait);
@@ -109,8 +114,11 @@ export function ChatWidget() {
             {msgs.map((m) => (
               <div key={m.id} className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-sm font-medium ${m.from === 'user' ? 'bg-coral text-white' : 'bg-white shadow-clay'}`}>
-                  <p>{m.text}</p>
-                  {m.link && (
+                  <p>{m.id === streaming
+                    ? <StreamText text={m.text} speed={30} delay={0} onDone={() => setStreaming(null)}
+                      onProgress={() => { const el = listRef.current; if (el) el.scrollTop = el.scrollHeight; }} />
+                    : m.text}</p>
+                  {m.link && m.id !== streaming && (
                     <button type="button" onClick={() => { router.push(m.link!.href); if (window.innerWidth < 640) setOpen(false); }}
                       className="mt-1.5 font-bold text-coral underline-offset-2 hover:underline">{m.link.label}</button>
                   )}
@@ -131,7 +139,7 @@ export function ChatWidget() {
               </div>
             )}
           </div>
-          {chips.length > 0 && !typing && (
+          {chips.length > 0 && !typing && streaming === null && (
             <div className="flex flex-wrap gap-1.5 px-3 pb-2">
               {chips.map((c) => (
                 <button key={c} type="button" onClick={() => send(c)}
