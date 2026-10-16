@@ -70,17 +70,28 @@ describe('QuestionView', () => {
     await userEvent.click(screen.getByRole('button', { name: 'R2' }));
     expect(onChange).toHaveBeenLastCalledWith([1, -1]);
   });
+  it('match: shows the same pair number on both paired items; re-picking unpairs', async () => {
+    const onChange = vi.fn();
+    const q: Question = { ...base, id: 'mt2', type: 'match', content: 'Ghép', left: ['L1', 'L2'], right: ['R1', 'R2'], answer: [1, 0] };
+    render(<QuestionView question={q} value={[1, -1]} onChange={onChange} disabled={false} reveal={false} />);
+    expect(screen.getByRole('button', { name: 'L1' })).toHaveAttribute('data-paired', 'true');
+    expect(screen.getByRole('button', { name: 'R2' })).toHaveAttribute('data-paired', 'true');
+    expect(screen.getByRole('button', { name: 'R1' })).toHaveAttribute('data-paired', 'false');
+    await userEvent.click(screen.getByRole('button', { name: 'L1' }));
+    await userEvent.click(screen.getByRole('button', { name: 'R2' }));
+    expect(onChange).toHaveBeenLastCalledWith([-1, -1]);
+  });
   it('reveal marks correct option', () => {
     const q: Question = { ...base, id: 'm2', type: 'mcq', content: 'Chọn', options: ['A', 'B'], answer: 0 };
     render(<QuestionView question={q} value={1} onChange={() => {}} disabled reveal />);
     expect(screen.getByRole('button', { name: /A/ })).toHaveAttribute('data-result', 'correct');
     expect(screen.getByRole('button', { name: /B/ })).toHaveAttribute('data-result', 'wrong');
   });
-  it('shows level and NXB badge', () => {
+  it('shows level, without NXB badge', () => {
     const q: Question = { ...base, id: 'm3', type: 'mcq', content: 'Chọn', options: ['A', 'B'], answer: 0 };
     render(<QuestionView question={q} value={null} onChange={() => {}} disabled={false} reveal={false} index={3} />);
     expect(screen.getByText('Thông hiểu')).toBeInTheDocument();
-    expect(screen.getByText(/NXB phê duyệt/)).toBeInTheDocument();
+    expect(screen.queryByText(/NXB phê duyệt/)).not.toBeInTheDocument();
     expect(screen.getByText('Câu 3')).toBeInTheDocument();
   });
 });

@@ -2,7 +2,6 @@
 import type { AnswerValue, Question } from '@/lib/bank/types';
 import { skillName } from '@/lib/bank';
 import { LevelPill } from '@/components/ui/level-pill';
-import { NxbBadge } from '@/components/ui/nxb-badge';
 import { MathText } from './math-text';
 import { QuestionImage } from './question-image';
 import { McqView } from './mcq';
@@ -47,7 +46,6 @@ export function QuestionView({ question: q, index, showMeta = true, onChange, ..
           {index !== undefined && <span className="font-display font-extrabold text-coral">Câu {index}</span>}
           <LevelPill level={q.level} />
           <span className="text-muted">{skillName(q.skillId)}</span>
-          <NxbBadge className="ml-auto" />
         </div>
       )}
       <h2 className="text-xl font-semibold leading-relaxed"><MathText text={q.content} /></h2>

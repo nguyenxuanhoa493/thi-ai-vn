@@ -43,6 +43,12 @@ describe('ExamRoom', () => {
     useDemo.getState().setExam(startAttempt(exam, clock - 16 * 60_000));
     render(<ExamRoom exam={exam} now={now} />);
     expect(screen.getByText(/Kết quả bài thi/)).toBeInTheDocument();
+    // phân tích + nhận xét AI hiện ngay; chi tiết bài làm chỉ mở khi bấm
+    expect(screen.getByText('Nhận xét của AI')).toBeInTheDocument();
+    expect(screen.getByText('Theo mức độ nhận thức')).toBeInTheDocument();
+    expect(screen.queryByText('Chi tiết bài làm')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Xem chi tiết bài làm' }));
+    expect(screen.getByText('Chi tiết bài làm')).toBeInTheDocument();
     expect(useDemo.getState().examResults[exam.id]).toBeDefined();
     expect(useDemo.getState().exam).toBeNull();
   });

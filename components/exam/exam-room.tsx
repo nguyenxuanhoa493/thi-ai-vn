@@ -1,6 +1,6 @@
 'use client';
 import { AnimatePresence, motion } from 'motion/react';
-import { Check, Pin, Star, TriangleAlert } from 'lucide-react';
+import { Check, Clock, Pin, Star, TriangleAlert } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -188,11 +188,6 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
       <header className="sticky top-0 z-30 flex items-center gap-6 border-b border-white/60 bg-cream/90 px-8 py-3 backdrop-blur">
         <p className="flex-1 font-display font-bold">{exam.title}</p>
         {a.violations > 0 && <span className="rounded-xl bg-peach px-3 py-1 text-sm font-semibold text-peach-dark"><TriangleAlert aria-hidden size={14} className="mr-1 inline-block align-[-2px]" />{a.violations}</span>}
-        <motion.span animate={left <= 60 ? { scale: [1, 1.08, 1] } : { scale: 1 }} transition={{ repeat: left <= 60 ? Infinity : 0, duration: 1 }}
-          className={`rounded-2xl px-5 py-2 font-display text-2xl font-extrabold tabular-nums shadow-clay ${urgent ? 'bg-peach text-peach-dark' : 'bg-white'}`}>
-          {formatClock(left)}
-        </motion.span>
-        <ClayButton onClick={() => setConfirming(true)}>Nộp bài</ClayButton>
       </header>
 
       <div className="mx-auto grid max-w-7xl gap-6 p-8 lg:grid-cols-[1fr_280px]">
@@ -210,7 +205,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
             <ClayButton variant="ghost" disabled={current === questions.length - 1} onClick={() => setCurrent((c) => c + 1)}>Câu sau →</ClayButton>
           </div>
         </div>
-        <ClayCard className="h-fit space-y-4">
+        <ClayCard className="h-fit space-y-4 lg:sticky lg:top-20">
           <p className="font-bold">Danh sách câu hỏi</p>
           <div className="grid grid-cols-5 gap-2">
             {exam.questionIds.map((id, i) => (
@@ -225,6 +220,17 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
             <p><span className="mr-2 inline-block h-3 w-3 rounded bg-lavender" />Đã làm</p>
             <p><span className="mr-2 inline-block h-3 w-3 rounded bg-sun" />Đánh dấu xem lại</p>
             <p><span className="mr-2 inline-block h-3 w-3 rounded bg-lavender-soft" />Chưa làm</p>
+          </div>
+          <div className="space-y-3 border-t border-lavender-soft pt-4">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1.5 text-sm font-semibold text-muted"><Clock aria-hidden size={16} />Thời gian còn lại</span>
+              <span className="text-xs text-muted">{exam.questionIds.length - unanswered}/{exam.questionIds.length} câu</span>
+            </div>
+            <motion.p animate={left <= 60 ? { scale: [1, 1.06, 1] } : { scale: 1 }} transition={{ repeat: left <= 60 ? Infinity : 0, duration: 1 }}
+              className={`rounded-2xl py-3 text-center font-display text-3xl font-extrabold tabular-nums shadow-clay ${urgent ? 'bg-peach text-peach-dark' : 'bg-white'}`}>
+              {formatClock(left)}
+            </motion.p>
+            <ClayButton className="w-full" onClick={() => setConfirming(true)}>Nộp bài</ClayButton>
           </div>
           <p className="text-xs text-mint-dark"><Check aria-hidden size={14} strokeWidth={3} className="mr-1 inline-block align-[-2px]" />Bài làm được tự động lưu</p>
         </ClayCard>

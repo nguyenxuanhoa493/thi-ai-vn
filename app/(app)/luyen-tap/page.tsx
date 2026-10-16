@@ -11,7 +11,6 @@ import { getQuestion } from '@/lib/bank';
 import { LEVELS } from '@/lib/bank/types';
 import { ClayCard } from '@/components/ui/clay-card';
 import { TiltCard } from '@/components/ui/tilt-card';
-import { NxbBadge } from '@/components/ui/nxb-badge';
 import { CountUp } from '@/components/ui/count-up';
 
 export default function LuyenTapPage() {
@@ -29,7 +28,7 @@ export default function LuyenTapPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold">Ngân hàng đề</h1>
-          <p className="mt-1 text-muted"><b className="text-ink"><CountUp value={BANK_TOTAL} /></b> câu hỏi · Chuẩn chương trình GDPT 2018 · <NxbBadge /></p>
+          <p className="mt-1 text-muted"><b className="text-ink"><CountUp value={BANK_TOTAL} /></b> câu hỏi · Chuẩn chương trình GDPT 2018</p>
         </div>
         <div className="flex rounded-2xl bg-white p-1 shadow-clay">
           {(['toan', 'anh'] as Subject[]).map((s) => (
@@ -82,7 +81,7 @@ export default function LuyenTapPage() {
                 <div className="flex flex-wrap gap-1">
                   {LEVELS.filter((lv) => s.questionIds.some((id) => getQuestion(id)?.level === lv)).map((lv) => <LevelPill key={lv} level={lv} />)}
                 </div>
-                <div className="flex items-center justify-between text-sm"><NxbBadge /><span className="font-bold text-coral">Luyện ngay →</span></div>
+                <div className="flex justify-end text-sm"><span className="font-bold text-coral">Luyện ngay →</span></div>
               </TiltCard>
             </motion.div>
           ))}
