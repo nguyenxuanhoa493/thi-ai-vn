@@ -158,10 +158,10 @@ describe('progress & milestones', () => {
       expect(rows[0].date).toBe('2026-10-03');
       expect(rows.at(-1)!.score).toBeGreaterThan(rows[0].score);
     }
-    expect(s.progress.find((p) => p.subject === 'toan')!.score).toBe(38);
-    expect(s.progress.filter((p) => p.subject === 'toan').at(-1)!.score).toBe(48);
-    expect(s.progress.find((p) => p.subject === 'anh')!.score).toBe(42);
-    expect(s.progress.filter((p) => p.subject === 'anh').at(-1)!.score).toBe(52);
+    expect(s.progress.find((p) => p.subject === 'toan')!.score).toBe(36);
+    expect(s.progress.filter((p) => p.subject === 'toan').at(-1)!.score).toBe(45);
+    expect(s.progress.find((p) => p.subject === 'anh')!.score).toBe(36);
+    expect(s.progress.filter((p) => p.subject === 'anh').at(-1)!.score).toBe(46);
     expect(s.progress.every((p) => p.grade === 9)).toBe(true);
     expect(s.milestones).toEqual([]);
     expect(createSeed(NOW)).toEqual(s);

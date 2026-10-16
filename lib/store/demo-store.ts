@@ -59,7 +59,7 @@ export function createSeed(now: Date = new Date()): DemoData {
       const base = from + ((to - from) * i) / 12;
       return { date: day(13 - i), subject, grade: 9 as Grade, score: Math.round(base + (edge ? 0 : NOISE[(i + shift) % 13])) };
     });
-  const progress = [...series('toan', 38, 48, 0), ...series('anh', 42, 52, 4)];
+  const progress = [...series('toan', 36, 45, 0), ...series('anh', 36, 46, 4)];
   // không seed mốc 'assessment': radar nói "AI chưa có dữ liệu" trước lần đánh giá thật đầu tiên
   const milestones: Milestone[] = [];
   return {
