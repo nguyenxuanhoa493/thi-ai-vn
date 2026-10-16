@@ -1,19 +1,20 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
+import { AudioLines, CircleDot, FileText, Link2, Mic, PencilLine, Puzzle, ListChecks, ListOrdered, SquareCheckBig, TrendingUp } from 'lucide-react';
 
 const TYPES = [
-  { icon: '🔘', name: 'Trắc nghiệm', ex: 'Chọn 1 đáp án đúng trong A–D.' },
-  { icon: '☑️', name: 'Nhiều đáp án', ex: 'Chọn tất cả các đáp án đúng.' },
-  { icon: '✅', name: 'Đúng/Sai 4 ý', ex: 'Xét đúng sai từng ý a, b, c, d.' },
-  { icon: '✍️', name: 'Trả lời ngắn', ex: 'Nhập kết quả, ví dụ x = 3.' },
-  { icon: '🔀', name: 'Sắp xếp', ex: 'Xếp các bước giải theo thứ tự.' },
-  { icon: '🔗', name: 'Nối cặp', ex: 'Nối từ vựng với nghĩa phù hợp.' },
-  { icon: '🧩', name: 'Điền chỗ trống', ex: 'Kéo từ vào chỗ trống trong câu.' },
-  { icon: '📈', name: 'Đồ thị', ex: 'Chọn giao điểm hai đường thẳng.' },
-  { icon: '🎧', name: 'Nghe', ex: 'Nghe đoạn audio rồi trả lời.' },
-  { icon: '🎤', name: 'Nói', ex: 'Đọc to câu mẫu và nhận xét.' },
-  { icon: '📝', name: 'Viết', ex: 'Viết đoạn văn ngắn theo gợi ý.' },
+  { icon: CircleDot, tint: 'bg-lavender-soft text-lavender-dark', name: 'Trắc nghiệm', ex: 'Chọn 1 đáp án đúng trong A–D.' },
+  { icon: ListChecks, tint: 'bg-mint text-mint-dark', name: 'Nhiều đáp án', ex: 'Chọn tất cả các đáp án đúng.' },
+  { icon: SquareCheckBig, tint: 'bg-peach text-peach-dark', name: 'Đúng/Sai 4 ý', ex: 'Xét đúng sai từng ý a, b, c, d.' },
+  { icon: PencilLine, Puzzle, tint: 'bg-lavender-soft text-lavender-dark', name: 'Trả lời ngắn', ex: 'Nhập kết quả, ví dụ x = 3.' },
+  { icon: ListOrdered, tint: 'bg-mint text-mint-dark', name: 'Sắp xếp', ex: 'Xếp các bước giải theo thứ tự.' },
+  { icon: Link2, tint: 'bg-peach text-peach-dark', name: 'Nối cặp', ex: 'Nối từ vựng với nghĩa phù hợp.' },
+  { icon: Puzzle, tint: 'bg-lavender-soft text-lavender-dark', name: 'Điền chỗ trống', ex: 'Kéo từ vào chỗ trống trong câu.' },
+  { icon: TrendingUp, tint: 'bg-mint text-mint-dark', name: 'Đồ thị', ex: 'Chọn giao điểm hai đường thẳng.' },
+  { icon: AudioLines, tint: 'bg-peach text-peach-dark', name: 'Nghe', ex: 'Nghe đoạn audio rồi trả lời.' },
+  { icon: Mic, tint: 'bg-lavender-soft text-lavender-dark', name: 'Nói', ex: 'Đọc to câu mẫu và nhận xét.' },
+  { icon: FileText, tint: 'bg-mint text-mint-dark', name: 'Viết', ex: 'Viết đoạn văn ngắn theo gợi ý.' },
 ];
 
 export function QuestionTypes() {
@@ -53,7 +54,7 @@ export function QuestionTypes() {
         className={`mx-auto mt-10 flex max-w-7xl ${auto ? '' : 'snap-x snap-mandatory'} gap-4 overflow-x-auto px-4 pb-6 sm:px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}>
         {list.map((t, i) => (
           <div key={`${t.name}-${i}`} aria-hidden={i >= TYPES.length || undefined} className="w-56 shrink-0 snap-start rounded-3xl bg-white p-5 shadow-clay">
-            <p className="text-4xl">{t.icon}</p>
+            <span aria-hidden className={`grid h-12 w-12 place-items-center rounded-2xl ${t.tint}`}><t.icon size={24} strokeWidth={2.25} /></span>
             <h3 className="mt-3 font-display text-lg font-extrabold">{t.name}</h3>
             <p className="mt-1 text-sm text-muted">{t.ex}</p>
           </div>

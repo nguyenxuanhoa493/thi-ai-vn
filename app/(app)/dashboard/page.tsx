@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'motion/react';
+import { CalendarDays, Check, ChevronRight, Flame, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useDemo, zoneKey } from '@/lib/store/demo-store';
@@ -84,7 +85,7 @@ export default function DashboardPage() {
         <ClayCard className="flex h-full flex-col items-center gap-4 sm:flex-row sm:gap-6 bg-gradient-to-br from-white to-lavender-soft">
           <Owl state="cheer" size={130} />
           <div className="space-y-3">
-            <h1 className="text-3xl font-extrabold">Chào {profile.name}! 👋</h1>
+            <h1 className="text-3xl font-extrabold">Chào {profile.name}!</h1>
             <OwlBubble text={assessment ? 'Hôm nay luyện 15 phút trong Learning Zone nhé!' : 'Làm bài đánh giá để Bé Cú hiểu em hơn nhé!'} />
             <ClayButton onClick={() => router.push(assessment ? '/learning-zone' : '/danh-gia')}>{assessment ? 'Vào Learning Zone' : 'Làm bài đánh giá'}</ClayButton>
           </div>
@@ -93,14 +94,14 @@ export default function DashboardPage() {
       <motion.div variants={item} className="col-span-6 lg:col-span-3">
         <ClayCard className="flex h-full flex-col justify-between bg-gradient-to-br from-[#fff1e6] to-white">
           <p className="font-semibold text-muted">Chuỗi ngày học</p>
-          <p className="font-display text-5xl font-extrabold text-coral sm:text-6xl"><motion.span animate={{ scale: [1, 1.15, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="inline-block">🔥</motion.span><CountUp value={streak.count} /></p>
+          <p className="font-display text-5xl font-extrabold text-coral sm:text-6xl"><motion.span animate={{ scale: [1, 1.15, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="mr-1 inline-block"><Flame aria-hidden className="size-[0.85em]" strokeWidth={2.25} /></motion.span><CountUp value={streak.count} /></p>
           <p className="text-sm text-muted">Giữ lửa mỗi ngày nhé!</p>
         </ClayCard>
       </motion.div>
       <motion.div variants={item} className="col-span-6 lg:col-span-3">
         <ClayCard className="flex h-full flex-col justify-between">
           <p className="font-semibold text-muted">Điểm kinh nghiệm</p>
-          <p className="font-display text-3xl font-extrabold text-lavender-dark sm:text-5xl">⭐ <CountUp value={xp} /></p>
+          <p className="font-display text-3xl font-extrabold text-lavender-dark sm:text-5xl"><Star aria-hidden className="mr-1 inline-block size-[0.8em] align-[-0.08em]" strokeWidth={2.25} /> <CountUp value={xp} /></p>
           <p className="text-sm text-muted">Hôm nay: {answeredToday} câu</p>
         </ClayCard>
       </motion.div>
@@ -163,16 +164,16 @@ export default function DashboardPage() {
           <p className="font-bold">Nhiệm vụ hôm nay</p>
           {tasks.map((t) => (
             <button key={t.label} type="button" onClick={() => router.push(t.href)} className="flex w-full items-center gap-3 rounded-xl bg-cream px-4 py-3 text-left hover:bg-lavender-soft">
-              <span className={`grid h-7 w-7 place-items-center rounded-full ${t.done ? 'bg-mint-dark text-white' : 'border-2 border-lavender'}`}>{t.done ? '✓' : ''}</span>
+              <span className={`grid h-7 w-7 place-items-center rounded-full ${t.done ? 'bg-mint-dark text-white' : 'border-2 border-lavender'}`}>{t.done ? <Check aria-hidden size={16} strokeWidth={3} /> : null}</span>
               <span className={`flex-1 font-medium ${t.done ? 'text-muted line-through' : ''}`}>{t.label}</span>
-              <span className="text-coral">→</span>
+              <ChevronRight aria-hidden size={20} className="text-coral" />
             </button>
           ))}
         </ClayCard>
       </motion.div>
       <motion.div variants={item} className="col-span-12 lg:col-span-6">
         <ClayCard className="h-full space-y-3">
-          <p className="font-bold">📅 Lịch thi sắp tới</p>
+          <p className="font-bold"><CalendarDays aria-hidden size={18} className="mr-1.5 inline-block align-[-3px] text-lavender-dark" />Lịch thi sắp tới</p>
           {exams.length === 0 && <p className="text-sm text-muted">Không có bài thi nào đang chờ.</p>}
           {exams.map((e) => (
             <button key={e.id} type="button" onClick={() => router.push(`/phong-thi/${e.id}`)} className="flex w-full items-center gap-3 rounded-xl bg-cream px-4 py-3 text-left hover:bg-lavender-soft">
@@ -205,10 +206,11 @@ export default function DashboardPage() {
           <div className="mt-3 grid grid-cols-4 gap-3">
             {(Object.keys(BADGES) as BadgeId[]).map((b) => {
               const has = badges.includes(b);
+              const Icon = BADGES[b].icon;
               return (
                 <motion.div key={b} whileHover={{ scale: 1.1, rotate: -4 }} title={BADGES[b].name}
-                  className={`grid aspect-square place-items-center rounded-2xl text-3xl ${has ? 'bg-[#fff1d6] shadow-clay' : 'bg-lavender-soft opacity-40 grayscale'}`}>
-                  {BADGES[b].icon}
+                  className={`grid aspect-square place-items-center rounded-2xl ${has ? 'bg-[#fff1d6] shadow-clay' : 'bg-lavender-soft opacity-40 grayscale'}`}>
+                  <Icon aria-hidden size={28} strokeWidth={2.25} className="text-coral-dark" />
                 </motion.div>
               );
             })}

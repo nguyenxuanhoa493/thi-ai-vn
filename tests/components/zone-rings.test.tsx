@@ -30,7 +30,8 @@ describe('ZoneRings wording', () => {
     expect(container.textContent).toContain('ĐÃ VỮNG');
     expect(container.textContent).not.toMatch(/QUÁ SỨC|Quá sức|Chưa tới/);
     expect(screen.getByTestId('dot-B')).toHaveAttribute('fill', '#b39dff');
-    expect(screen.getByText(/🔒 Skill B/)).toBeInTheDocument();
+    expect(screen.getByText('Skill B')).toBeInTheDocument();
+    expect(container.querySelector('svg.lucide-lock')).toBeInTheDocument();
   });
   it('mini rings show the VỪA SỨC label', () => {
     const { container } = render(<ZoneRings skills={skills} map={{ A: { theta: 0, unlockedLevel: 'TH' } }} />);

@@ -1,10 +1,11 @@
 'use client';
 import { motion } from 'motion/react';
+import { Bot, Sprout, Trophy } from 'lucide-react';
 
 const STEPS = [
-  { icon: '🤖', title: 'Đánh giá AI', desc: '12 câu thích ứng để Bé Cú hiểu năng lực của em.', bg: 'bg-peach' },
-  { icon: '🌱', title: 'Learning Zone', desc: 'Luyện đúng vùng vừa sức, vùng tự mở rộng khi em vững.', bg: 'bg-mint' },
-  { icon: '🏆', title: 'Thi & theo dõi tiến bộ', desc: 'Làm đề thật, xem báo cáo năng lực tăng mỗi tuần.', bg: 'bg-lavender-soft' },
+  { icon: Bot, title: 'Đánh giá AI', desc: '12 câu thích ứng để Bé Cú hiểu năng lực của em.', bg: 'bg-peach' },
+  { icon: Sprout, title: 'Learning Zone', desc: 'Luyện đúng vùng vừa sức, vùng tự mở rộng khi em vững.', bg: 'bg-mint' },
+  { icon: Trophy, title: 'Thi & theo dõi tiến bộ', desc: 'Làm đề thật, xem báo cáo năng lực tăng mỗi tuần.', bg: 'bg-lavender-soft' },
 ];
 
 export function HowItWorks() {
@@ -21,8 +22,8 @@ export function HowItWorks() {
           {STEPS.map((s, i) => (
             <motion.li key={s.title} className="relative flex flex-col items-center text-center"
               initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ delay: i * 0.25 }}>
-              <div className={`relative grid h-20 w-20 place-items-center rounded-3xl text-4xl shadow-clay ${s.bg}`}>
-                {s.icon}
+              <div className={`relative grid h-20 w-20 place-items-center rounded-3xl shadow-clay ${s.bg}`}>
+                <s.icon aria-hidden size={36} strokeWidth={2.25} className="text-ink" />
                 <span className="absolute -right-2 -top-2 grid h-7 w-7 place-items-center rounded-full bg-coral font-display text-sm font-extrabold text-white">{i + 1}</span>
               </div>
               <h3 className="mt-5 text-xl font-extrabold">{s.title}</h3>

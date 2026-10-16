@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'motion/react';
+import { Check, Lock, Sprout, Star, Telescope } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -20,8 +21,8 @@ const SESSION = 10;
 
 function eventText(e: ZoneEvent) {
   return e.type === 'level'
-    ? `🌱 Vùng của em vừa mở rộng: ${skillName(e.skillId)} · ${LEVEL_LABEL[e.level]}`
-    : `🔓 Mở khoá kiến thức mới: ${skillName(e.skillId)}`;
+    ? `Vùng của em vừa mở rộng: ${skillName(e.skillId)} · ${LEVEL_LABEL[e.level]}`
+    : `Mở khoá kiến thức mới: ${skillName(e.skillId)}`;
 }
 
 export default function LearningZonePage() {
@@ -128,13 +129,13 @@ export default function LearningZonePage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
         <ClayCard className="flex flex-col items-center gap-4 p-8">
           <p className="rounded-full bg-mint px-4 py-1.5 text-center text-sm font-bold text-mint-dark">
-            {growth > 0 ? `🌱 Vùng vừa sức của em đã rộng thêm +${growth}% so với lần đầu` : 'Luyện thêm để vùng vừa sức của em rộng ra nhé!'}
+            {growth > 0 ? `Vùng vừa sức của em đã rộng thêm +${growth}% so với lần đầu` : 'Luyện thêm để vùng vừa sức của em rộng ra nhé!'}
           </p>
           <ZoneRings skills={skills} map={map} size={520} showLabels />
           <ul className="space-y-1.5 text-sm text-muted">
-            <li className="flex items-start gap-2"><i className="mt-1 h-3 w-3 shrink-0 rounded-full bg-[#8b95e0]" /> <span>⭐ Đã vững: không cần luyện thêm</span></li>
-            <li className="flex items-start gap-2"><i className="mt-1 h-3 w-3 shrink-0 rounded-full bg-[#22c55e]" /> <span>🌱 Vừa sức: câu hỏi em làm đúng khoảng 3/4 — luyện ở đây tiến bộ nhanh nhất</span></li>
-            <li className="flex items-start gap-2"><i className="mt-1 h-3 w-3 shrink-0 rounded-full bg-[#b39dff]" /> <span>🔭 Sắp khám phá: sẽ mở khi em vững phần trước</span></li>
+            <li className="flex items-start gap-2"><i className="mt-1 h-3 w-3 shrink-0 rounded-full bg-[#8b95e0]" /> <span><Star aria-hidden size={16} className="inline-block align-[-2px] text-lavender-dark" /> Đã vững: không cần luyện thêm</span></li>
+            <li className="flex items-start gap-2"><i className="mt-1 h-3 w-3 shrink-0 rounded-full bg-[#22c55e]" /> <span><Sprout aria-hidden size={16} className="inline-block align-[-2px] text-mint-dark" /> Vừa sức: câu hỏi em làm đúng khoảng 3/4 — luyện ở đây tiến bộ nhanh nhất</span></li>
+            <li className="flex items-start gap-2"><i className="mt-1 h-3 w-3 shrink-0 rounded-full bg-[#b39dff]" /> <span><Telescope aria-hidden size={16} className="inline-block align-[-2px] text-lavender-dark" /> Sắp khám phá: sẽ mở khi em vững phần trước</span></li>
           </ul>
         </ClayCard>
 
@@ -153,7 +154,7 @@ export default function LearningZonePage() {
               const sp = map[s.id];
               const { zone } = skillZone(sp);
               const pFrontier = prob(sp.theta, LEVEL_B[sp.unlockedLevel]);
-              const status = zone === 'mastered' ? '✓ Đã vững'
+              const status = zone === 'mastered' ? <><Check aria-hidden size={14} className="inline-block mr-0.5 align-[-2px]" /> Đã vững</>
                 : pFrontier < 0.5 ? 'Đang củng cố'
                 : pFrontier < 0.85 ? `~${Math.round(pFrontier * 100)}% đúng ở mức ${LEVEL_LABEL[sp.unlockedLevel]}`
                 : 'Sẵn sàng lên mức mới';
@@ -174,9 +175,9 @@ export default function LearningZonePage() {
             })}
             {locked.length > 0 && (
               <>
-                <p className="pt-2 font-bold">🔭 Sắp khám phá</p>
+                <p className="pt-2 font-bold"><Telescope aria-hidden size={16} className="inline-block align-[-2px] text-lavender-dark" /> Sắp khám phá</p>
                 {locked.map((s) => (
-                  <p key={s.id} className="text-sm text-muted">🔒 {s.name} <span className="text-xs">· cần vững: {s.prerequisites.map(skillName).join(', ')}</span></p>
+                  <p key={s.id} className="text-sm text-muted"><Lock aria-hidden size={14} className="inline-block align-[-2px]" /> {s.name} <span className="text-xs">· cần vững: {s.prerequisites.map(skillName).join(', ')}</span></p>
                 ))}
               </>
             )}

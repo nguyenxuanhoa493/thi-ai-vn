@@ -25,6 +25,6 @@ describe('landing sound preference', () => {
     await act(async () => { render(<Providers><LandingNav /></Providers>); });
     fireEvent.click(await screen.findByRole('button', { name: 'Tắt âm thanh' }));
     expect(useDemo.getState().soundOn).toBe(false);
-    expect(screen.getByRole('button', { name: 'Bật âm thanh' })).toHaveTextContent('🔇');
+    expect(screen.getByRole('button', { name: 'Bật âm thanh' })).toContainElement(document.querySelector('svg.lucide-volume-x') as HTMLElement);
   });
 });

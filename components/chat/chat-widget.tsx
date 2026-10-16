@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
+import { X } from 'lucide-react';
 import { Owl } from '@/components/owl/owl';
 import { reply as botReply, type BotReply } from '@/lib/chat/bot';
 import { useSfx } from '@/lib/ui/use-sfx';
@@ -10,7 +11,7 @@ interface Msg { id: number; from: 'bot' | 'user'; text: string; link?: BotReply[
 
 const SEEN_KEY = 'thiai-chat-seen';
 const WELCOME_CHIPS = ['Learning Zone là gì?', 'Phòng thi hoạt động sao?', 'Bắt đầu từ đâu?', 'Giá bao nhiêu?'];
-const WELCOME: Msg = { id: 0, from: 'bot', text: 'Chào em, Bé Cú đây 🦉 Em cần Bé Cú giúp gì về thi.ai.vn?' };
+const WELCOME: Msg = { id: 0, from: 'bot', text: 'Chào em, Bé Cú đây. Em cần Bé Cú giúp gì về thi.ai.vn?' };
 
 const typingMs = (text: string) => Math.min(900, 500 + text.length * 4);
 
@@ -102,7 +103,7 @@ export function ChatWidget() {
               <p className="truncate text-xs opacity-90">Trợ lý thi.ai.vn</p>
             </div>
             <button type="button" aria-label="Đóng trò chuyện" onClick={toggle}
-              className="grid h-9 w-9 place-items-center rounded-full bg-white/20 text-lg hover:bg-white/30">✕</button>
+              className="grid h-9 w-9 place-items-center rounded-full bg-white/20 hover:bg-white/30"><X aria-hidden size={18} /></button>
           </header>
           <div ref={listRef} role="log" aria-live="polite" aria-label="Tin nhắn" className="flex-1 space-y-2.5 overflow-y-auto px-3 py-3">
             {msgs.map((m) => (

@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'motion/react';
+import { Check } from 'lucide-react';
 import type { MultiQuestion } from '@/lib/bank/types';
 import { MathText } from './math-text';
 import { resultClass, type QuestionProps } from './types';
@@ -18,7 +19,7 @@ export function MultiView({ question: q, value, onChange, disabled, reveal }: Qu
             onClick={() => onChange(on ? sel.filter((x) => x !== i) : [...sel, i])}
             className={`flex w-full items-center gap-3 rounded-2xl ${result ? '' : 'bg-white'} p-4 text-left shadow-clay ${on && !reveal ? 'ring-2 ring-lavender' : ''} ${resultClass(result)}`}>
             <motion.span animate={{ scale: on ? [1, 1.25, 1] : 1 }}
-              className={`grid h-7 w-7 place-items-center rounded-lg border-2 ${on ? 'border-lavender bg-lavender text-white' : 'border-lavender-soft'}`}>{on ? '✓' : ''}</motion.span>
+              className={`grid h-7 w-7 place-items-center rounded-lg border-2 ${on ? 'border-lavender bg-lavender text-white' : 'border-lavender-soft'}`}>{on ? <Check aria-hidden size={16} strokeWidth={3} /> : null}</motion.span>
             <MathText text={opt} />
           </motion.button>
         );

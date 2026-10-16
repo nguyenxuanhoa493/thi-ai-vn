@@ -1,5 +1,6 @@
 'use client';
 import { AnimatePresence, motion } from 'motion/react';
+import { Bot, Check, Dumbbell, Target } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -77,7 +78,7 @@ export default function DanhGiaPage() {
     if (n) { setQ(n); return; }
     const sum = summarizeAssessment(s, skills, ctx);
     setSummary(sum); setStep(0); setPhase('analyzing');
-    saveAssessment(sum).forEach((b) => toast(`${BADGES[b].icon} Huy hiệu mới: ${BADGES[b].name}`));
+    saveAssessment(sum).forEach((b) => toast(`Huy hiệu mới: ${BADGES[b].name}`));
   };
 
   useEffect(() => {
@@ -92,7 +93,7 @@ export default function DanhGiaPage() {
     return (
       <div className="grid items-center gap-10 lg:grid-cols-2">
         <div className="space-y-5">
-          <span className="rounded-full bg-lavender-soft px-3 py-1 text-sm font-bold text-lavender-dark">🤖 AI đánh giá năng lực</span>
+          <span className="rounded-full bg-lavender-soft px-3 py-1 text-sm font-bold text-lavender-dark"><Bot aria-hidden size={16} className="mr-1.5 inline-block align-[-3px]" />AI đánh giá năng lực</span>
           <h1 className="text-4xl font-extrabold leading-tight">Chỉ {ASSESSMENT_LENGTH} câu, AI hiểu em đang ở đâu</h1>
           <p className="text-lg text-muted">Câu hỏi tự điều chỉnh độ khó theo từng câu trả lời. Kết quả là bản đồ năng lực theo từng kiến thức và Learning Zone dành riêng cho em.</p>
           <div className="flex rounded-2xl bg-white p-1 shadow-clay w-fit">
@@ -153,7 +154,7 @@ export default function DanhGiaPage() {
           {STEPS.map((s, i) => (
             <motion.li key={s} initial={{ opacity: 0.3 }} animate={{ opacity: i <= step ? 1 : 0.3 }} className="flex items-center gap-3">
               <motion.span animate={{ scale: i < step ? 1 : [1, 1.2, 1] }} transition={{ repeat: i === step ? Infinity : 0, duration: 0.8 }}
-                className={`grid h-7 w-7 place-items-center rounded-full text-sm ${i < step ? 'bg-mint-dark text-white' : 'bg-lavender-soft'}`}>{i < step ? '✓' : '•'}</motion.span>
+                className={`grid h-7 w-7 place-items-center rounded-full text-sm ${i < step ? 'bg-mint-dark text-white' : 'bg-lavender-soft'}`}>{i < step ? <Check aria-hidden size={16} strokeWidth={3} /> : '•'}</motion.span>
               {s}
             </motion.li>
           ))}
@@ -177,15 +178,15 @@ export default function DanhGiaPage() {
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           <ClayCard className="space-y-3">
-            <p className="font-bold">💪 Điểm mạnh</p>
+            <p className="font-bold"><Dumbbell aria-hidden size={18} className="mr-1.5 inline-block align-[-3px] text-mint-dark" />Điểm mạnh</p>
             <div className="flex flex-wrap gap-2">{summary.strengths.map((s) => <span key={s} className="rounded-xl bg-mint px-3 py-1.5 font-semibold text-mint-dark">{skillName(s)}</span>)}</div>
-            <p className="pt-2 font-bold">🎯 Cần tập trung</p>
+            <p className="pt-2 font-bold"><Target aria-hidden size={18} className="mr-1.5 inline-block align-[-3px] text-peach-dark" />Cần tập trung</p>
             <div className="flex flex-wrap gap-2">{summary.weaknesses.map((s) => <span key={s} className="rounded-xl bg-peach px-3 py-1.5 font-semibold text-peach-dark">{skillName(s)}</span>)}</div>
           </ClayCard>
           <ClayCard className="flex gap-4">
             <Owl state="cheer" size={90} />
             <div>
-              <p className="font-bold">🤖 Nhận xét của AI</p>
+              <p className="font-bold"><Bot aria-hidden size={18} className="mr-1.5 inline-block align-[-3px] text-lavender-dark" />Nhận xét của AI</p>
               <p className="mt-2 leading-relaxed"><Typewriter text={aiComment(summary, profile.name, skillName)} /></p>
             </div>
           </ClayCard>

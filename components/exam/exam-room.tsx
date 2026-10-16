@@ -1,5 +1,6 @@
 'use client';
 import { AnimatePresence, motion } from 'motion/react';
+import { Check, Pin, Star, TriangleAlert } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -32,7 +33,7 @@ function leaveFullscreen() {
   if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
 }
 function toastBadges(ids: string[]) {
-  ids.forEach((b) => { const d = BADGES[b as keyof typeof BADGES]; if (d) toast(`${d.icon} Huy hiệu mới: ${d.name}`); });
+  ids.forEach((b) => { const d = BADGES[b as keyof typeof BADGES]; if (d) toast(`Huy hiệu mới: ${d.name}`); });
 }
 
 export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => number }) {
@@ -93,7 +94,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
       // tick mỗi giây (không phải mỗi 500ms) trong 60 giây cuối
       if (r <= 60 && r > 0 && r !== lastTick) { lastTick = r; playSfx('tick'); }
       setLeft(r);
-      if (r === 0) { const res = submit(); if (res) { setResult(res); setPhase('result'); leaveFullscreen(); toast('⏰ Hết giờ, bài đã được tự động nộp'); } }
+      if (r === 0) { const res = submit(); if (res) { setResult(res); setPhase('result'); leaveFullscreen(); toast('Hết giờ, bài đã được tự động nộp'); } }
     }, 500);
     return () => clearInterval(id);
   }, [phase, now, submit]);
@@ -145,7 +146,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
                   </div>
                 </div>
                 <ul className="space-y-2">
-                  {RULES.map((r) => <li key={r} className="flex gap-3 rounded-xl bg-cream px-4 py-2.5 text-sm">📌 {r}</li>)}
+                  {RULES.map((r) => <li key={r} className="flex gap-3 rounded-xl bg-cream px-4 py-2.5 text-sm"><Pin aria-hidden size={16} className="mt-0.5 shrink-0 text-coral" />{r}</li>)}
                 </ul>
                 {other && otherExam && otherLive && (
                   <div className="space-y-3 rounded-xl bg-peach px-4 py-3 text-sm text-peach-dark">
@@ -186,7 +187,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 flex items-center gap-6 border-b border-white/60 bg-cream/90 px-8 py-3 backdrop-blur">
         <p className="flex-1 font-display font-bold">{exam.title}</p>
-        {a.violations > 0 && <span className="rounded-xl bg-peach px-3 py-1 text-sm font-semibold text-peach-dark">⚠️ {a.violations}</span>}
+        {a.violations > 0 && <span className="rounded-xl bg-peach px-3 py-1 text-sm font-semibold text-peach-dark"><TriangleAlert aria-hidden size={14} className="mr-1 inline-block align-[-2px]" />{a.violations}</span>}
         <motion.span animate={left <= 60 ? { scale: [1, 1.08, 1] } : { scale: 1 }} transition={{ repeat: left <= 60 ? Infinity : 0, duration: 1 }}
           className={`rounded-2xl px-5 py-2 font-display text-2xl font-extrabold tabular-nums shadow-clay ${urgent ? 'bg-peach text-peach-dark' : 'bg-white'}`}>
           {formatClock(left)}
@@ -205,7 +206,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
           </AnimatePresence>
           <div className="flex items-center justify-between">
             <ClayButton variant="ghost" disabled={current === 0} onClick={() => setCurrent((c) => c - 1)}>← Câu trước</ClayButton>
-            <ClayButton variant="secondary" onClick={() => setExam(toggleFlag(a, q.id))}>{a.flagged.includes(q.id) ? '★ Bỏ đánh dấu' : '☆ Đánh dấu xem lại'}</ClayButton>
+            <ClayButton variant="secondary" onClick={() => setExam(toggleFlag(a, q.id))}><Star aria-hidden size={16} className="mr-1.5 inline-block align-[-2px]" fill={a.flagged.includes(q.id) ? 'currentColor' : 'none'} />{a.flagged.includes(q.id) ? 'Bỏ đánh dấu' : 'Đánh dấu xem lại'}</ClayButton>
             <ClayButton variant="ghost" disabled={current === questions.length - 1} onClick={() => setCurrent((c) => c + 1)}>Câu sau →</ClayButton>
           </div>
         </div>
@@ -225,7 +226,7 @@ export function ExamRoom({ exam, now = Date.now }: { exam: ExamDef; now?: () => 
             <p><span className="mr-2 inline-block h-3 w-3 rounded bg-sun" />Đánh dấu xem lại</p>
             <p><span className="mr-2 inline-block h-3 w-3 rounded bg-lavender-soft" />Chưa làm</p>
           </div>
-          <p className="text-xs text-mint-dark">✓ Bài làm được tự động lưu</p>
+          <p className="text-xs text-mint-dark"><Check aria-hidden size={14} strokeWidth={3} className="mr-1 inline-block align-[-2px]" />Bài làm được tự động lưu</p>
         </ClayCard>
       </div>
 

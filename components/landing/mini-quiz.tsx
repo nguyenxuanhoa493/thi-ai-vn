@@ -33,9 +33,9 @@ export function MiniQuiz() {
 
   const state: OwlState = reveal === null ? (hasAnswer(value) ? 'thinking' : 'idle') : perfect ? 'celebrate' : reveal ? 'correct' : 'wrong';
   const bubble = reveal === null
-    ? (hasAnswer(value) ? 'Hmm, em chắc chưa nào? 🤔' : 'Thử 1 câu cho vui nhé, không tính điểm đâu!')
-    : perfect ? 'Tuyệt vời! 3/3 luôn, em giỏi quá! 🎉'
-      : reveal ? 'Đúng rồi! Em làm tốt lắm 🎉' : 'Không sao, sai là cơ hội để nhớ lâu hơn 💪';
+    ? (hasAnswer(value) ? 'Hmm, em chắc chưa nào?' : 'Thử 1 câu cho vui nhé, không tính điểm đâu!')
+    : perfect ? 'Tuyệt vời! 3/3 luôn, em giỏi quá!'
+      : reveal ? 'Đúng rồi! Em làm tốt lắm' : 'Không sao, sai là cơ hội để nhớ lâu hơn';
 
   const check = () => {
     const ok = checkAnswer(q, value).correct;
@@ -69,7 +69,7 @@ export function MiniQuiz() {
           </div>
           {reveal !== null && (
             <div role="status" className={`rounded-2xl p-4 ${reveal ? 'bg-mint/60' : 'bg-peach/70'}`}>
-              <p className="font-display font-extrabold">{reveal ? 'Chính xác! 🎉' : 'Chưa đúng rồi 🙈'}</p>
+              <p className="font-display font-extrabold">{reveal ? 'Chính xác!' : 'Chưa đúng rồi'}</p>
               <MathText text={q.explanation} className="mt-1 text-sm text-muted" />
             </div>
           )}

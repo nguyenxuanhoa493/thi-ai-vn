@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'motion/react';
+import { Mic, Volume2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { SpeakAnswer, SpeakQuestion } from '@/lib/bank/types';
 import { speak } from './mcq';
@@ -46,12 +47,12 @@ export function SpeakView({ question: q, value, onChange, disabled }: QuestionPr
     <div className="space-y-5">
       <p className="rounded-2xl bg-white p-5 font-display text-2xl font-semibold shadow-clay">“{q.target}”</p>
       <div className="flex items-center gap-4">
-        <button type="button" onClick={() => speak(q.target)} className="rounded-2xl bg-lavender-soft px-4 py-3 font-semibold text-lavender-dark">🔊 Nghe mẫu</button>
+        <button type="button" onClick={() => speak(q.target)} className="rounded-2xl bg-lavender-soft px-4 py-3 font-semibold text-lavender-dark"><Volume2 aria-hidden size={18} className="mr-2 inline-block align-[-3px]" />Nghe mẫu</button>
         <motion.button type="button" disabled={disabled}
           onPointerDown={begin} onPointerUp={end} onPointerCancel={end}
           animate={recording ? { scale: [1, 1.08, 1] } : { scale: 1 }} transition={{ repeat: recording ? Infinity : 0, duration: 0.8 }}
           className={`flex items-center gap-3 rounded-2xl px-6 py-3 font-bold text-white shadow-[0_6px_0_var(--color-coral-dark)] ${recording ? 'bg-peach-dark' : 'bg-coral'}`}>
-          🎙️ {recording ? 'Đang ghi… thả ra để dừng' : 'Nhấn giữ để nói'}
+          <Mic aria-hidden size={20} />{recording ? 'Đang ghi… thả ra để dừng' : 'Nhấn giữ để nói'}
         </motion.button>
         {recording && (
           <div className="flex h-10 items-end gap-1">

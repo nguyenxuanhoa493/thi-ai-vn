@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'motion/react';
+import { Check, Star, Telescope } from 'lucide-react';
 import { Owl } from '@/components/owl/owl';
 import { TiltCard } from '@/components/ui/tilt-card';
 
@@ -19,7 +20,7 @@ export function ParentReport() {
         <p className="text-lg text-muted">Mỗi tuần, ba mẹ nhận một bản tóm tắt ngắn gọn, dễ hiểu về hành trình học của con.</p>
         <ul className="space-y-3">
           {POINTS.map((p) => (
-            <li key={p} className="flex gap-3"><span aria-hidden className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-mint text-sm font-bold text-mint-dark">✓</span><span>{p}</span></li>
+            <li key={p} className="flex gap-3"><span aria-hidden className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-mint text-mint-dark"><Check size={14} strokeWidth={3} /></span><span>{p}</span></li>
           ))}
         </ul>
       </motion.div>
@@ -34,8 +35,8 @@ export function ParentReport() {
             <div className="rounded-2xl bg-peach p-3"><p className="font-display text-2xl font-extrabold text-peach-dark">+7</p><p className="text-xs text-muted">năng lực so với tuần trước</p></div>
           </div>
           <div className="space-y-2 text-sm">
-            <p><b className="text-mint-dark">⭐ Điểm mạnh:</b> Căn bậc hai, Hệ phương trình.</p>
-            <p><b className="text-peach-dark">🔭 Cần tập trung:</b> Tỉ số lượng giác.</p>
+            <p><b className="text-mint-dark"><Star aria-hidden size={16} className="inline-block align-[-2px]" /> Điểm mạnh:</b> Căn bậc hai, Hệ phương trình.</p>
+            <p><b className="text-peach-dark"><Telescope aria-hidden size={16} className="inline-block align-[-2px]" /> Cần tập trung:</b> Tỉ số lượng giác.</p>
           </div>
           <div className="flex items-end gap-3 rounded-2xl bg-sky p-3">
             <Owl state="cheer" size={56} />

@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'motion/react';
+import { Check, Timer } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useDemo } from '@/lib/store/demo-store';
 import { EXAM_KIND_LABEL, examsFor } from '@/lib/bank/exams';
@@ -30,10 +31,10 @@ export default function PhongThiPage() {
                   <span className="text-sm text-muted">{SUBJECT_LABEL[e.subject]}</span>
                 </div>
                 <h3 className="flex-1 text-lg font-bold">{e.title}</h3>
-                <p className="text-sm text-muted">⏱ {e.durationMin} phút · {e.questionIds.length} câu · {e.schedule}</p>
+                <p className="text-sm text-muted"><Timer aria-hidden size={14} className="mr-1 inline-block align-[-2px]" />{e.durationMin} phút · {e.questionIds.length} câu · {e.schedule}</p>
                 <p className="font-bold">
                   {inProgress ? <span className="text-coral">● Đang làm dở, vào tiếp →</span>
-                    : r ? <span className="text-mint-dark">✓ Đã làm · {r.score10.toFixed(2).replace('.', ',')} điểm</span>
+                    : r ? <span className="text-mint-dark"><Check aria-hidden size={16} strokeWidth={3} className="mr-1 inline-block align-[-2px]" />Đã làm · {r.score10.toFixed(2).replace('.', ',')} điểm</span>
                     : <span className="text-coral">Vào thi →</span>}
                 </p>
               </TiltCard>

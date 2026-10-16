@@ -4,7 +4,7 @@ import { CartesianGrid, Line, LineChart, ReferenceDot, ResponsiveContainer, Tool
 import { SUBJECT_LABEL, type Subject } from '@/lib/bank/types';
 
 export const SUBJECT_COLOR: Record<Subject, string> = { toan: '#7c83db', anh: '#ff8a65' };
-export const MILESTONE_LABEL = { assessment: '🎯 Đánh giá AI', 'zone-expand': '🌱 Vùng mở rộng' } as const;
+export const MILESTONE_LABEL = { assessment: 'Đánh giá AI', 'zone-expand': 'Vùng mở rộng' } as const;
 
 export interface ProgressRow { label: string; toan?: number; anh?: number }
 export interface ProgressMark { label: string; subject: Subject; score: number; kind: keyof typeof MILESTONE_LABEL }

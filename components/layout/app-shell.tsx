@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
+import { Flame, RotateCcw, Star, Volume2, VolumeX } from 'lucide-react';
 import { useDemo } from '@/lib/store/demo-store';
 import { useHydrated } from '@/lib/store/use-hydrated';
 import { Owl } from '@/components/owl/owl';
@@ -45,18 +46,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
           <div className="ml-auto flex items-center gap-2 text-sm font-bold md:ml-0">
-            <span className="rounded-xl bg-white px-3 py-1.5 shadow-clay" title="Chuỗi ngày học">🔥 <span>{streak.count}</span></span>
-            <span className="hidden rounded-xl bg-white px-3 py-1.5 shadow-clay sm:inline" title="Điểm kinh nghiệm">⭐ {xp.toLocaleString('vi-VN')}</span>
+            <span className="rounded-xl bg-white px-3 py-1.5 shadow-clay" title="Chuỗi ngày học"><Flame aria-hidden size={16} className="inline-block align-[-3px] text-coral" /> <span>{streak.count}</span></span>
+            <span className="hidden rounded-xl bg-white px-3 py-1.5 shadow-clay sm:inline" title="Điểm kinh nghiệm"><Star aria-hidden size={16} className="inline-block align-[-3px] text-lavender-dark" /> {xp.toLocaleString('vi-VN')}</span>
             <label className="sr-only" htmlFor="grade">Chọn lớp</label>
             <select id="grade" value={profile.grade} onChange={(e) => setGrade(Number(e.target.value) as Grade)}
               className="rounded-xl bg-white px-2 py-1.5 shadow-clay outline-none">
               {GRADES.map((g) => <option key={g} value={g}>Lớp {g}</option>)}
             </select>
             <button type="button" title={soundOn ? 'Tắt âm thanh' : 'Bật âm thanh'} aria-label={soundOn ? 'Tắt âm thanh' : 'Bật âm thanh'}
-              onClick={toggleSound} className="rounded-xl bg-white px-3 py-1.5 shadow-clay hover:text-coral">{soundOn ? '🔊' : '🔇'}</button>
+              onClick={toggleSound} className="rounded-xl bg-white px-3 py-1.5 shadow-clay hover:text-coral">{soundOn ? <Volume2 aria-hidden size={18} /> : <VolumeX aria-hidden size={18} />}</button>
             <button type="button" title="Đặt lại demo" aria-label="Đặt lại demo"
               onClick={() => { if (confirm('Xoá toàn bộ tiến độ demo và bắt đầu lại?')) resetDemo(); }}
-              className="rounded-xl bg-white px-3 py-1.5 shadow-clay hover:text-coral">↺</button>
+              className="rounded-xl bg-white px-3 py-1.5 shadow-clay hover:text-coral"><RotateCcw aria-hidden size={18} /></button>
             <span className="hidden h-9 w-9 place-items-center sm:grid rounded-full bg-coral font-display text-white">{profile.name[0]}</span>
           </div>
         </div>

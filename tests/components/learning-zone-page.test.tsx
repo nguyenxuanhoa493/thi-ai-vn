@@ -73,7 +73,7 @@ describe('LearningZonePage meaning', () => {
     expect(screen.getByText(/Đã vững: không cần luyện thêm/)).toBeInTheDocument();
     expect(screen.getByText(/Vừa sức: câu hỏi em làm đúng khoảng 3\/4/)).toBeInTheDocument();
     expect(screen.getByText(/Sắp khám phá: sẽ mở khi em vững phần trước/)).toBeInTheDocument();
-    expect(screen.getByText('🔭 Sắp khám phá')).toBeInTheDocument();
+    expect(screen.getByText('Sắp khám phá')).toBeInTheDocument();
     expect(container.textContent).not.toMatch(/Quá sức|QUÁ SỨC|Chưa tới|Chưa mở/);
     expect(screen.getByText(/Luyện thêm để vùng vừa sức của em rộng ra nhé/)).toBeInTheDocument();
   });

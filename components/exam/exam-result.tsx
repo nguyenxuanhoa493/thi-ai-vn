@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'motion/react';
+import { Bot, TriangleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ExamDef } from '@/lib/bank/exams';
 import type { Question } from '@/lib/bank/types';
@@ -25,7 +26,7 @@ export function ExamResultView({ exam, result, questions, onBack, onRetake }: { 
           <p className="text-sm font-semibold text-muted">Kết quả bài thi · {exam.title}</p>
           <p className="font-display text-5xl font-extrabold text-coral sm:text-7xl"><CountUp value={result.score10} format={(n) => n.toFixed(2).replace('.', ',')} /></p>
           <p className="text-muted">Đúng {result.correct}/{result.total} câu · Thời gian {formatClock(result.durationUsedSec)}
-            {result.violations > 0 && <span className="ml-2 font-semibold text-peach-dark">· ⚠️ {result.violations} lần rời màn hình</span>}</p>
+            {result.violations > 0 && <span className="ml-2 font-semibold text-peach-dark">· <TriangleAlert aria-hidden size={14} className="inline-block align-[-2px]" /> {result.violations} lần rời màn hình</span>}</p>
         </div>
       </ClayCard>
       <ClayCard className="space-y-3">
@@ -50,7 +51,7 @@ export function ExamResultView({ exam, result, questions, onBack, onRetake }: { 
               </button>
               {open === q.id && (
                 <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} className="overflow-hidden px-4 pb-4 text-sm">
-                  <p className="font-semibold">🤖 Lời giải</p><MathText text={q.explanation} />
+                  <p className="font-semibold"><Bot aria-hidden size={16} className="inline-block align-[-3px] text-lavender-dark" /> Lời giải</p><MathText text={q.explanation} />
                 </motion.div>
               )}
             </div>

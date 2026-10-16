@@ -26,7 +26,7 @@ describe('reply', () => {
     ['giáo viên tạo đề được không', /giáo viên/i],
     ['phụ huynh xem báo cáo', /phụ huynh/i],
     ['XP và streak là gì', /XP/],
-    ['bật tắt âm thanh', /🔊/],
+    ['bật tắt âm thanh', /âm thanh/],
     ['đổi lớp sao', /lớp/i],
     ['reset demo', /Đặt lại|↺/],
     ['giá bao nhiêu, có miễn phí không', /Bản demo miễn phí/],

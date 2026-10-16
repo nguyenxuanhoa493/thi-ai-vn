@@ -1,5 +1,6 @@
 'use client';
 import { AnimatePresence, motion } from 'motion/react';
+import { Bot, Flame, Lightbulb, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { AnswerValue, Question, SpeakAnswer } from '@/lib/bank/types';
 import { checkAnswer, type CheckResult } from '@/lib/bank/check';
@@ -25,7 +26,7 @@ interface Props {
   onAnswered: (q: Question, r: CheckResult) => RunnerOutcome; onExit: () => void; aside?: ReactNode;
 }
 
-const PRAISE = ['Chính xác! 🎉', 'Tuyệt vời!', 'Giỏi quá!', 'Chuẩn luôn!'];
+const PRAISE = ['Chính xác!', 'Tuyệt vời!', 'Giỏi quá!', 'Chuẩn luôn!'];
 const ENCOURAGE = ['Gần đúng rồi, xem lời giải nhé!', 'Không sao, sai là để học!', 'Thử nghĩ theo gợi ý nhé!'];
 
 export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, aside }: Props) {
@@ -60,14 +61,14 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
     setOwl(r.correct ? (o.combo >= 3 ? 'celebrate' : 'correct') : 'wrong');
     if (r.correct && o.combo >= 3) fireConfetti({ origin: { x: 0.2, y: 0.4 } });
     play(!r.correct ? 'wrong' : o.combo >= 3 ? 'combo' : 'correct');
-    o.newBadges.forEach((b) => toast(`${BADGES[b].icon} Huy hiệu mới: ${BADGES[b].name}`));
+    o.newBadges.forEach((b) => toast(`Huy hiệu mới: ${BADGES[b].name}`));
   };
 
   if (done) {
     return (
       <ClayCard className="mx-auto max-w-xl space-y-5 p-10 text-center">
         <div className="flex justify-center"><Owl state={owl} size={160} /></div>
-        <h2 className="text-3xl font-extrabold">Hoàn thành phiên! 🎉</h2>
+        <h2 className="text-3xl font-extrabold">Hoàn thành phiên!</h2>
         <div className="flex justify-center gap-8 text-lg">
           <div><p className="font-display text-4xl font-extrabold text-mint-dark">{stats.correct}/{count}</p><p className="text-muted">câu đúng</p></div>
           <div><p className="font-display text-4xl font-extrabold text-coral">+{stats.xp}</p><p className="text-muted">XP</p></div>
@@ -84,7 +85,7 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
     <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
       <div className="space-y-5">
         <div className="flex items-center gap-4">
-          <button type="button" onClick={onExit} aria-label="Thoát" className="text-2xl text-muted hover:text-ink">✕</button>
+          <button type="button" onClick={onExit} aria-label="Thoát" className="text-muted hover:text-ink"><X aria-hidden size={24} /></button>
           <ProgressBar value={count / maxQuestions} color="coral" className="flex-1" />
           <span className="text-sm font-bold text-muted">{title}</span>
         </div>
@@ -95,7 +96,7 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
               {hintsShown > 0 && !result && (
                 <div className="mt-5 space-y-2">
                   {q.hints.slice(0, hintsShown).map((h, hi) => (
-                    <motion.p key={hi} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-[#fff8e1] px-4 py-2 text-sm">💡 <MathText text={h} /></motion.p>
+                    <motion.p key={hi} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-[#fff8e1] px-4 py-2 text-sm"><Lightbulb aria-hidden size={16} className="mr-1.5 inline-block align-[-2px] text-coral-dark" /><MathText text={h} /></motion.p>
                   ))}
                 </div>
               )}
@@ -113,7 +114,7 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
               </p>
               {q.type === 'speak' && <div className="mt-3"><SpeakFeedback question={q} durationMs={(value as SpeakAnswer | null)?.durationMs ?? 0} /></div>}
               {q.type === 'write' && <div className="mt-3"><WritingFeedback question={q} text={String(value ?? '')} /></div>}
-              <p className="mt-3 text-sm font-semibold">🤖 AI giải thích</p>
+              <p className="mt-3 text-sm font-semibold"><Bot aria-hidden size={16} className="inline-block align-[-3px] text-lavender-dark" /> AI giải thích</p>
               <p className="mt-1 leading-relaxed">
                 {/* lời giải có công thức ($…$) hoặc **đậm** phải qua MathText, không gõ từng ký tự thô */}
                 {/[$*]/.test(q.explanation) ? <motion.span initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="inline-block"><MathText text={q.explanation} /></motion.span> : <Typewriter text={q.explanation} speed={12} />}
@@ -125,7 +126,7 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
 
         <div className="flex items-center justify-between">
           <ClayButton variant="ghost" disabled={!!result || hintsShown >= q.hints.length} onClick={() => setHintsShown((h) => h + 1)}>
-            💡 Gợi ý {q.hints.length ? `(${hintsShown}/${q.hints.length})` : ''}
+            <Lightbulb aria-hidden size={18} className="inline-block align-[-3px]" /> Gợi ý {q.hints.length ? `(${hintsShown}/${q.hints.length})` : ''}
           </ClayButton>
           {result
             ? <ClayButton size="lg" variant={result.correct ? 'mint' : 'primary'} onClick={advance}>Tiếp tục</ClayButton>
@@ -139,7 +140,7 @@ export function PracticeRunner({ title, maxQuestions, next, onAnswered, onExit, 
           <Owl state={owl} size={150} />
           {outcome && outcome.combo >= 2 && (
             <motion.span key={outcome.combo} initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="rounded-full bg-coral px-4 py-1.5 font-display font-extrabold text-white">
-              🔥 Combo x{outcome.combo}
+              <Flame aria-hidden size={18} className="inline-block align-[-3px]" /> Combo x{outcome.combo}
             </motion.span>
           )}
         </div>

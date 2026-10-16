@@ -1,6 +1,7 @@
 'use client';
 import { motion } from 'motion/react';
 import Link from 'next/link';
+import { Check, Flame, Sparkles, Sprout, type LucideIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Owl } from '@/components/owl/owl';
 import { OwlBubble } from '@/components/owl/owl-bubble';
@@ -9,23 +10,23 @@ import { MathText } from '@/components/questions/math-text';
 import type { OwlState } from '@/components/owl/owl';
 import { playSfx } from '@/lib/ui/sfx';
 
-const GREETING = 'Chào em! Mình là Bé Cú 🦉';
+const GREETING = 'Chào em! Mình là Bé Cú';
 const LINES = [
-  'Em biết không? Cú mèo xoay đầu được tới 270 độ đó! 🦉',
+  'Em biết không? Cú mèo xoay đầu được tới 270 độ đó!',
   'Mỗi ngày tiến bộ một chút là đủ rồi nè!',
-  'Sai một câu chưa phải là mất gì, mà là biết thêm một điều! 💡',
-  'Vùng vừa sức là nơi em tiến bộ nhanh nhất đó 🌱',
-  'Uống miếng nước rồi mình học tiếp nhé! 💧',
-  'Em làm được mà, Cú tin em! 💪',
-  'Mẹo nhỏ: làm đúng 3 câu liên tiếp là có combo đó 🔥',
+  'Sai một câu chưa phải là mất gì, mà là biết thêm một điều!',
+  'Vùng vừa sức là nơi em tiến bộ nhanh nhất đó',
+  'Uống miếng nước rồi mình học tiếp nhé!',
+  'Em làm được mà, Cú tin em!',
+  'Mẹo nhỏ: làm đúng 3 câu liên tiếp là có combo đó',
   'Toán và Tiếng Anh đều vui nếu học đúng mức nè!',
 ];
 
-const FLOATING = [
+const FLOATING: { icon?: LucideIcon; text: string; cls: string; d: number }[] = [
   { text: '$x^2 - 5x + 6 = 0$', cls: 'left-0 top-10 bg-white', d: 0 },
-  { text: 'I have been to Hội An ✓', cls: 'right-0 top-0 bg-mint', d: 0.6 },
-  { text: '🔥 Combo x5', cls: 'left-8 bottom-16 bg-peach', d: 1.2 },
-  { text: '🌱 Vùng mở rộng!', cls: 'right-6 bottom-6 bg-lavender-soft', d: 1.8 },
+  { icon: Check, text: 'I have been to Hội An', cls: 'right-0 top-0 bg-mint', d: 0.6 },
+  { icon: Flame, text: 'Combo x5', cls: 'left-8 bottom-16 bg-peach', d: 1.2 },
+  { icon: Sprout, text: 'Vùng mở rộng!', cls: 'right-6 bottom-6 bg-lavender-soft', d: 1.8 },
 ];
 
 export function Hero() {
@@ -50,7 +51,7 @@ export function Hero() {
       setLook({ x: Math.max(-1, Math.min(1, (e.clientX - cx) / 400)), y: Math.max(-1, Math.min(1, (e.clientY - cy) / 300)) });
     }} className="mx-auto grid max-w-7xl items-center gap-10 px-4 sm:px-6 pb-20 pt-12 lg:grid-cols-2">
       <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-        <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-semibold shadow-clay">✨ Nền tảng thi & ôn luyện K12 · Toán · Tiếng Anh</span>
+        <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-semibold shadow-clay"><Sparkles aria-hidden size={16} className="text-coral" /> Nền tảng thi & ôn luyện K12 · Toán · Tiếng Anh</span>
         <h1 className="text-5xl font-extrabold leading-[1.1] xl:text-6xl">Học <span className="text-coral">vừa sức</span>,<br />tiến bộ <span className="text-lavender-dark">mỗi ngày</span></h1>
         <p className="max-w-lg text-lg text-muted">AI đánh giá đúng năng lực, Learning Zone đưa ra câu hỏi không quá khó, không quá dễ, và mở rộng dần cùng em. Ngân hàng 40.000 câu hỏi được NXB phê duyệt.</p>
         <div className="flex flex-wrap gap-4">
@@ -64,7 +65,9 @@ export function Hero() {
           <motion.div key={f.text} className={`absolute max-w-[62%] rounded-2xl px-3 py-2 text-sm sm:px-4 sm:py-3 sm:text-base font-semibold shadow-clay ${f.cls}`}
             initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1, y: [0, -10, 0] }}
             transition={{ opacity: { delay: 0.4 + f.d * 0.3 }, scale: { delay: 0.4 + f.d * 0.3 }, y: { duration: 4, repeat: Infinity, delay: f.d, ease: 'easeInOut' } }}>
-            <MathText text={f.text} />
+            {f.icon
+              ? <span className="flex items-center gap-2"><f.icon aria-hidden size={18} strokeWidth={2.5} className="shrink-0" /><MathText text={f.text} /></span>
+              : <MathText text={f.text} />}
           </motion.div>
         ))}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">

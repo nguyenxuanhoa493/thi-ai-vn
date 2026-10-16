@@ -1,5 +1,6 @@
 'use client';
 import { AnimatePresence, motion } from 'motion/react';
+import { Check, FileText } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { questionsFor } from '@/lib/bank';
 import { LEVELS, LEVEL_LABEL, SUBJECT_LABEL, type Grade, type Level, type Question, type Subject } from '@/lib/bank/types';
@@ -69,7 +70,7 @@ export function ExamBuilderDemo() {
         <AnimatePresence mode="wait">
           {state === 'idle' && (
             <motion.div key="idle" className="flex h-full min-h-[380px] flex-col items-center justify-center gap-2 text-center text-muted">
-              <p className="text-5xl">📝</p>
+              <FileText aria-hidden size={48} strokeWidth={2} className="text-lavender-dark" />
               <p>Chọn môn, lớp, ma trận mức độ rồi bấm <b className="text-ink">Tạo đề</b>.</p>
             </motion.div>
           )}
@@ -84,7 +85,7 @@ export function ExamBuilderDemo() {
           {state === 'done' && result && (
             <motion.div key="done" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-display text-lg font-extrabold text-mint-dark">✓ Đề đã sẵn sàng · {result.questions.length} câu</p>
+                <p className="font-display text-lg font-extrabold text-mint-dark"><Check aria-hidden size={20} strokeWidth={3} className="inline-block align-[-3px]" /> Đề đã sẵn sàng · {result.questions.length} câu</p>
                 <span className="rounded-xl bg-coral px-3 py-1 font-mono font-bold text-white">Mã phòng thi: {result.room}</span>
               </div>
               <div className="max-h-[320px] space-y-2 overflow-y-auto pr-1">

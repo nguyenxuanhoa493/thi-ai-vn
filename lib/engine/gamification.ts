@@ -1,3 +1,4 @@
+import { FileText, Flame, Sprout, Target } from 'lucide-react';
 import type { Level } from '@/lib/bank/types';
 
 export const LEVEL_XP: Record<Level, number> = { NB: 5, TH: 10, VD: 15, VDC: 20 };
@@ -25,9 +26,9 @@ export function updateStreak(s: Streak, today: string): Streak {
 }
 
 export const BADGES = {
-  'first-assessment': { name: 'Lần đầu đánh giá', icon: '🎯' },
-  'combo-5': { name: 'Combo 5', icon: '🔥' },
-  'zone-expand': { name: 'Mở rộng vùng', icon: '🌱' },
-  'first-exam': { name: 'Hoàn thành bài thi', icon: '📝' },
+  'first-assessment': { name: 'Lần đầu đánh giá', icon: Target },
+  'combo-5': { name: 'Combo 5', icon: Flame },
+  'zone-expand': { name: 'Mở rộng vùng', icon: Sprout },
+  'first-exam': { name: 'Hoàn thành bài thi', icon: FileText },
 } as const;
 export type BadgeId = keyof typeof BADGES;
