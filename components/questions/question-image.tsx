@@ -4,6 +4,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { QuestionImage as QImage } from '@/lib/bank/types';
 
+// ảnh trong public/ cần tiền tố basePath khi xuất cho GitHub Pages
+const withBase = (src: string) => (src.startsWith('/') ? `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}${src}` : src);
+
 /** Hình minh hoạ của câu hỏi: khung clay, bấm để phóng to (lightbox, Esc/bấm nền để đóng).
  *  Lightbox render qua portal vào body vì tổ tiên có transform (template animation) làm lệch position: fixed. */
 export function QuestionImage({ image }: { image: QImage }) {
@@ -28,14 +31,14 @@ export function QuestionImage({ image }: { image: QImage }) {
       <figure className="flex justify-center">
         <button ref={triggerRef} type="button" onClick={() => setOpen(true)} aria-label={`Phóng to hình: ${image.alt}`}
           className="cursor-zoom-in rounded-2xl bg-white p-3 shadow-clay transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-lavender-dark">
-          <img src={image.src} alt={image.alt} width={image.width} height={image.height}
+          <img src={withBase(image.src)} alt={image.alt} width={image.width} height={image.height}
             className="mx-auto block h-auto max-h-[260px] w-auto max-w-full object-contain" />
         </button>
       </figure>
       {open && createPortal(
         <div role="dialog" aria-modal="true" aria-label={image.alt} onClick={close}
           className="fixed inset-0 z-50 flex cursor-zoom-out items-center justify-center bg-ink/60 p-4 backdrop-blur-sm">
-          <img src={image.src} alt={image.alt}
+          <img src={withBase(image.src)} alt={image.alt}
             className="h-auto max-h-[90vh] w-[min(94vw,880px)] rounded-2xl bg-white object-contain p-3 shadow-clay-lg" />
           <button type="button" autoFocus onClick={(e) => { e.stopPropagation(); close(); }}
             className="absolute top-4 right-4 cursor-pointer rounded-xl bg-white/90 px-4 py-2 font-semibold text-ink shadow-clay transition hover:bg-white focus-visible:outline-2 focus-visible:outline-lavender-dark">
