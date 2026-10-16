@@ -1,0 +1,81 @@
+import type { Chapter, Skill } from './types';
+
+export const CHAPTERS: Chapter[] = [
+  // ===== Toán 9 =====
+  { id: 't9-c1', subject: 'toan', grade: 9, order: 1, name: 'Phương trình và hệ hai phương trình bậc nhất hai ẩn',
+    lessons: [{ id: 't9-b1', name: 'Khái niệm phương trình và hệ phương trình bậc nhất hai ẩn' },
+              { id: 't9-b2', name: 'Giải hệ hai phương trình bậc nhất hai ẩn' },
+              { id: 't9-b3', name: 'Giải bài toán bằng cách lập hệ phương trình' }] },
+  { id: 't9-c2', subject: 'toan', grade: 9, order: 2, name: 'Phương trình và bất phương trình bậc nhất một ẩn',
+    lessons: [{ id: 't9-b6', name: 'Bất phương trình bậc nhất một ẩn' }] },
+  { id: 't9-c3', subject: 'toan', grade: 9, order: 3, name: 'Căn bậc hai và căn bậc ba',
+    lessons: [{ id: 't9-b7', name: 'Căn bậc hai và căn thức bậc hai' },
+              { id: 't9-b9', name: 'Biến đổi đơn giản và rút gọn biểu thức chứa căn' }] },
+  { id: 't9-c4', subject: 'toan', grade: 9, order: 4, name: 'Hệ thức lượng trong tam giác vuông',
+    lessons: [{ id: 't9-b11', name: 'Tỉ số lượng giác của góc nhọn' }] },
+  { id: 't9-c6', subject: 'toan', grade: 9, order: 6, name: 'Hàm số y = ax² (a ≠ 0). Phương trình bậc hai một ẩn',
+    lessons: [{ id: 't9-b18', name: 'Hàm số y = ax² (a ≠ 0)' },
+              { id: 't9-b19', name: 'Phương trình bậc hai một ẩn' },
+              { id: 't9-b20', name: 'Định lí Viète và ứng dụng' }] },
+  // ===== Tiếng Anh 9 =====
+  { id: 'e9-c1', subject: 'anh', grade: 9, order: 1, name: 'Ngữ âm & Từ vựng',
+    lessons: [{ id: 'e9-l1', name: 'Từ vựng theo chủ đề (Unit 1–6)' }] },
+  { id: 'e9-c2', subject: 'anh', grade: 9, order: 2, name: 'Ngữ pháp',
+    lessons: [{ id: 'e9-l2', name: 'Thì hiện tại hoàn thành & quá khứ đơn' },
+              { id: 'e9-l3', name: 'Câu ước với wish' },
+              { id: 'e9-l4', name: 'Câu bị động' },
+              { id: 'e9-l5', name: 'Câu tường thuật' },
+              { id: 'e9-l6', name: 'Mệnh đề quan hệ' },
+              { id: 'e9-l7', name: 'Câu điều kiện loại 1 & 2' }] },
+  { id: 'e9-c3', subject: 'anh', grade: 9, order: 3, name: 'Kỹ năng',
+    lessons: [{ id: 'e9-l8', name: 'Nghe hiểu' }, { id: 'e9-l9', name: 'Nói' }, { id: 'e9-l10', name: 'Viết đoạn văn' }] },
+  // ===== Lớp 6 =====
+  { id: 't6-c1', subject: 'toan', grade: 6, order: 1, name: 'Số tự nhiên',
+    lessons: [{ id: 't6-b1', name: 'Phép tính với số tự nhiên' }] },
+  { id: 't6-c6', subject: 'toan', grade: 6, order: 6, name: 'Phân số',
+    lessons: [{ id: 't6-b24', name: 'Phép cộng, trừ phân số' }] },
+  { id: 'e6-c1', subject: 'anh', grade: 6, order: 1, name: 'Ngữ pháp & Từ vựng',
+    lessons: [{ id: 'e6-l1', name: 'Thì hiện tại đơn' }, { id: 'e6-l2', name: 'Từ vựng: My house, My school' }] },
+  // ===== Lớp 12 =====
+  { id: 't12-c1', subject: 'toan', grade: 12, order: 1, name: 'Ứng dụng đạo hàm để khảo sát hàm số',
+    lessons: [{ id: 't12-b1', name: 'Tính đơn điệu và cực trị của hàm số' }] },
+  { id: 't12-c4', subject: 'toan', grade: 12, order: 4, name: 'Nguyên hàm và tích phân',
+    lessons: [{ id: 't12-b11', name: 'Nguyên hàm' }] },
+  { id: 'e12-c1', subject: 'anh', grade: 12, order: 1, name: 'Ngữ pháp & Từ vựng',
+    lessons: [{ id: 'e12-l1', name: 'Mệnh đề & cấu trúc nâng cao' }, { id: 'e12-l2', name: 'Từ vựng học thuật' }] },
+];
+
+export const SKILLS: Skill[] = [
+  // Toán 9
+  { id: 't9-hpt-khai-niem', subject: 'toan', grade: 9, chapterId: 't9-c1', lessonId: 't9-b1', name: 'Nghiệm của phương trình bậc nhất hai ẩn', prerequisites: [], bankCount: 640 },
+  { id: 't9-hpt-giai', subject: 'toan', grade: 9, chapterId: 't9-c1', lessonId: 't9-b2', name: 'Giải hệ phương trình bậc nhất hai ẩn', prerequisites: ['t9-hpt-khai-niem'], bankCount: 910 },
+  { id: 't9-hpt-bai-toan', subject: 'toan', grade: 9, chapterId: 't9-c1', lessonId: 't9-b3', name: 'Giải bài toán bằng cách lập hệ phương trình', prerequisites: ['t9-hpt-giai'], bankCount: 720 },
+  { id: 't9-bpt', subject: 'toan', grade: 9, chapterId: 't9-c2', lessonId: 't9-b6', name: 'Bất phương trình bậc nhất một ẩn', prerequisites: [], bankCount: 580 },
+  { id: 't9-can-bac-hai', subject: 'toan', grade: 9, chapterId: 't9-c3', lessonId: 't9-b7', name: 'Căn bậc hai', prerequisites: [], bankCount: 830 },
+  { id: 't9-bien-doi-can', subject: 'toan', grade: 9, chapterId: 't9-c3', lessonId: 't9-b9', name: 'Rút gọn biểu thức chứa căn', prerequisites: ['t9-can-bac-hai'], bankCount: 1040 },
+  { id: 't9-ti-so-luong-giac', subject: 'toan', grade: 9, chapterId: 't9-c4', lessonId: 't9-b11', name: 'Tỉ số lượng giác của góc nhọn', prerequisites: [], bankCount: 690 },
+  { id: 't9-ham-so-ax2', subject: 'toan', grade: 9, chapterId: 't9-c6', lessonId: 't9-b18', name: 'Hàm số y = ax²', prerequisites: [], bankCount: 610 },
+  { id: 't9-pt-bac-hai', subject: 'toan', grade: 9, chapterId: 't9-c6', lessonId: 't9-b19', name: 'Phương trình bậc hai một ẩn', prerequisites: ['t9-bien-doi-can', 't9-ham-so-ax2'], bankCount: 1120 },
+  { id: 't9-viete', subject: 'toan', grade: 9, chapterId: 't9-c6', lessonId: 't9-b20', name: 'Định lí Viète', prerequisites: ['t9-pt-bac-hai'], bankCount: 760 },
+  // Tiếng Anh 9
+  { id: 'e9-vocab', subject: 'anh', grade: 9, chapterId: 'e9-c1', lessonId: 'e9-l1', name: 'Từ vựng theo chủ đề', prerequisites: [], bankCount: 1350 },
+  { id: 'e9-tenses', subject: 'anh', grade: 9, chapterId: 'e9-c2', lessonId: 'e9-l2', name: 'Present perfect & Past simple', prerequisites: [], bankCount: 980 },
+  { id: 'e9-wish', subject: 'anh', grade: 9, chapterId: 'e9-c2', lessonId: 'e9-l3', name: 'Câu ước (wish)', prerequisites: ['e9-tenses'], bankCount: 540 },
+  { id: 'e9-passive', subject: 'anh', grade: 9, chapterId: 'e9-c2', lessonId: 'e9-l4', name: 'Câu bị động', prerequisites: ['e9-tenses'], bankCount: 760 },
+  { id: 'e9-reported', subject: 'anh', grade: 9, chapterId: 'e9-c2', lessonId: 'e9-l5', name: 'Câu tường thuật', prerequisites: ['e9-tenses'], bankCount: 690 },
+  { id: 'e9-relative', subject: 'anh', grade: 9, chapterId: 'e9-c2', lessonId: 'e9-l6', name: 'Mệnh đề quan hệ', prerequisites: [], bankCount: 820 },
+  { id: 'e9-conditional', subject: 'anh', grade: 9, chapterId: 'e9-c2', lessonId: 'e9-l7', name: 'Câu điều kiện', prerequisites: ['e9-tenses'], bankCount: 710 },
+  { id: 'e9-listening', subject: 'anh', grade: 9, chapterId: 'e9-c3', lessonId: 'e9-l8', name: 'Nghe hiểu', prerequisites: [], bankCount: 620 },
+  { id: 'e9-speaking', subject: 'anh', grade: 9, chapterId: 'e9-c3', lessonId: 'e9-l9', name: 'Nói', prerequisites: [], bankCount: 380 },
+  { id: 'e9-writing', subject: 'anh', grade: 9, chapterId: 'e9-c3', lessonId: 'e9-l10', name: 'Viết đoạn văn', prerequisites: [], bankCount: 410 },
+  // Lớp 6
+  { id: 't6-so-tu-nhien', subject: 'toan', grade: 6, chapterId: 't6-c1', lessonId: 't6-b1', name: 'Phép tính với số tự nhiên', prerequisites: [], bankCount: 900 },
+  { id: 't6-phan-so', subject: 'toan', grade: 6, chapterId: 't6-c6', lessonId: 't6-b24', name: 'Cộng, trừ phân số', prerequisites: ['t6-so-tu-nhien'], bankCount: 870 },
+  { id: 'e6-present-simple', subject: 'anh', grade: 6, chapterId: 'e6-c1', lessonId: 'e6-l1', name: 'Present simple', prerequisites: [], bankCount: 760 },
+  { id: 'e6-vocab', subject: 'anh', grade: 6, chapterId: 'e6-c1', lessonId: 'e6-l2', name: 'Từ vựng: nhà & trường', prerequisites: [], bankCount: 690 },
+  // Lớp 12
+  { id: 't12-don-dieu', subject: 'toan', grade: 12, chapterId: 't12-c1', lessonId: 't12-b1', name: 'Tính đơn điệu & cực trị', prerequisites: [], bankCount: 1260 },
+  { id: 't12-nguyen-ham', subject: 'toan', grade: 12, chapterId: 't12-c4', lessonId: 't12-b11', name: 'Nguyên hàm', prerequisites: ['t12-don-dieu'], bankCount: 1180 },
+  { id: 'e12-grammar', subject: 'anh', grade: 12, chapterId: 'e12-c1', lessonId: 'e12-l1', name: 'Cấu trúc nâng cao', prerequisites: [], bankCount: 1090 },
+  { id: 'e12-vocab', subject: 'anh', grade: 12, chapterId: 'e12-c1', lessonId: 'e12-l2', name: 'Từ vựng học thuật', prerequisites: [], bankCount: 1150 },
+];

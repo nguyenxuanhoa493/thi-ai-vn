@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 290" width="440" height="290" role="img" aria-label="Tam giác ABC vuông tại A, AB = 6 cm, AC = 8 cm, BC = 10 cm">
+<title>Tam giác ABC vuông tại A, AB = 6 cm, AC = 8 cm, BC = 10 cm</title>
+<defs><clipPath id="card"><rect width="440" height="290" rx="20"/></clipPath></defs>
+<g clip-path="url(#card)">
+<rect width="440" height="290" fill="#FFF4EC"/>
+<polygon points="120,235 120,85 320,235" fill="#EEF3FF" stroke="#7C83DB" stroke-width="4" stroke-linejoin="round"/>
+<path d="M120.0,219.0 L136.0,219.0 L136.0,235.0" fill="none" stroke="#2B2D42" stroke-width="2"/>
+<path d="M274.0,235.0 A46,46 0 0 1 283.2,207.4" fill="none" stroke="#FF8A65" stroke-width="3"/>
+<circle cx="120.0" cy="235.0" r="4" fill="#2B2D42"/>
+<circle cx="120.0" cy="85.0" r="4" fill="#2B2D42"/>
+<circle cx="320.0" cy="235.0" r="4" fill="#2B2D42"/>
+<text x="100.0" y="252.0" font-family="Lexend, Be Vietnam Pro, sans-serif" font-size="24" font-weight="700" fill="#2B2D42" text-anchor="middle">A</text>
+<text x="102.0" y="80.0" font-family="Lexend, Be Vietnam Pro, sans-serif" font-size="24" font-weight="700" fill="#2B2D42" text-anchor="middle">B</text>
+<text x="340.0" y="252.0" font-family="Lexend, Be Vietnam Pro, sans-serif" font-size="24" font-weight="700" fill="#2B2D42" text-anchor="middle">C</text>
+<text x="108.0" y="166.0" font-family="Lexend, Be Vietnam Pro, sans-serif" font-size="20" font-weight="600" fill="#2B2D42" text-anchor="end">6 cm</text>
+<text x="220.0" y="266.0" font-family="Lexend, Be Vietnam Pro, sans-serif" font-size="20" font-weight="600" fill="#2B2D42" text-anchor="middle">8 cm</text>
+<text x="236.0" y="148.0" font-family="Lexend, Be Vietnam Pro, sans-serif" font-size="20" font-weight="600" fill="#2B2D42" text-anchor="start">10 cm</text>
+</g>
+</svg>
