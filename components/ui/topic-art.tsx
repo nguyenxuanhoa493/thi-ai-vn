@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-// Minh hoạ nét trắng cho thumbnail bộ đề, vẽ trên nền màu chuyển sắc. viewBox 160×120.
+// Minh hoạ nét trắng cho thumbnail bộ đề / đề thi, vẽ trên nền màu chuyển sắc. viewBox 160×120.
 const S = { stroke: 'white', strokeWidth: 3, strokeLinecap: 'round', strokeLinejoin: 'round' } as const;
 const SOFT = 'rgba(255,255,255,0.22)';
 const T = { fill: 'white', fontWeight: 800, fontFamily: 'inherit', textAnchor: 'middle' } as const;
@@ -127,7 +127,7 @@ const ART: Record<string, ReactNode> = {
 };
 
 // Đề tổng hợp: chồng thẻ câu hỏi
-const MIXED = (
+ART.mixed = (
   <>
     <rect x="44" y="26" width="56" height="72" rx="10" fill={SOFT} {...S} transform="rotate(-14 72 62)" />
     <rect x="60" y="26" width="56" height="72" rx="10" fill={SOFT} {...S} transform="rotate(10 88 62)" />
@@ -136,8 +136,21 @@ const MIXED = (
   </>
 );
 
-export function ChapterArt({ chapterId, fallback }: { chapterId: string | null; fallback: string }) {
-  const art = chapterId === null ? MIXED : ART[chapterId];
-  if (!art) return <span className="text-6xl font-black text-white/90">{fallback}</span>;
-  return <svg viewBox="0 0 160 120" fill="none" className="h-[78%] w-auto drop-shadow-sm" aria-hidden>{art}</svg>;
+// Thi giữa kỳ / cuối kỳ: tờ bài thi có đáp án đã chấm và dấu điểm
+ART['exam-paper'] = (
+  <>
+    <rect x="34" y="12" width="70" height="96" rx="8" fill={SOFT} {...S} />
+    {[34, 56, 78].map((y) => (
+      <g key={y}><path d={`M46 ${y}l4 4 8-8`} {...S} strokeWidth={2.5} /><path d={`M66 ${y}h26`} {...S} strokeWidth={2.5} opacity={0.8} /></g>
+    ))}
+    <circle cx="116" cy="84" r="22" fill="white" />
+    <text x="116" y="93" fontSize="24" {...T} fill="#e86a45">A+</text>
+  </>
+);
+
+/** `art`: mã chương (vd 't9-c1'), 'mixed' hoặc 'exam-paper'. Không có hình thì hiện `fallback`. */
+export function TopicArt({ art, fallback = '' }: { art: string; fallback?: string }) {
+  const node = ART[art];
+  if (!node) return <span className="text-6xl font-black text-white/90">{fallback}</span>;
+  return <svg viewBox="0 0 160 120" fill="none" className="h-[78%] w-auto drop-shadow-sm" aria-hidden>{node}</svg>;
 }

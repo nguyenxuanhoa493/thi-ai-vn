@@ -8,6 +8,8 @@ export const EXAM_KIND_LABEL: Record<ExamKind, string> = {
 export interface ExamDef {
   id: string; title: string; kind: ExamKind; subject: Subject; grade: Grade;
   durationMin: number; questionIds: string[]; schedule: string;
+  /** Mã hình minh hoạ cho thumbnail (xem components/ui/topic-art) */
+  art: string;
 }
 
 /** Tỉ lệ mức độ của ma trận đề: NB 40% · TH 30% · VD 20% · VDC 10% */
@@ -52,21 +54,21 @@ const skillsOfChapters = (chapterIds: string[]) =>
 
 export const EXAMS: ExamDef[] = [
   { id: 'toan9-15p-can', title: 'Kiểm tra 15 phút — Căn bậc hai', kind: '15p', subject: 'toan', grade: 9, durationMin: 15,
-    questionIds: pick('toan', 9, 8, ['t9-can-bac-hai', 't9-bien-doi-can']), schedule: 'Đang mở · hạn 20/10' },
+    questionIds: pick('toan', 9, 8, ['t9-can-bac-hai', 't9-bien-doi-can']), schedule: 'Đang mở · hạn 20/10', art: 't9-c3' },
   { id: 'toan9-45p-hpt', title: 'Kiểm tra 45 phút — Hệ phương trình', kind: '45p', subject: 'toan', grade: 9, durationMin: 45,
-    questionIds: pick('toan', 9, 15, ['t9-hpt-khai-niem', 't9-hpt-giai', 't9-hpt-bai-toan', 't9-bpt']), schedule: 'Đang mở · hạn 22/10' },
+    questionIds: pick('toan', 9, 15, ['t9-hpt-khai-niem', 't9-hpt-giai', 't9-hpt-bai-toan', 't9-bpt']), schedule: 'Đang mở · hạn 22/10', art: 't9-c1' },
   { id: 'anh9-giua-ky', title: 'Thi giữa kỳ I — Tiếng Anh 9', kind: 'giua-ky', subject: 'anh', grade: 9, durationMin: 60,
-    questionIds: pick('anh', 9, 20), schedule: 'Thứ Hai 28/10 · 7:30' },
+    questionIds: pick('anh', 9, 20), schedule: 'Thứ Hai 28/10 · 7:30', art: 'exam-paper' },
   { id: 'toan9-cuoi-ky', title: 'Thi cuối kỳ I — Toán 9', kind: 'cuoi-ky', subject: 'toan', grade: 9, durationMin: 90,
-    questionIds: pick('toan', 9, 25, skillsOfChapters(['t9-c1', 't9-c2', 't9-c3', 't9-c4'])), schedule: 'Thứ Sáu 20/12 · 7:30' },
+    questionIds: pick('toan', 9, 25, skillsOfChapters(['t9-c1', 't9-c2', 't9-c3', 't9-c4'])), schedule: 'Thứ Sáu 20/12 · 7:30', art: 'exam-paper' },
   { id: 'toan6-15p', title: 'Kiểm tra 15 phút — Số tự nhiên', kind: '15p', subject: 'toan', grade: 6, durationMin: 15,
-    questionIds: pick('toan', 6, 8, ['t6-so-tu-nhien']), schedule: 'Đang mở · hạn 21/10' },
+    questionIds: pick('toan', 6, 8, ['t6-so-tu-nhien']), schedule: 'Đang mở · hạn 21/10', art: 't6-c1' },
   { id: 'anh6-15p', title: 'Kiểm tra 15 phút — Present simple', kind: '15p', subject: 'anh', grade: 6, durationMin: 15,
-    questionIds: pick('anh', 6, 8, ['e6-present-simple']), schedule: 'Đang mở · hạn 23/10' },
+    questionIds: pick('anh', 6, 8, ['e6-present-simple']), schedule: 'Đang mở · hạn 23/10', art: 'e6-c1' },
   { id: 'toan12-45p', title: 'Kiểm tra 45 phút — Đạo hàm', kind: '45p', subject: 'toan', grade: 12, durationMin: 45,
-    questionIds: pick('toan', 12, 10, ['t12-don-dieu']), schedule: 'Đang mở · hạn 25/10' },
+    questionIds: pick('toan', 12, 10, ['t12-don-dieu']), schedule: 'Đang mở · hạn 25/10', art: 't12-c1' },
   { id: 'anh12-15p', title: 'Kiểm tra 15 phút — Cấu trúc nâng cao', kind: '15p', subject: 'anh', grade: 12, durationMin: 15,
-    questionIds: pick('anh', 12, 8, ['e12-grammar']), schedule: 'Đang mở · hạn 24/10' },
+    questionIds: pick('anh', 12, 8, ['e12-grammar']), schedule: 'Đang mở · hạn 24/10', art: 'e12-c1' },
 ];
 
 export const examsFor = (grade: Grade) => EXAMS.filter((e) => e.grade === grade);

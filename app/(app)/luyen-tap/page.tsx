@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { ChapterArt } from '@/components/practice/chapter-art';
+import { TopicArt } from '@/components/ui/topic-art';
 import { useDemo } from '@/lib/store/demo-store';
 import { BANK_TOTAL, getQuestion } from '@/lib/bank';
 import { practiceSetsFor } from '@/lib/bank/practice-sets';
@@ -53,7 +53,7 @@ export default function LuyenTapPage() {
             <motion.div key={s.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
               <TiltCard onClick={() => router.push(`/luyen-tap/${s.id}`)} className="group flex h-full flex-col overflow-hidden !p-0">
                 <div className={`relative flex aspect-[4/3] items-center justify-center bg-gradient-to-br ${mixed ? 'from-ink to-[#4a4e6e]' : THUMBS[i % THUMBS.length]}`}>
-                  <ChapterArt chapterId={s.chapterId} fallback={String(i + 1).padStart(2, '0')} />
+                  <TopicArt art={s.chapterId ?? 'mixed'} fallback={String(i + 1).padStart(2, '0')} />
                   <span className="absolute right-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-ink">{s.questionIds.length} câu</span>
                 </div>
                 <div className="flex flex-1 flex-col gap-2 p-3">

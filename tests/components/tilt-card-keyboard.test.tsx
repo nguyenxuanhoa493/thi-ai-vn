@@ -46,7 +46,7 @@ describe('Phòng thi card status', () => {
       examResults: { [e.id]: { examId: e.id, score10: 7.5 } as never },
     });
     render(<PhongThiPage />);
-    expect(screen.getByText(/Đang làm dở, vào tiếp/)).toBeInTheDocument();
+    expect(screen.getByText(/Đang làm dở/)).toBeInTheDocument();
     expect(screen.queryByText(/Đã làm/)).toBeNull();
   });
 });

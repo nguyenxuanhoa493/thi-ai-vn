@@ -5,7 +5,7 @@ import {
 import type { ExamDef } from '@/lib/bank/exams';
 import type { Question } from '@/lib/bank/types';
 
-const exam: ExamDef = { id: 'e', title: 'E', kind: '15p', subject: 'toan', grade: 9, durationMin: 15, questionIds: ['q1', 'q2', 'q3'], schedule: '' };
+const exam: ExamDef = { id: 'e', title: 'E', kind: '15p', subject: 'toan', grade: 9, durationMin: 15, questionIds: ['q1', 'q2', 'q3'], schedule: '', art: 'exam-paper' };
 const base = { subject: 'toan', grade: 9, skillId: 's', b: 0, content: '', explanation: '', hints: [], source: 'NXB' } as const;
 const qs: Question[] = [
   { ...base, id: 'q1', level: 'NB', type: 'mcq', options: ['a', 'b'], answer: 0 },
